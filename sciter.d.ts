@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.3.0
+//| Sciter.d.ts v0.3.1
 //| https://github.com/MustafaHi/sciter-vscode
 
 
@@ -412,8 +412,6 @@ declare var Window: {
     this: Window;
     new(param?: windowParam): Window;
 }
-
-declare var window: Window;
 
 interface windowParam {
     type?: number|windowType;
