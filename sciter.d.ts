@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.2.0
+//| Sciter.d.ts v0.3.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 
@@ -244,6 +244,22 @@ interface Element {
     $(query: string): Element;
     /** querySelectorAll */
     $$(query: string): array<Element>;
+    /** Select parent element that match the query */
+    $p(query: string): Element;
+    /** Owner element selector, useful to get owner of menu */
+    $o(query: string): Element;
+    /** Check element match the selector */
+    $is(query: string): boolean;
+    /** Fire event asynchronously, `dispatchEvent` for sync method */
+    postEvent(event: Event);
+    /** jQuery style event subscription:  
+        @param event `^name` for handling events in capturing phase
+        @param query subscribe to all children that match the css selector otherwise this element
+        @param handler `function(event, matchedElement: Element)` - `this` is set to the element the handler is attached to
+        */
+    on(event: string, query?: string, handler: function): Element;
+    off(event: string): Element;
+    off(handler: function): Element;
 
     /* NATIVE */
 
@@ -251,6 +267,11 @@ interface Element {
     querySelector(query: string): Element;
     /** Get array of elements matching the css selector */
     querySelectorAll(query: string): array<Element>;
+    getElementsByClassName(query: string): array<Element>;
+    getElementsByTagName(query: string): array<Element>;
+    getElementsByName(query: string): array<Element>;
+    /** Check element match the selector */
+    matches(query: string): boolean;
     firstElementChild: Element;
     lastElementChild: Element;
     nextElementSibling: Element;
@@ -266,16 +287,6 @@ interface Element {
     replaceChild(newNode: Node, refNode: Node);
     insertAdjacentHTML(where: number, html: string);
     swapWith(element: Element);
-
-
-    readonly clientLeft: number;
-    readonly clientTop: number;
-    readonly clientWidth: number;
-    readonly clientHeight: number;
-    readonly scrollLeft: number;
-    readonly scrollRight: number;
-    readonly scrollWidth: number;
-    readonly scrollHeight: number;
     
     style: Style;
     state: State;
@@ -285,6 +296,11 @@ interface Element {
     checked: boolean;
     src: string;
 
+    hasAttribute(name: string): boolean;
+    getAttribute(name: string): string;
+    getAttributeNames(): array<string>;
+    setAttribute(name: string, value: string|number|undefined);
+    removeAttribute(name: string);
     classList: {
         add(name: string[], value: string|number): void;
         remove(name: string[]): void;
@@ -305,6 +321,33 @@ interface Element {
     innerText: string;
     value: string|number|boolean|undefined;
 
+    scrollTo(x: number, y: number);
+    scrollTo(options: {
+        left?: number;
+        top?: number;
+        behavior?: "instant" | "smooth";
+    });
+    scrollIntoView(toTop?: true);
+    scrollIntoView(options: {
+        block?: "start" | "nearest";
+        behavior?: "instant" | "smooth";
+    });
+    readonly clientLeft: number;
+    readonly clientTop: number;
+    readonly clientWidth: number;
+    readonly clientHeight: number;
+    readonly scrollLeft: number;
+    readonly scrollRight: number;
+    readonly scrollWidth: number;
+    readonly scrollHeight: number;
+
+    click();
+    focus();
+    /** Call handler each time the event is fired */
+    addEventListener(name: string, handler: funcion, flags?: string);
+    removeEventListener(name: string, handler: function);
+    /** Fire event synchronously, `postEvent` for async method */
+    dispatchEvent(event: Event);
 }
 
 
