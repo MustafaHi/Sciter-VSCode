@@ -1,7 +1,7 @@
 # sciter.d.ts
 Sciter declaration files for linting intellisense in VSCode
 
-`0.3.0`
+`0.3.1`
 
 ### setup
 
@@ -18,3 +18,4 @@ There is still much to be added, open an issue before contributing to avoid conf
 
 commit with version major.minor.fix
 
+initial credit [@patrick](https://sciter.com/forums/users/patrick/)
