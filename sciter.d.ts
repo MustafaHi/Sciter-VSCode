@@ -1,5 +1,5 @@
 //| Sciter.d.ts v0.2.0
-//| https://github.com/MustafaHi/sciter-declarations
+//| https://github.com/MustafaHi/sciter-vscode
 
 
 declare module "@sciter" {
