@@ -1,7 +1,7 @@
 # sciter.d.ts
 Sciter declaration files for linting intellisense in VSCode
 
-`0.2.0`
+`0.3.0`
 
 ### setup
 
