@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.3.1
+//| Sciter.d.ts v0.4.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 
@@ -250,6 +250,8 @@ interface Element {
     $o(query: string): Element;
     /** Check element match the selector */
     $is(query: string): boolean;
+    /** Posts a function or event to event queue. */
+    post(eventOrHandler: function | Event, avoidDuplicates?: boolean);
     /** Fire event asynchronously, `dispatchEvent` for sync method */
     postEvent(event: Event);
     /** jQuery style event subscription:  
@@ -258,8 +260,52 @@ interface Element {
         @param handler `function(event, matchedElement: Element)` - `this` is set to the element the handler is attached to
         */
     on(event: string, query?: string, handler: function): Element;
-    off(event: string): Element;
-    off(handler: function): Element;
+    off(eventOrHandler: string|function): Element;
+    /** jQuery style event subscription to application wide events:  
+     *  The element gets unsubscribed automatically when it is disconnected from DOM
+        @param event `^event` for handling events in capturing phase
+        @param query subscribe to all children that match the css selector otherwise this element
+        @param handler `function(event, matchedElement: Element)` - `this` is set to the element the handler is attached to
+        */
+    onGlobalEvent(event: string, handler: function): Element;
+    /** Unsubscribe this element from particular event, if no argument is provided unsubscribe from all events */
+    offGlobalEvent(eventOrHandler?: string | function): Element;
+    /** Starts timer on element.
+     *  If the element already has a timer with the same callback, it first gets removed and timer is restarted.
+     *  This allows to implement effective throttling (debounce).
+     *  @param callback `this` is set to the element, `return true` to repeat. */
+    timer(milliseconds: number, callback: function): boolean;
+    /** Removes content of the element, makes it empty. */
+    clear();
+    /** Interaction with native behaviors attached to the element. */
+    xcall(name: string, ...args): any
+    /** Removes the element and moves its content in place in the DOM. */
+    unwrapElement();
+    /** Wraps range of nodes from start to end into wrap element - opposite action to `unwrapElement()` */
+    wrapNodes(start: Node, end: Node, wrap: Element);
+    checkCommand(command: string, params?: object): commandFlags;
+    /** Execute behavior specific commands */
+    executeCommand(command: string, params?: object): commandFlags;
+    /** Immediate mode drawing "ports".
+     *  Functions assigned to these properties will be called when the element is rendered on screen
+     *  so they can draw anything on top (or below) of default HTML/CSS rendering. */
+    paintBackground: function(Graphics);
+    /** Immediate mode drawing "ports".
+     *  Functions assigned to these properties will be called when the element is rendered on screen
+     *  so they can draw anything on top (or below) of default HTML/CSS rendering. */
+    paintForeground: function(Graphics);
+    /** Immediate mode drawing "ports".
+     *  Functions assigned to these properties will be called when the element is rendered on screen
+     *  so they can draw anything on top (or below) of default HTML/CSS rendering. */
+    paintContent: function(Graphics);
+    /** Immediate mode drawing "ports".
+     *  Functions assigned to these properties will be called when the element is rendered on screen
+     *  so they can draw anything on top (or below) of default HTML/CSS rendering. */
+    paintOutline: function(Graphics);
+    /** Schedules re-paint of the element. This will trigger `Element.paintXXXX` calls. */
+    requestPaint(): void;
+    /** Shows the popup element or VNode (JSX) in out-of-canvas popup window on desktop. */
+    popup(popup: Element | VNode, params: popupParams): void;
 
     /* NATIVE */
 
@@ -279,13 +325,14 @@ interface Element {
     childElementCount: number;
     children: array<Element>;
     childElement(index: number): Element;
+    readonly ownerDocument: Document;
 
     appendChild(node: Node);
     removeChild(node: Node);
     insertBefore(node: Node, refNode: Node);
     insertAfter(node: Node, refNode: Node);
     replaceChild(newNode: Node, refNode: Node);
-    insertAdjacentHTML(where: number, html: string);
+    insertAdjacentHTML(where: InsertPosition, html: string);
     swapWith(element: Element);
     
     style: Style;
@@ -296,6 +343,7 @@ interface Element {
     checked: boolean;
     src: string;
 
+    readonly attributes: array<string>;
     hasAttribute(name: string): boolean;
     getAttribute(name: string): string;
     getAttributeNames(): array<string>;
@@ -333,13 +381,15 @@ interface Element {
         behavior?: "instant" | "smooth";
     });
     readonly clientLeft: number;
-    readonly clientTop: number;
+    readonly clientTop : number;
     readonly clientWidth: number;
     readonly clientHeight: number;
-    readonly scrollLeft: number;
+    scrollLeft: number;
+    scrollTop : number;
     readonly scrollRight: number;
     readonly scrollWidth: number;
     readonly scrollHeight: number;
+    getBoundingClientRect(): DOMRect;
 
     click();
     focus();
@@ -349,7 +399,30 @@ interface Element {
     /** Fire event synchronously, `postEvent` for async method */
     dispatchEvent(event: Event);
 }
+type InsertPosition = "beforebegin" | "afterbegin" | "beforeend" | "afterend";
+interface popupParams {
+    /** 1..9, reference point on anchor border box (see keyboard numpad for the meaning) */
+    anchorAt: number;
+    /** 1..9, reference point on popup's margin box. */
+    popupAt: number;
+    x?: number;
+    y?: number;
+}
 
+interface DOMRect {
+    readonly bottom: number;
+    readonly height: number;
+    readonly left: number;
+    readonly right: number;
+    readonly top: number;
+    readonly width: number;
+    readonly x: number;
+    readonly y: number;
+}
+declare var DOMRect: {
+    new(x?: number, y?: number, width?: number, height?: number): DOMRect;
+    fromRect(other?: DOMRectInit): DOMRect;
+};
 
 interface Document extends Element {
     /** Load image from `url` and bind it to variable */
@@ -384,7 +457,7 @@ interface Window {
     // new(param: object<windowParam>);
     //
     new(): Window;
-    state: number|windowState;
+    state: number| keyof typeof windowState;
 
     /** Window has input focus. */
     readonly isActive: boolean;
@@ -405,7 +478,7 @@ interface Window {
     /** Maximum size of resizable window `[width, height]` */
     maxSize: array;
 
-    frameType: frameType;
+    frameType: keyof typeof frameType;
 }
 
 declare var Window: {
@@ -414,7 +487,7 @@ declare var Window: {
 }
 
 interface windowParam {
-    type?: number|windowType;
+    type?: number| keyof typeof windowType;
     /** When owner closed or minimized this window will be closed/minimized too. */
     parent?: Window;
     /** window caption (or title) */
@@ -433,7 +506,7 @@ interface windowParam {
     alignment?: number;
     /** index of monitor to spawn on. */
     screen?: number;
-    state?: number|windowState;
+    state?: number| keyof typeof windowState;
     /** window html source file */
     url?: string;
     /** extra parameters to pass to the new window. */
