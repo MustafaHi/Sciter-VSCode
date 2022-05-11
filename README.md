@@ -1,7 +1,7 @@
 # sciter.d.ts
 Sciter declaration files for linting intellisense in VSCode
 
-`0.3.1`
+`0.4.0`
 
 ### setup
 
@@ -17,5 +17,17 @@ If you want to have the default declarations clear the `jsconfig.json` file (eve
 There is still much to be added, open an issue before contributing to avoid conflict
 
 commit with version major.minor.fix
+
+
+### status
+
+the status of declarations and their documentations as of Sciter specific and default javascript/dom.
+| declaration | sciter | default |
+| Element | - | - |
+| Document | done | - |
+| Event | - | - |
+| globalThis | - | - |
+| modules | done | - |
+| Range/Node | - | - |
 
 initial credit [@patrick](https://sciter.com/forums/users/patrick/)
