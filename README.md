@@ -23,6 +23,7 @@ commit with version major.minor.fix
 
 the status of declarations and their documentations as of Sciter specific and default javascript/dom.
 | declaration | sciter | default |
+| ----------- | ------ | ------- |
 | Element | - | - |
 | Document | done | - |
 | Event | - | - |
