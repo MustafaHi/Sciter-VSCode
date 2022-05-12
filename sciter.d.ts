@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.4.0
+//| Sciter.d.ts v0.5.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 
@@ -6,6 +6,10 @@ declare module "@sciter" {
     export const VERSION: string;
     export const REVISION: string;
     export const QUICKJS_VERSION: string;
+    /** Returns first matched DOM element in current document. */
+    export function $(query: string): Element;
+    /** Returns list (array) of matched DOM elements. */
+    export function $$(query: string): array<Element>;
 //    export function import(path: string): object;
     /**
      * Load native Sciter extension
@@ -14,9 +18,14 @@ declare module "@sciter" {
     export function loadLibrary(name: string): any;
     /** Passive json parser */
     export function parseValue(val:string): any;
-    export function devicePixels(length: number | string)
+    /** Converts length to device (screen) pixels */
+    export function devicePixels(length: number | string, axis: "width" | "height")
     /** Generate unique id */
     export function uuid(): string;
+    /** Subscribe to any DOM event */
+    export function on(event: string, selector?: string, handler: function): void;
+    /** Unsubscribe to any DOM event */
+    export function off(eventOrHandler: string | function): void;
     export function encode(text: string, encoding ?: string): ArrayBuffer;
     export function decode(bytes: ArrayBuffer, encoding ?: string): string;
     export function compress(input: ArrayBuffer, method?: "gz" | "gzip" | "lzf"): ArrayBuffer;
@@ -240,9 +249,9 @@ declare function scanf(...args: string[]): array<string | number>;
 declare var devicePixelRatio: float;
 
 interface Element {
-    /** querySelector */
+    /** Get element matching the css selector */
     $(query: string): Element;
-    /** querySelectorAll */
+    /** Get array of elements matching the css selector */
     $$(query: string): array<Element>;
     /** Select parent element that match the query */
     $p(query: string): Element;
@@ -263,7 +272,7 @@ interface Element {
     off(eventOrHandler: string|function): Element;
     /** jQuery style event subscription to application wide events:  
      *  The element gets unsubscribed automatically when it is disconnected from DOM
-        @param event `^event` for handling events in capturing phase
+        @param event `^name` for handling events in capturing phase
         @param query subscribe to all children that match the css selector otherwise this element
         @param handler `function(event, matchedElement: Element)` - `this` is set to the element the handler is attached to
         */
@@ -306,6 +315,29 @@ interface Element {
     requestPaint(): void;
     /** Shows the popup element or VNode (JSX) in out-of-canvas popup window on desktop. */
     popup(popup: Element | VNode, params: popupParams): void;
+    /**The method offers "manual" animation support.  
+     * `function(progress:0.0 ... 1.0)`: true | false  
+     * Sciter will call handler with animation frame rate passing current progress value.
+     * return false to stop animation. */
+    animate(handler: function, params: animateParams): void;
+    /** Make the element "airborn" - to be replaced outside of host window */
+    takeOff(params: takeoffParams): void;
+    /** Append element as last child */
+    append(JSX: VNode): void;
+    /** Insert element as the first child */
+    prepend(JSX: VNode): void;
+    /** Replace content by element */
+    content(JSX: VNode): void;
+    /** patches content of the element by VNode using rules of React[or].  
+     *  If second parameter is true the function patches only children but not element itself. */
+    patch(JSX: VNode, onlyChildren?: true): void;
+    /** Patch properties and enqueue rendering */
+    componentUpdate(object: object): void;
+    /** Return collapsed range (caret position) at point x/y.
+     *  x/a are local coordinates - relative to origin of element's inner box. */
+    rangeFromPoint(x: number, y: number): Range | null;
+    toString(): string;
+
 
     /* NATIVE */
 
@@ -316,6 +348,8 @@ interface Element {
     getElementsByClassName(query: string): array<Element>;
     getElementsByTagName(query: string): array<Element>;
     getElementsByName(query: string): array<Element>;
+    /** Find the closest parent element matching the query selector */
+    closest(query: string): Element | null;
     /** Check element match the selector */
     matches(query: string): boolean;
     firstElementChild: Element;
@@ -332,7 +366,7 @@ interface Element {
     insertBefore(node: Node, refNode: Node);
     insertAfter(node: Node, refNode: Node);
     replaceChild(newNode: Node, refNode: Node);
-    insertAdjacentHTML(where: InsertPosition, html: string);
+    insertAdjacentHTML(where: InsertPosition, html: string): void;
     swapWith(element: Element);
     
     style: Style;
@@ -347,8 +381,9 @@ interface Element {
     hasAttribute(name: string): boolean;
     getAttribute(name: string): string;
     getAttributeNames(): array<string>;
-    setAttribute(name: string, value: string|number|undefined);
-    removeAttribute(name: string);
+    setAttribute(name: string, value: string|number|undefined): void;
+    removeAttribute(name: string): void;
+    attributes: array<string|number>;
     classList: {
         add(name: string[], value: string|number): void;
         remove(name: string[]): void;
@@ -369,33 +404,33 @@ interface Element {
     innerText: string;
     value: string|number|boolean|undefined;
 
-    scrollTo(x: number, y: number);
+    scrollTo(x: number, y: number): void;
     scrollTo(options: {
         left?: number;
         top?: number;
         behavior?: "instant" | "smooth";
-    });
-    scrollIntoView(toTop?: true);
+    }): void;
+    scrollIntoView(toTop?: true): void;
     scrollIntoView(options: {
         block?: "start" | "nearest";
         behavior?: "instant" | "smooth";
-    });
+    }): void;
     readonly clientLeft: number;
     readonly clientTop : number;
     readonly clientWidth: number;
     readonly clientHeight: number;
-    scrollLeft: number;
-    scrollTop : number;
+    readonly scrollLeft: number;
+    readonly scrollTop : number;
     readonly scrollRight: number;
     readonly scrollWidth: number;
     readonly scrollHeight: number;
     getBoundingClientRect(): DOMRect;
 
-    click();
-    focus();
+    click(): void;
+    focus(): void;
     /** Call handler each time the event is fired */
-    addEventListener(name: string, handler: funcion, flags?: string);
-    removeEventListener(name: string, handler: function);
+    addEventListener(name: string, handler: function, flags?: string): void;
+    removeEventListener(name: string, handler: function): void;
     /** Fire event synchronously, `postEvent` for async method */
     dispatchEvent(event: Event);
 }
@@ -407,6 +442,21 @@ interface popupParams {
     popupAt: number;
     x?: number;
     y?: number;
+}
+interface animateParams {
+    duration?: number,
+    ease?: "linear" | "ease" | "ease-in" | "ease-in-out" | "ease-out" | "quad-in" | "quad-out" | "quad-in-out" | "cubic-in" | "cubic-out" | "cubic-in-out" |  "quart-in" | "quart-out" | "quart-in-out" | "quint-in" | "quint-out" | "quint-in-out" | "sine-in" | "sine-out" | "sine-in-out" |  "expo-in" | "expo-out" | "expo-in-out" | "circ-in" | "circ-out" | "circ-in-out" | "elastic-in" | "elastic-out" | "elastic-in-out" |  "back-in" | "back-out" | "back-in-out" | "x-back-in" | "x-back-out" | "x-back-in-out" | "xx-back-in" | "xx-back-out" | "xx-back-in-out" |  "bounce-in" | "bounce-out" | "bounce-in-out";
+    effect?: "blend" | "blend-atop" | "slide-top" | "slide-bottom" | "slide-left" | "slide-right" | "slide-over-top" | "slide-over-bottom" | "slide-over-left" | "slide-over-right" | "remove-top" | "remove-bottom" | "remove-left" | "remove-right" | "scroll-top" | "scroll-bottom" | "scroll-left" | "scroll-right";
+    /** Times per second the function is called */
+    FPS?: number;
+}
+interface takeoffParams {
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+    relativeTo?: "screen" | "document" | "window" | "parent" | "self";
+    window?: "attached" | "detached" | "popup";
 }
 
 interface DOMRect {
@@ -421,8 +471,53 @@ interface DOMRect {
 }
 declare var DOMRect: {
     new(x?: number, y?: number, width?: number, height?: number): DOMRect;
-    fromRect(other?: DOMRectInit): DOMRect;
+    fromRect(other?: DOMRect): DOMRect;
 };
+
+interface Style {
+    getPropertyValue(name: string): string;
+    setProperty(name: string, value: string|length, important?: boolean): void;
+    removeProperty(name: string): void;
+    colorOf(name: string): Graphics.Color | null;
+    pixelsOf(name: string): number | null;
+    imageOf(name: string): Graphics.Image | null;
+    /** Get/Set CSS variables applied to the element
+     * @return `{name: value...}`
+     */
+    variables(variables?: object): object;
+    setCursor(cursor: Graphic.Image|null, x: number, y: number): void;
+
+
+    behavior: string;
+    aspect: string;
+    prototype: string;
+    size: string;
+    flow: string;
+    "font-rendering-mode": "sub-pixel" | "snap-pixel" | "classic" | "enhanced";
+    "image-rendering": "auto" | "crispy-edges" | "pixelated" | "inherit" | "default" | "optimize-quality" | "optimize-speed";
+    "context-menu": string;
+    "hit-margin": string;
+    content: string;
+    "scroll-manner": string;
+    "vertical-scrollbar": string;
+    "horizontal-scrollbar": string;
+    "text-overflow": string;
+    "popup-position": string;
+
+
+    font: string;
+    "font-size": string|length;
+    height: string|length;
+    width: string|length;
+
+    color: string;
+    background: string;
+    backgroundColor: string;
+    backgroundImage: string;
+    foreground: string;
+    foregroundColor: string;
+    foregroundImage: string;
+}
 
 interface Document extends Element {
     /** Load image from `url` and bind it to variable */
