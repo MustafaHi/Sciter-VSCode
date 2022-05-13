@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.5.0
+//| Sciter.d.ts v0.6.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 
@@ -231,6 +231,33 @@ declare interface TCPSocket {
     bind();
 }
 
+/** Call function after x time
+ * @return Timeout ID for `clearTimeout(ID)`
+ */
+declare function setTimeout(cb: function, milliseconds: number): number;
+/** Cancel `setTimeout` function by it returned ID */
+declare function clearTimeout(tID: number): void;
+/** Call function every x amount of time
+ * @return Interval ID for `clearInterval(ID)`
+ */
+declare function setInterval(cb: function, milliseconds: number): number;
+/** Cancel `setInterval` function by it returned ID */
+declare function clearInterval(iID: number): void;
+/** Call function on every frame
+ * @return function ID for `cancelAnimationFrame(ID)`
+ */
+declare function requestAnimationFrame(cb: function): number;
+/** Cancel `requestAnimationFrame` function by it returned ID */
+declare function cancelAnimationFrame(aID: number): void;
+
+declare var console:
+{
+    log(...arg: any): void;
+    warn(...arg: any): void;
+    error(...arg: any): void;
+}
+
+
 
 /**
  * Format arguments using [C-style printf conventions](https://en.cppreference.com/w/cpp/io/c/fprintf).  
@@ -248,7 +275,112 @@ declare function scanf(...args: string[]): array<string | number>;
 /** Number of physical screen pixels in logical CSS px (dip) */
 declare var devicePixelRatio: float;
 
-interface Element {
+interface Node extends EventTarget {
+    /** Instance of Window that hosts this node; */
+    readonly parentWindow: Window;
+    /** Returns the previous sibling. */
+    readonly previousSibling: Node | null;
+    readonly nodeIndex: number;
+    remove(): void;
+
+    /** NATIVE */
+
+    /** Returns the children. */
+    readonly childNodes: NodeListOf<Node>;
+    /** Returns the first child. */
+    readonly firstChild: Node | null;
+    /** Returns the last child. */
+    readonly lastChild: Node | null;
+    /** Returns the next sibling. */
+    readonly nextSibling: Node | null;
+    /** Returns a string appropriate for the type of node. */
+    readonly nodeName: string;
+    /** Returns the type of node:  
+     * `1` : Element  
+     * `2` : Comment  
+     * `3` : Text
+    */
+    readonly nodeType: number;
+    nodeValue: string | null;
+    /** Returns the node document. Returns null for documents. */
+    readonly ownerDocument: Document | null;
+    /** Returns the parent element. */
+    readonly parentElement: Element | null;
+    /** Returns the parent. */
+    readonly parentNode: Node | null;
+    /** Textual content of an element and all its descendants */
+    textContent: string | null;
+    appendChild<T extends Node>(node: T): T;
+    /** Returns a copy of node. If deep is true, the copy also includes the node's descendants. */
+    cloneNode(deep?: boolean): Node;
+    /** Returns a bitmask indicating the position of other relative to node. */
+    compareDocumentPosition(other: Node): number;
+    /** Returns true if other is an inclusive descendant of node, and false otherwise. */
+    contains(other: Node | null): boolean;
+    /** Returns node's root. (\<html/>) */
+    getRootNode(options?: GetRootNodeOptions): Node;
+    /** Does this node have children. */
+    hasChildNodes(): boolean;
+    insertBefore<T extends Node>(node: T, child: Node | null): T;
+    /** Does this node and otherNode have the same properties. */
+    isEqualNode(otherNode: Node | null): boolean;
+    isSameNode(otherNode: Node | null): boolean;
+    removeChild<T extends Node>(child: T): T;
+    replaceChild<T extends Node>(node: Node, child: T): T;
+}
+declare var Node: {
+    new(): Node;
+};
+
+interface Text extends Node
+{
+    data: string;
+    readonly length: number;
+    readonly wholeText: string;
+}
+declare var Text: {
+    new(): Text;
+}
+
+interface Comment extends Node
+{
+    data: string;
+    readonly length: number;
+}
+declare var Comment: {
+    new(): Comment;
+}
+
+/** NodeList objects are collections of nodes, usually returned by properties such as Node.childNodes and methods such as document.querySelectorAll(). */
+interface NodeList {
+    /** Returns the number of nodes in the collection. */
+    readonly length: number;
+    /** Returns the node with index index from the collection. The nodes are sorted in tree order. */
+    item(index: number): Node | null;
+    /**
+     * Performs the specified action for each node in an list.
+     * @param callbackfn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the list.
+     * @param thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+     */
+    forEach(callbackfn: (value: Node, key: number, parent: NodeList) => void, thisArg?: any): void;
+    [index: number]: Node;
+}
+declare var NodeList: {
+    new(): NodeList;
+};
+
+interface NodeListOf<TNode extends Node> extends NodeList {
+    item(index: number): TNode;
+    /**
+     * Performs the specified action for each node in an list.
+     * @param callbackfn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the list.
+     * @param thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+     */
+    forEach(callbackfn: (value: TNode, key: number, parent: NodeListOf<TNode>) => void, thisArg?: any): void;
+    [index: number]: TNode;
+}
+
+interface Element extends Node {
     /** Get element matching the css selector */
     $(query: string): Element;
     /** Get array of elements matching the css selector */
@@ -541,7 +673,6 @@ interface Document extends Element {
     createDocumentFragment();
     createNodeIterator(root: string, whatToShow?: string, filter?: string): NodeIterator;
 }
-
 declare var Document: {
     new(): Document;
 };
@@ -556,17 +687,37 @@ interface Window {
 
     /** Window has input focus. */
     readonly isActive: boolean;
+    /** The property is false when the window was closed and destroyed. */
+    readonly isAlive: boolean;
+    /** True if window is on active space now.
+     * the property is undefined if host system does not support spaces (virtual desktops). */
+    readonly isOnActiveSpace: boolean|undefined;
+    
+    isResizable: boolean;
+    isMaximizable: boolean;
+    isMinimizable: boolean;
+    /** Window is alway on top */
+    isTopmost: boolean;
+    /** Does the window accept user input. */
+    isEnabled: boolean;
+    /** Width to height ratio to keep on window resizes */
+    aspectRatio: number;
+    
+    /** If set by element, direct all UI events to that element and its children. */
+    eventRoot: Element|null;
+    focus: Element;
+    readonly parent: Window|null;
+    readonly document: Document;
+    /** Parameters provided by constructor, available inside the window as they are. */
+    parameters: object;
 
     /** Monitor index where the current window is on */
     readonly screen: number;
-    /** Number of monitors in the system */
-    readonly screens: number;
-
     /** current graphics backend used: `direct2d`, `Skia/OpenGL`, etc. */
     readonly graphicBackend: string;
     /** blur-behind effect  
      * one of `none` `auto` `dark` `ultra-dark` `light` `ultra-light` */
-    blurBehind: string;
+    blurBehind: "none" | "auto" | "dark" | "ultra-dark" | "light" | "ultra-light";
 
     /** Minimal size of resizable window `[width, height]` */
     minSize: array;
@@ -574,11 +725,80 @@ interface Window {
     maxSize: array;
 
     frameType: keyof typeof frameType;
+
+    /** move/size window.  
+     * x, y, width, height are in PPX (physical screen pixels).  
+     * If `client` is provided then parameters are window client area coordinates. */
+    move(x: number, y: number, width?: number, height?: number, client?: boolean): void;
+    /** move/size window to particular monitor.  
+     * x, y, width, height are in DIPs - device independent pixels (a.k.a. CSS pixels). */
+    move(monitor: number, x: number, y: number, width?: number, height?: number, client?: boolean): void;
+
+    /** Subscribe to window related events, init callback everytime the event occurs. */
+    addEventHandler(event: windowEvent, handler: funcion): Window;
+    /** Subscribe to window related events, init callback everytime the event occurs. */
+    on(event: windowEvent, cb: function): Window;
+    /** Unsubscribe from event by eventname or handler used by `on()` */
+    off(eventOrHandler: windowEvent|function): Window;
+
+    selectFile(params: selectFileParams): string|array<string>;
+    selectFolder(params: object): string;
+
+    /** Performs system event(s) in application message queue, mode is one of:  
+     * `wait` - waits for the next event and executes it;  
+     * `noWait` - if next event is available executes it otherwise returns immediately;  
+     * `untilMouseUp` - executes events until mouseup event arrives, used for various drag cases;  
+     * `untilQuit` - performs run loop - executes all events until application quit message arrives;  
+     * `I/O` - performs events associated with I/O; */
+    doEvent(mode: "wait"|"noWait"|"untileMouseUp"|"untilQuit"|"I/O");
+
+
+    /** Show tray icon with the image and tooltip text.  
+     * Tray icon will generate "trayiconclick" event for Window on user clicks */
+    trayIcon<Image extends Graphics.Image>({image: Image, text: string}): void;
+    /** Remove tray icon */
+    trayIcon(command: "remove"): void;
+    /** Report location of the icon on desktop, coordinates are in screen pixels. */
+    trayIcon(command: "place"): [x: number, y: number, w: number, h: number];
+    /** Request user attention by flashing or bouncing window icon in task/dock bar. */
+    requestAttention(command: "info" | "alert" | "stop"): void;
 }
 
 declare var Window: {
-    this: Window;
     new(param?: windowParam): Window;
+    readonly this: Window;
+    /** List of Sciter windows in the current process */
+    readonly all: array<Window>;
+    /** share is an object shared between all documents and windows in the application.
+     * CAUTION: use it responsibly.If temporary window or document populates
+     * shared object then it should clean it in `beforeunload` document event. */
+    share: object;
+    /** Number of monitors in the system */
+    readonly screens: number;
+    screenBox(screen: number, what: string, boxPart: string): any;
+    /** Return DOM element under screenX/screenY position.  
+     * @Note: this method may return DOM element belonging to any Sciter window in current process. */
+    elementAt(x: number, y: number): Element;
+    /** Return value of internal timer. */
+    ticks(): number;
+    /** Post global event to all windows in current process. */
+    post(event: Event): void;
+    /** Synchronously sends global event to all windows in current process.  
+     * Sending stops on first window that will consume the event by returning true from event handler of this event. */
+    send(event: Event): void;
+
+
+    readonly POPUP_WINDOW : 0;
+    readonly TOOL_WINDOW  : 1;
+    readonly CHILD_WINDOW : 2;
+    readonly FRAME_WINDOW : 3;
+    readonly DIALOG_WINDOW: 4;
+
+    readonly WINDOW_SHOWN      : 0;
+    readonly WINDOW_MINIMIZED  : 1;
+    readonly WINDOW_MAXIMIZED  : 2;
+    readonly WINDOW_HIDDEN     : 3;
+    readonly WINDOW_FULL_SCREEN: 4;
 }
 
 interface windowParam {
@@ -608,6 +828,7 @@ interface windowParam {
     parameter?: array|string|object;
 }
 
+type windowEvent = "statechange" | "resolutionchange" | "mediachange" | "activate" | "replacementstart" | "replacementend" | "move" | "size" | "trayiconclick" | "spacechange";
 enum windowType {
     POPUP_WINDOW  = 0,
     TOOL_WINDOW   = 1,
@@ -624,3 +845,67 @@ enum windowState {
 }
 
 enum frameType { "standard", "solid", "solid-with-shadow", "extended", "transparent" }
+
+interface selectFileParams {
+    mode?: "save"|"open"|"open-multiple";
+    /** File type filter, as "title|ext1;ext2".  
+     *  i.e. `"HTML File (*.htm,*.html)|*.html;*.htm|All Files (*.*)|*.*"` */
+    filter?: string;
+    /** Default file extension. */
+    extension?: string;
+    /** Dialog title, "Save As" */
+    caption?: string;
+    /** Initial directory to open the dialog at. */
+    path?: string;
+}
+
+/** An event which takes place in the DOM. */
+interface Event {
+    /** True if event goes through its target's ancestors in reverse tree order, and false otherwise. */
+    readonly bubbles: boolean;
+    cancelBubble: boolean;
+    /** Can be canceled by invoking the preventDefault() method. */
+    readonly cancelable: boolean;
+    /** True if event invokes listeners past a ShadowRoot node that is the root of its target, and false otherwise. */
+    readonly composed: boolean;
+    /** Returns the Element whose event listener's callback is currently being invoked. */
+    readonly currentTarget: Element | null;
+    /** Returns true if preventDefault() was invoked successfully to indicate cancelation, and false otherwise. */
+    readonly defaultPrevented: boolean;
+    /** Returns the event's phase, which is one of `NONE`, `CAPTURING_PHASE`, `AT_TARGET`, and `BUBBLING_PHASE`. */
+    readonly eventPhase: number;
+    /** Returns true if event was dispatched by the user agent, and false otherwise. */
+    readonly isTrusted: boolean;
+    readonly srcElement: Element | null;
+    /** The element to which event is dispatched (its target). */
+    readonly target: Element | null;
+    /** Type of event, e.g. "click", "hashchange", or "submit". */
+    readonly type: string;
+    /** If invoked when the cancelable attribute value is true,
+     * and while executing a listener for the event with passive set to false,
+     * signals to the operation that caused event to be dispatched that it needs to be canceled. */
+    preventDefault(): void;
+    /** Invoking this method prevents event from reaching any registered event listeners
+     * after the current one finishes running and, when dispatched in a tree,
+     * also prevents event from reaching any other objects. */
+    stopImmediatePropagation(): void;
+    /** When dispatched in a tree, invoking this method prevents event
+     * from reaching any objects other than the current object. */
+    stopPropagation(): void;
+    readonly AT_TARGET: number;
+    readonly BUBBLING_PHASE: number;
+    readonly CAPTURING_PHASE: number;
+    readonly NONE: number;
+}
+declare var Event: {
+    new(type: string, eventInitDict?: EventInit): Event;
+    readonly AT_TARGET: number;
+    readonly BUBBLING_PHASE: number;
+    readonly CAPTURING_PHASE: number;
+    readonly NONE: number;
+};
+interface EventInit {
+    bubbles?: boolean;
+    cancelable?: boolean;
+    composed?: boolean;
+}

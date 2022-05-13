@@ -1,7 +1,7 @@
 # sciter.d.ts
 Sciter declaration files for linting intellisense in VSCode
 
-`0.5.0`
+`0.6.0`
 
 ### setup
 
@@ -24,12 +24,11 @@ commit with version major.minor.fix
 the status of declarations and their documentations as of Sciter specific and default javascript/dom.
 | declaration | sciter | default |
 | ----------- | ------ | ------- |
-| Element | - | done |
+| Element | done | done |
 | Selection | - | - |
 | Document | done | - |
-| Event | - | - |
-| globalThis | - | - |
+| Event | - | done |
 | modules | done | - |
-| Range/Node | - | - |
+| Range/Node | - | done |
 
 initial credit [@patrick](https://sciter.com/forums/users/patrick/)
