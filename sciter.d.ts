@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.6.0
+//| Sciter.d.ts v0.6.1
 //| https://github.com/MustafaHi/sciter-vscode
 
 
@@ -625,22 +625,22 @@ interface Style {
     prototype: string;
     size: string;
     flow: string;
-    "font-rendering-mode": "sub-pixel" | "snap-pixel" | "classic" | "enhanced";
-    "image-rendering": "auto" | "crispy-edges" | "pixelated" | "inherit" | "default" | "optimize-quality" | "optimize-speed";
-    "context-menu": string;
-    "hit-margin": string;
+    fontRenderingMode: "sub-pixel" | "snap-pixel";
+    imageRendering: "auto" | "inherit" | "default" | "crispy-edges" | "pixelated" | "optimize-quality" | "optimize-speed";
+    contextMenu: string;
+    hitMargin: string;
     content: string;
-    "scroll-manner": string;
-    "vertical-scrollbar": string;
-    "horizontal-scrollbar": string;
-    "text-overflow": string;
-    "popup-position": string;
+    scrollManner: string;
+    verticalScrollbar: string;
+    horizontalScrollbar: string;
+    textOverflow: string;
+    popupPosition: string;
 
 
     font: string;
-    "font-size": string|length;
-    height: string|length;
-    width: string|length;
+    fontSize: length;
+    height: length;
+    width: length;
 
     color: string;
     background: string;
@@ -649,6 +649,8 @@ interface Style {
     foreground: string;
     foregroundColor: string;
     foregroundImage: string;
+
+    [name: string]: string|length;
 }
 
 interface Document extends Element {
