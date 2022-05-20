@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.7.0
+//| Sciter.d.ts v0.7.1
 //| https://github.com/MustafaHi/sciter-vscode
 
 
@@ -23,7 +23,7 @@ declare module "@sciter" {
     /** Generate unique id */
     export function uuid(): string;
     /** Subscribe to any DOM event */
-    export function on(event: string, selector?: string, handler: function): void;
+    export function on(event: string, selector?: string, handler: eventFunction): void;
     /** Unsubscribe to any DOM event */
     export function off(eventOrHandler: string | function): void;
     export function encode(text: string, encoding ?: string): ArrayBuffer;
@@ -398,15 +398,16 @@ interface Element extends Node {
     /** jQuery style event subscription:  
         @param event `^name` for handling events in capturing phase
         @param query subscribe to all children that match the css selector otherwise this element
-        @param handler `function(event, matchedElement: Element)` - `this` is set to the element the handler is attached to
+        @param handler `function(Event, Element)` - `this` is set to the element the handler is attached to
         */
-    on(event: string, query?: string, handler: function): Element;
+    on(event: string, query: string, handler: eventFunction): Element;
+    on(event: string, handler: eventFunction): Element;
     off(eventOrHandler: string|function): Element;
     /** jQuery style event subscription to application wide events:  
      *  The element gets unsubscribed automatically when it is disconnected from DOM
         @param event `^name` for handling events in capturing phase
         @param query subscribe to all children that match the css selector otherwise this element
-        @param handler `function(event, matchedElement: Element)` - `this` is set to the element the handler is attached to
+        @param handler `function(Event, Element)` - `this` is set to the element the handler is attached to
         */
     onGlobalEvent(event: string, handler: function): Element;
     /** Unsubscribe this element from particular event, if no argument is provided unsubscribe from all events */
@@ -451,10 +452,10 @@ interface Element extends Node {
      * @param referencePoint `1-9`, see keyboard numpad for the meaning.
     */
     popupAt(x: number, y: number, referencePoint?: number): void;
-    /**The method offers "manual" animation support.  
-     * `function(progress:0.0 ... 1.0)`: true | false  
-     * Sciter will call handler with animation frame rate passing current progress value.
-     * return false to stop animation. */
+    /** The method offers "manual" animation support.  
+     *  `function(progress: 0.0...1.0)`: true | false  
+     *  Sciter will call handler with animation frame rate passing current progress value.
+     *  return false to stop animation. */
     animate(handler: function, params: animateParams): void;
     /** Make the element "airborn" - to be replaced outside of host window */
     takeOff(params: takeoffParams): void;
@@ -830,7 +831,7 @@ interface Window {
     /** Subscribe to window related events, init callback everytime the event occurs. */
     addEventHandler(event: windowEvent, handler: funcion): Window;
     /** Subscribe to window related events, init callback everytime the event occurs. */
-    on(event: windowEvent, cb: function): Window;
+    on(event: windowEvent, cb: eventFunction): Window;
     /** Unsubscribe from event by eventname or handler used by `on()` */
     off(eventOrHandler: windowEvent|function): Window;
 
@@ -985,6 +986,7 @@ interface Event {
     /** When dispatched in a tree, invoking this method prevents event
      * from reaching any objects other than the current object. */
     stopPropagation(): void;
+    data: any;
     readonly AT_TARGET: number;
     readonly BUBBLING_PHASE: number;
     readonly CAPTURING_PHASE: number;
@@ -1001,4 +1003,6 @@ interface EventInit {
     bubbles?: boolean;
     cancelable?: boolean;
     composed?: boolean;
+    data?: any;
 }
+type eventFunction = function(Event, Element): boolean;
