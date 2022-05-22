@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.7.1
+//| Sciter.d.ts v0.7.2
 //| https://github.com/MustafaHi/sciter-vscode
 
 
@@ -1005,4 +1005,4 @@ interface EventInit {
     composed?: boolean;
     data?: any;
 }
-type eventFunction = function(Event, Element): boolean;
+type eventFunction = function(Event, Element): void;
