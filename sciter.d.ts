@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.7.2
+//| Sciter.d.ts v0.7.3
 //| https://github.com/MustafaHi/sciter-vscode
 
 
@@ -71,19 +71,22 @@ declare enum systemPath { "home", "root", "desktop", "applications", "downloads"
 declare module "@sys" {
     declare interface spawnOptions {stdout?: string, stdin?: string, stderr?: string}
     export function spawn(args: array<string>, options?: spawnOptions ): Process;
-    export function hrtime();
-    export function gettimeofday();
-    export function uname();
-    export function isatty();
-    export function environ();
-    export function getenv();
-    export function setenv();
-    export function unsetenv();
+    export function hrtime(): bigint;
+    export function gettimeofday(): number;
+    export function uname(): unameObject;
+    /** Returns `true` if fd is an open file descriptor referring to a terminal. */
+    export function isatty(): boolean;
+    /** Retrieves all environment variables */
+    export function environ(): object;
+    export function getenv(name: string): string;
+    export function setenv(name: string, value: string): void;
+    export function unsetenv(name: string): void;
     export function cwd(): string;
     export function homedir(): string;
-    export function tmpdir();
-    export function exepath();
-    export function random();
+    export function tmpdir(): string;
+    /** Return path of this executable file. */
+    export function exepath(): string;
+    export function random(buffer: ArrayBuffer);
 
     namespace fs {
         /**
@@ -171,6 +174,17 @@ declare module "@sys" {
         st_mtime: number;
         st_ctime: number;
         st_birthtime: number;
+    }
+
+    interface unameObject {
+        /** OS code name: Windows_NT */
+        sysname: string;
+        /** OS version: 10.0.19044  */
+        release: string;
+        /** OS type: Windows 10 Enterprise */
+        version: string;
+        /** Processor type: i686 */
+        machine: string;
     }
 }
 
