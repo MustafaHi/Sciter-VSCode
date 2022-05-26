@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.7.3
+//| Sciter.d.ts v0.8.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 
@@ -23,9 +23,9 @@ declare module "@sciter" {
     /** Generate unique id */
     export function uuid(): string;
     /** Subscribe to any DOM event */
-    export function on(event: string, selector?: string, handler: eventFunction): void;
+    export function on(event: keyof typeof eventType, selector?: string, handler: eventFunction): void;
     /** Unsubscribe to any DOM event */
-    export function off(eventOrHandler: string | function): void;
+    export function off(eventOrHandler: keyof typeof eventType | function): void;
     export function encode(text: string, encoding ?: string): ArrayBuffer;
     export function decode(bytes: ArrayBuffer, encoding ?: string): string;
     export function compress(input: ArrayBuffer, method?: "gz" | "gzip" | "lzf"): ArrayBuffer;
@@ -202,6 +202,8 @@ declare interface Process {
 declare interface ProcessStats {
     exit_status: number;
     term_signal: number;
+    exitCode: number;
+    terminationSignal: number;
 }
 
 declare interface Socket {
@@ -414,9 +416,9 @@ interface Element extends Node {
         @param query subscribe to all children that match the css selector otherwise this element
         @param handler `function(Event, Element)` - `this` is set to the element the handler is attached to
         */
-    on(event: string, query: string, handler: eventFunction): Element;
-    on(event: string, handler: eventFunction): Element;
-    off(eventOrHandler: string|function): Element;
+    on(event: keyof typeof eventType, query: string, handler: eventFunction): Element;
+    on(event: keyof typeof eventType, handler: eventFunction): Element;
+    off(eventOrHandler: keyof typeof eventType|string|function): Element;
     /** jQuery style event subscription to application wide events:  
      *  The element gets unsubscribed automatically when it is disconnected from DOM
         @param event `^name` for handling events in capturing phase
@@ -526,6 +528,11 @@ interface Element extends Node {
      * `element:visited { color: red; }`
     */
     state: State;
+    /** Represents current selection on elements that supports selection:  
+       ` <htmlarea>` - WYSIWYG HTML editor;  
+        `<plaintext>` - Plain text multiline editor;  
+        any other element with `[selectable]` attribute set;   */
+    selection: Selection;
 
     disabled: boolean;
     readonly: boolean;
@@ -676,6 +683,39 @@ interface Style {
     [name: string]: string|length;
 }
 
+interface Selection
+{
+    /** `true` if selection is collapsed to one position (anchor === focus) */
+    readonly isCollapsed: boolean;
+    /** Nearest container element that encloses as anchor as focus positions */
+    readonly commonAncestorContainer: Element;
+    readonly anchorNode: Node;
+    readonly anchorOffset: number;
+    /** Caret position */
+    readonly focusNode: Node;
+    readonly focusOffset: number;
+    readonly rangeCount: number;
+    readonly type: "Caret" | "Selection" | "Element" | "TableCells";
+
+    /** Collapse selection to current focus (caret) position. */
+    collapse(): void;
+    /** Collapse selection to anchor or focus (the last in the DOM). */
+    collapseToEnd(): void;
+    /** Collapse selection to anchor or focus (the first in the DOM). */
+    collapseToStart(): void;
+    /** `true` if the selection contains the node. */
+    containsNode(node: Node): boolean;
+    /** Remove selection (but not its content). */
+    empty(): void;
+    /** Set focus (caret) position without changing anchor position. */
+    extend(node: Node, offset: number): void;
+    getRangeAt(index: number): Range;
+    selectNodeContent(node: Node): void;
+    setBaseAndExtent(anchorNode: Node, anchorOffset: number, focusNode: Node, focusOffset: number): void;
+    /** Return selected text. */
+    toString(): string;
+}
+
 /** Runtime flags and state on element.  
  * Most of Element.State reflect so called CSS pseudo-classes (flags): 
  * `element:visited { color: red; }`*/
@@ -766,6 +806,10 @@ interface Document extends Element {
     /** return path relative to document path */
     url(relpath ?: string): string;
 
+    /** Subscribe to any DOM event */
+    on(event: keyof typeof eventType, selector?: string, handler: eventFunction): void;
+    on(event: keyof typeof domEvent, handler: eventFunction): void;
+    
 
     /* NATIVE */
 
@@ -786,6 +830,17 @@ declare var Document: {
 };
 
 declare var document: Document;
+
+enum domEvent {
+    parsed,
+    ready,
+    DOMContentLoaded,
+    complete,
+    close,
+    unload,
+    beforeunload,
+    closerequest
+}
 
 interface Window {
     // new(param: object<windowParam>);
@@ -1005,6 +1060,42 @@ interface Event {
     readonly BUBBLING_PHASE: number;
     readonly CAPTURING_PHASE: number;
     readonly NONE: number;
+
+    currentTarget: Element;
+    target: Element;
+    eventPhase: string;
+
+    altKey: boolean;
+    ctrlKey: boolean;
+    /** `Command` key on OSX, `win` on Windows */
+    metaKey: boolean;
+    shiftKey: boolean;
+    button: number;
+    buttons: number;
+
+    clientX: number;
+    clientY: number;
+    screenX: number;
+    screenY: number;
+    windowX: number;
+    windowY: number;
+    deltaX: number;
+    deltaY: number;
+    /** `0` - `deltaX/Y` are pixels coming from touch devices,  
+     *  `1` - `deltaX/Y` are in "lines" (a.k.a. mouse wheel "ticks"). */
+    deltaMode: number;
+
+    /** Coordinates relative to `currentTarget` - the element this event handler is attached to. */
+    x: number;
+    /** Coordinates relative to `currentTarget` - the element this event handler is attached to. */
+    y: number;
+    /** Used in some events to indicate auxiliary "source" element. */
+    source: Element;
+    /** Mouse event is on `foreground-image`, return Element containing the image */
+    isOnIcon: Element;
+
+    /** Returns pressed status of the key. */
+    keyState(key: string): boolean;
 }
 declare var Event: {
     new(type: string, eventInitDict?: EventInit): Event;
@@ -1020,3 +1111,82 @@ interface EventInit {
     data?: any;
 }
 type eventFunction = function(Event, Element): void;
+enum eventType {
+    mouseMove,
+    mouseLeave,
+    mouseIdle,
+    mousetick,
+    mousedown,
+    mouseup,
+    mousewheel,
+    mousedragrequest,
+    dblclick,
+    doubleclick,
+    tripleclick,
+
+    click,
+    input,
+    change,
+    press,
+    changing,
+    submit,
+    reset,
+    expand,
+    collapse,
+    statechange,
+    visualstatechange,
+    disabledstatechange,
+    readonlystatechange,
+    contextmenu,
+    contextmenusetup,
+    animationend,
+    animationstart,
+    animationloop,
+    transitionend,
+    transitionstart,
+    mediachange,
+    contentchange,
+    inputlangchange,
+    pastehtml,
+    pastetext,
+    pasteimage,
+    popuprequest,
+    popupready,
+    popupdismissing,
+    popupdismissed,
+    tooltiprequest,
+
+    focus,
+    focusin,
+    focusout,
+    blue,
+
+    keydown,
+    keyup,
+    keypress,
+    compostionstart,
+    compositionend,
+
+    scroll,
+    scrollanimationstart,
+    scrollanimationend,
+
+    sizechange,
+    visibilitychange,
+
+    load,
+    error,
+    
+    drag,
+    dragenter,
+    dragleave,
+    drop,
+    dragaccept,
+    dropcancel,
+    willacceptdrop,
+
+    play,
+    ended,
+    videocoordinate,
+    videoframeready,
+}

@@ -1,7 +1,7 @@
 # sciter.d.ts
 Sciter declaration files for linting intellisense in VSCode
 
-`0.7.3`
+`0.8.0`
 
 ### setup
 
@@ -25,9 +25,9 @@ the status of declarations and their documentations as of Sciter specific and de
 | declaration | sciter | default |
 | ----------- | ------ | ------- |
 | Element | done | done |
-| Selection | - | - |
+| Selection/state/style | done | done |
 | Document | done | - |
-| Event | - | done |
+| Event | done | done |
 | modules | done | - |
 | Range/Node | - | done |
 
