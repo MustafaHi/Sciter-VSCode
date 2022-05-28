@@ -1,401 +1,48 @@
-//| Sciter.d.ts v0.8.0
+//| Sciter.d.ts v0.8.1
 //| https://github.com/MustafaHi/sciter-vscode
 
+interface Document extends Element {
+    /** Load image from `url` and bind it to variable */
+    bindImage(url: string, img ?: Graphics.Image): Graphics.Image;
 
-declare module "@sciter" {
-    export const VERSION: string;
-    export const REVISION: string;
-    export const QUICKJS_VERSION: string;
-    /** Returns first matched DOM element in current document. */
-    export function $(query: string): Element;
-    /** Returns list (array) of matched DOM elements. */
-    export function $$(query: string): array<Element>;
-//    export function import(path: string): object;
-    /**
-     * Load native Sciter extension
-     * @param name path to library without .dll/.dylib (relative to sciter.dll)
-     */
-    export function loadLibrary(name: string): any;
-    /** Passive json parser */
-    export function parseValue(val:string): any;
-    /** Converts length to device (screen) pixels */
-    export function devicePixels(length: number | string, axis: "width" | "height")
-    /** Generate unique id */
-    export function uuid(): string;
+    /** return path relative to document path */
+    url(relpath ?: string): string;
+
     /** Subscribe to any DOM event */
-    export function on(event: keyof typeof eventType, selector?: string, handler: eventFunction): void;
-    /** Unsubscribe to any DOM event */
-    export function off(eventOrHandler: keyof typeof eventType | function): void;
-    export function encode(text: string, encoding ?: string): ArrayBuffer;
-    export function decode(bytes: ArrayBuffer, encoding ?: string): string;
-    export function compress(input: ArrayBuffer, method?: "gz" | "gzip" | "lzf"): ArrayBuffer;
-    export function decompress(input: ArrayBuffer, method?: "gz" | "gzip" | "lzf"): ArrayBuffer;
-    export function toBase64(input:ArrayBuffer): string;
-    export function fromBase64(input:string): ArrayBuffer;
-    export function md5(input:ArrayBuffer): string;
-    export function crc32(input:ArrayBuffer): number;
-}
-
-declare module "@env" {
-    export const OS: string;
-    export const PLATFORM: string;
-    export const DEVICE: "desktop" | "mobile";
-    export function language(): string;
-    export function country(): string;
-    export function userName(): string;
-    export function machineName(): string;
-    export function domainName(): string;
-    /**
-     * Launch file/URL with default system application
-     */
-    export function launch(path:string): void;
-    export function home(relpath ?: string): string;
-    export function homeURL(relpath ?: string): string;
-    /**
-     * Return path of default system folder ie. documents|downloads
-     * @param name of default system folder
-     * @param relpath relative path to name
-     */
-    export function path(name: keyof typeof systemPath, relpath ?: string): string;
-    export function pathURL(name: string): string;
-    /**
-     * Execute comma seperated arguments
-     */
-    export function exec(...args: string[]): void;
+    on(event: keyof typeof eventType, selector?: string, handler: eventFunction): void;
+    on(event: keyof typeof domEvent, handler: eventFunction): void;
     
+
+    /* NATIVE */
+
+    body: Element;
+    head: Element;
+    /** Root(html) element */
+    documentElement: Element;
+    /** document loading state - `complete` | `interactive` */
+    readyState: string;
+    createElement(tag: string): Element;
+    createTextNode(): Node;
+    createComment(): Comment;
+    createDocumentFragment();
+    createNodeIterator(root: string, whatToShow?: string, filter?: string): NodeIterator;
 }
-
-declare enum systemPath { "home", "root", "desktop", "applications", "downloads", "documents", "music", "videos", "pictures" }
-
-
-declare module "@sys" {
-    declare interface spawnOptions {stdout?: string, stdin?: string, stderr?: string}
-    export function spawn(args: array<string>, options?: spawnOptions ): Process;
-    export function hrtime(): bigint;
-    export function gettimeofday(): number;
-    export function uname(): unameObject;
-    /** Returns `true` if fd is an open file descriptor referring to a terminal. */
-    export function isatty(): boolean;
-    /** Retrieves all environment variables */
-    export function environ(): object;
-    export function getenv(name: string): string;
-    export function setenv(name: string, value: string): void;
-    export function unsetenv(name: string): void;
-    export function cwd(): string;
-    export function homedir(): string;
-    export function tmpdir(): string;
-    /** Return path of this executable file. */
-    export function exepath(): string;
-    export function random(buffer: ArrayBuffer);
-
-    namespace fs {
-        /**
-         * Watch directory for changes
-         * @param path 
-         * @param cb callback function
-         */
-        function watch(path:string, cb: (path:string, events: 0x01 | 0x02) => WatchFS);
-        /**
-         * Open file instance
-         * @param path 
-         * @param flags method to open the file with read/write
-         * @param mode file content encoding
-         */
-        function open(path:string, flags: keyof typeof OpenFlagOptions, mode ?: number): Promise<File>;
-        /**
-         * Synchronously open file instance
-         * @param path 
-         * @param flags method to open the file with read/write
-         * @param mode file content encoding
-         */
-        function $open(path:string, flags: keyof typeof OpenFlagOptions, mode ?: number): File;
-        function stat(path:string): Promise<StatStruct>;
-        function $stat(path:string): StatStruct;
-        function lstat(): Promise<StatStruct>;
-        function $lstat(): StatStruct;
-        /** Remove file */
-        function unlink(path:string): Promise;
-        function rename(oldpath:string, newpath: string) : Promise;
-        function mkdtemp(template:string) : Promise<string>;
-        function mkstemp(template:string) : Promise<string>;
-        function rmdir(path:string) : Promise;
-        function $rmdir(path:string);
-        function mkdir(path:string, mode ?: 0o777): Promise;
-        function $mkdir(path:string, mode ?: 0o777);
-        function copyfile(): Promise;
-        function readdir(path: string): Promise<FileList>;
-        function $readdir(path: string): FileList;
-        /** Read file content, check `$readfile` for sync method */
-        function readfile(path: string): Promise<ArrayBuffer>;
-        /** Synchronously read file content */
-        function $readfile(path: string): ArrayBuffer;
-        
-    }
-    
-    interface Dir {
-        close();
-        path: string;
-        next();
-        [async iterator];
-    }
-
-    declare interface File {
-        read (length?:number, fileposition ?: number): Promise<Uint8Array>;
-        $read(length?:number, fileposition ?: number): Uint8Array;
-        write (data:string|string[]|ArrayBuffer, filePosition ?: number) : Promise<number>;
-        $write(data:string|string[]|ArrayBuffer, filePosition ?: number) : number;
-        close (): Promise<undefined>;
-        $close(): undefined;
-        fileno(): number;
-        stat(): Promise<Object>;
-        path: string;
-    }
-
-    declare interface WatchFS {
-        readonly path: string;
-        close(): void;
-    }
-
-    declare interface StatStruct {
-        isFile ?: boolean;
-        isDirectory ?: boolean;
-        isSymbolicLink ?: boolean;
-        st_dev: number;
-        st_ino: number;
-        st_mode: number;
-        st_nlink: number;
-        st_uid: number;
-        st_gid: number;
-        st_rdev: number;
-        st_size: number;
-        st_blksize: number;
-        st_blocks: number;
-        st_atime: number;
-        st_mtime: number;
-        st_ctime: number;
-        st_birthtime: number;
-    }
-
-    interface unameObject {
-        /** OS code name: Windows_NT */
-        sysname: string;
-        /** OS version: 10.0.19044  */
-        release: string;
-        /** OS type: Windows 10 Enterprise */
-        version: string;
-        /** Processor type: i686 */
-        machine: string;
-    }
-}
-
-declare enum OpenFlagOptions { 'a', 'ax', 'a+', 'ax+', 'as', 'as+', 'r', 'r+', 'rs+', 'w', 'wx', 'w+', 'wx+' }
-
-declare interface Process {
-    kill();
-    wait(): Promise<ProcessStats>;
-    pid: number;
-    stdin: Pipe;
-    stdout: Pipe;
-    stderr: Pipe;
-}
-
-declare interface ProcessStats {
-    exit_status: number;
-    term_signal: number;
-    exitCode: number;
-    terminationSignal: number;
-}
-
-declare interface Socket {
-    close();
-    read();
-    write();
-    fileno();
-}
-declare interface Pipe extends Socket {
-    listen();
-    accept();
-    getsockname();
-    getpeername();
-    connect();
-    bind();
-}
-
-declare interface TTY extends Socket {
-    setMode();
-    getWinSize();
-}
-
-declare interface UDPSocket extends Socket {
-    close();
-    recv();
-    send();
-    getsockname();
-    getpeername();
-    connect();
-    bind();
-}
-
-declare interface TCPSocket {
-    shutdown();
-    fileno();
-    listen();
-    accept();
-    getsockname();
-    getpeername();
-    connect();
-    bind();
-}
-
-/** Call function after x time
- * @return Timeout ID for `clearTimeout(ID)`
- */
-declare function setTimeout(cb: function, milliseconds: number): number;
-/** Cancel `setTimeout` function by it returned ID */
-declare function clearTimeout(tID: number): void;
-/** Call function every x amount of time
- * @return Interval ID for `clearInterval(ID)`
- */
-declare function setInterval(cb: function, milliseconds: number): number;
-/** Cancel `setInterval` function by it returned ID */
-declare function clearInterval(iID: number): void;
-/** Call function on every frame
- * @return function ID for `cancelAnimationFrame(ID)`
- */
-declare function requestAnimationFrame(cb: function): number;
-/** Cancel `requestAnimationFrame` function by it returned ID */
-declare function cancelAnimationFrame(aID: number): void;
-
-declare var console:
-{
-    log(...arg: any): void;
-    warn(...arg: any): void;
-    error(...arg: any): void;
-}
-
-
-
-/**
- * Format arguments using [C-style printf conventions](https://en.cppreference.com/w/cpp/io/c/fprintf).  
- * Sciter specific:  
-    `%v` - print as JSON.stringify(arg);  
-    `%V` - print as JSON.stringify(arg, null, " ");
- */
-declare function printf(...args: string[]): string;
-
-/**
- * Format arguments using [C-style scanf conventions](https://en.cppreference.com/w/c/io/fscanf).  
- */
-declare function scanf(...args: string[]): array<string | number>;
-
-/** Number of physical screen pixels in logical CSS px (dip) */
-declare var devicePixelRatio: float;
-
-interface Node extends EventTarget {
-    /** Instance of Window that hosts this node; */
-    readonly parentWindow: Window;
-    /** Returns the previous sibling. */
-    readonly previousSibling: Node | null;
-    readonly nodeIndex: number;
-    remove(): void;
-
-    /** NATIVE */
-
-    /** Returns the children. */
-    readonly childNodes: NodeListOf<Node>;
-    /** Returns the first child. */
-    readonly firstChild: Node | null;
-    /** Returns the last child. */
-    readonly lastChild: Node | null;
-    /** Returns the next sibling. */
-    readonly nextSibling: Node | null;
-    /** Returns a string appropriate for the type of node. */
-    readonly nodeName: string;
-    /** Returns the type of node:  
-     * `1` : Element  
-     * `2` : Comment  
-     * `3` : Text
-    */
-    readonly nodeType: number;
-    nodeValue: string | null;
-    /** Returns the node document. Returns null for documents. */
-    readonly ownerDocument: Document | null;
-    /** Returns the parent element. */
-    readonly parentElement: Element | null;
-    /** Returns the parent. */
-    readonly parentNode: Node | null;
-    /** Textual content of an element and all its descendants */
-    textContent: string | null;
-    appendChild<T extends Node>(node: T): T;
-    /** Returns a copy of node. If deep is true, the copy also includes the node's descendants. */
-    cloneNode(deep?: boolean): Node;
-    /** Returns a bitmask indicating the position of other relative to node. */
-    compareDocumentPosition(other: Node): number;
-    /** Returns true if other is an inclusive descendant of node, and false otherwise. */
-    contains(other: Node | null): boolean;
-    /** Returns node's root. (\<html/>) */
-    getRootNode(options?: GetRootNodeOptions): Node;
-    /** Does this node have children. */
-    hasChildNodes(): boolean;
-    insertBefore<T extends Node>(node: T, child: Node | null): T;
-    /** Does this node and otherNode have the same properties. */
-    isEqualNode(otherNode: Node | null): boolean;
-    isSameNode(otherNode: Node | null): boolean;
-    removeChild<T extends Node>(child: T): T;
-    replaceChild<T extends Node>(node: Node, child: T): T;
-}
-declare var Node: {
-    new(): Node;
+declare var Document: {
+    new(): Document;
 };
 
-interface Text extends Node
-{
-    data: string;
-    readonly length: number;
-    readonly wholeText: string;
-}
-declare var Text: {
-    new(): Text;
-}
+declare var document: Document;
 
-interface Comment extends Node
-{
-    data: string;
-    readonly length: number;
+enum domEvent {
+    parsed,
+    ready,
+    DOMContentLoaded,
+    complete,
+    close,
+    unload,
+    beforeunload,
+    closerequest
 }
-declare var Comment: {
-    new(): Comment;
-}
-
-/** NodeList objects are collections of nodes, usually returned by properties such as Node.childNodes and methods such as document.querySelectorAll(). */
-interface NodeList {
-    /** Returns the number of nodes in the collection. */
-    readonly length: number;
-    /** Returns the node with index index from the collection. The nodes are sorted in tree order. */
-    item(index: number): Node | null;
-    /**
-     * Performs the specified action for each node in an list.
-     * @param callbackfn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the list.
-     * @param thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
-     */
-    forEach(callbackfn: (value: Node, key: number, parent: NodeList) => void, thisArg?: any): void;
-    [index: number]: Node;
-}
-declare var NodeList: {
-    new(): NodeList;
-};
-
-interface NodeListOf<TNode extends Node> extends NodeList {
-    item(index: number): TNode;
-    /**
-     * Performs the specified action for each node in an list.
-     * @param callbackfn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the list.
-     * @param thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
-     */
-    forEach(callbackfn: (value: TNode, key: number, parent: NodeListOf<TNode>) => void, thisArg?: any): void;
-    [index: number]: TNode;
-}
-
 interface Element extends Node {
     /** Get element matching the css selector */
     $(query: string): Element;
@@ -635,8 +282,121 @@ declare var DOMRect: {
     new(x?: number, y?: number, width?: number, height?: number): DOMRect;
     fromRect(other?: DOMRect): DOMRect;
 };
+interface Selection
+{
+    /** `true` if selection is collapsed to one position (anchor === focus) */
+    readonly isCollapsed: boolean;
+    /** Nearest container element that encloses as anchor as focus positions */
+    readonly commonAncestorContainer: Element;
+    readonly anchorNode: Node;
+    readonly anchorOffset: number;
+    /** Caret position */
+    readonly focusNode: Node;
+    readonly focusOffset: number;
+    readonly rangeCount: number;
+    readonly type: "Caret" | "Selection" | "Element" | "TableCells";
 
-interface Style {
+    /** Collapse selection to current focus (caret) position. */
+    collapse(): void;
+    /** Collapse selection to anchor or focus (the last in the DOM). */
+    collapseToEnd(): void;
+    /** Collapse selection to anchor or focus (the first in the DOM). */
+    collapseToStart(): void;
+    /** `true` if the selection contains the node. */
+    containsNode(node: Node): boolean;
+    /** Remove selection (but not its content). */
+    empty(): void;
+    /** Set focus (caret) position without changing anchor position. */
+    extend(node: Node, offset: number): void;
+    getRangeAt(index: number): Range;
+    selectNodeContent(node: Node): void;
+    setBaseAndExtent(anchorNode: Node, anchorOffset: number, focusNode: Node, focusOffset: number): void;
+    /** Return selected text. */
+    toString(): string;
+}
+/** Runtime flags and state on element.  
+ * Most of Element.State reflect so called CSS pseudo-classes (flags): 
+ * `element:visited { color: red; }`*/
+ interface State
+ {
+     /** Computes current min and max widths of the element content. */
+     contentWidth(): [minWidth: number, maxWidth: number];
+     /** Computes current height of the element content with it given width. */
+     contentHeight(width: number): number;
+     /** Set/remove mouse capture(forward mouse event)  
+      *  `true` - captures mouse events by the element and its sub elements.  
+      *  `false` - remove capture if the element owns capture now.  
+      *  `"strict"` - mouse events will be delivered to the element only. */
+     capture(state: boolean|"strict"): boolean;
+     /** Returns various metrics of the element.  
+      *  @param property structure of returned value
+      *  @param metric particular metric of the element
+      *  @param relativeTo offset x/y are relative to
+      *  @param asPpx return coordinates in screen pixels otherwise DIPs
+      */
+     box(property: keyof typeof boxProperties, metric: keyof typeof boxMetric, relativeTo?: keyof typeof boxRelativeTo, asPpx?: boolean): array|number;
+     /** Parses length string as CSS length units or percentage and then converts them to CSS pixels.
+      *  Perecentage values are computed against element dimensions (inner box). */
+     pixelsIn(length: string, orientation?: "horizontal" |  "vertical"): number | undefined;
+     /** Maps local element coordinates to window coordinates.
+      *  This method accounts affine 2D transformation the element and its parents may have. */
+     mapLocalToWindow(x: number, y: number): [x: number, y: number];
+     /** Maps point on window to local coordinates of particular element.
+      *  This method accounts affine 2D transformation the element and its parents may have. */
+     mapWindowToLocal(x: number, y: number): [x: number, y: number];
+ 
+     focus: boolean;
+     readonly ownsfocus: boolean;
+     link: boolean;
+     visited: boolean;
+     hover: boolean;
+     selected: boolean;
+     current: boolean;
+     checked: boolean;
+     disabled: boolean;
+     readonly: boolean;
+     expanded: boolean;
+     collapsed: boolean;
+     invalid: boolean;
+     animating: boolean;
+     focusable: boolean;
+     anchor: boolean;
+     popup: boolean;
+     ownspopup: boolean;
+     tabfocus: boolean;
+     empty: boolean;
+     busy: boolean;
+     dragover: boolean;
+     dragsource: boolean;
+     droptarget: boolean;
+     moving: boolean;
+     copying: boolean;
+     pressed: boolean;
+     ready: boolean;
+     active: boolean;
+     /** `False` will prevent reconciliation of element's content by Reactor */
+     reactive: boolean;
+     /** Runtime value of native behavior attached to the element. Actual for input elements. */
+     value: any;
+     /** Reports visibility status of the element,  
+      *  if `0` then the element is visible in full, otherwise combination of these flags:  
+      *  `0x1` - left side of border box is clipped out (invisible).  
+      *  `0x2` - top side is clipped.  
+      *  `0x4` - right side is clipped.  
+      *  `0x8` - bottom side is clipped.  
+      *  `0xf` - the element is completely clipped out - invisible. */
+     occluded: number;
+ 
+     /** `True` if this is a root document of the window */
+     readonly windowroot: boolean;
+     /** Layout manager used by the element at the moment. */
+     readonly flow: "default" | "vertical" | "horizontal" | "horizontal-wrap" | "vertical-wrap" | "grid" | "table" | "table-fixed" | "table-row" | "table-body" | "columns" | "stack" | "text" | "null" | "image" | "svg" | "svg-child" | "";
+     readonly visible: boolean;
+ }
+ enum boxProperties { "xywh", "rect", "position", "dimension", "left", "right", "top", "bottom", "width", "height" }
+ enum boxMetric { "inner", "border", "padding", "margin", "client", "caret", "icon" }
+ enum relativeTo { "element", "screen", "window", "document", "parent", "container", "self" }
+ interface Style {
     getPropertyValue(name: string): string;
     setProperty(name: string, value: string|length, important?: boolean): void;
     removeProperty(name: string): void;
@@ -682,166 +442,560 @@ interface Style {
 
     [name: string]: string|length;
 }
+/** An event which takes place in the DOM. */
+interface Event {
+    /** True if event goes through its target's ancestors in reverse tree order, and false otherwise. */
+    readonly bubbles: boolean;
+    cancelBubble: boolean;
+    /** Can be canceled by invoking the preventDefault() method. */
+    readonly cancelable: boolean;
+    /** True if event invokes listeners past a ShadowRoot node that is the root of its target, and false otherwise. */
+    readonly composed: boolean;
+    /** Returns the Element whose event listener's callback is currently being invoked. */
+    readonly currentTarget: Element | null;
+    /** Returns true if preventDefault() was invoked successfully to indicate cancelation, and false otherwise. */
+    readonly defaultPrevented: boolean;
+    /** Returns the event's phase, which is one of `NONE`, `CAPTURING_PHASE`, `AT_TARGET`, and `BUBBLING_PHASE`. */
+    readonly eventPhase: number;
+    /** Returns true if event was dispatched by the user agent, and false otherwise. */
+    readonly isTrusted: boolean;
+    readonly srcElement: Element | null;
+    /** The element to which event is dispatched (its target). */
+    readonly target: Element | null;
+    /** Type of event, e.g. "click", "hashchange", or "submit". */
+    readonly type: string;
+    /** If invoked when the cancelable attribute value is true,
+     * and while executing a listener for the event with passive set to false,
+     * signals to the operation that caused event to be dispatched that it needs to be canceled. */
+    preventDefault(): void;
+    /** Invoking this method prevents event from reaching any registered event listeners
+     * after the current one finishes running and, when dispatched in a tree,
+     * also prevents event from reaching any other objects. */
+    stopImmediatePropagation(): void;
+    /** When dispatched in a tree, invoking this method prevents event
+     * from reaching any objects other than the current object. */
+    stopPropagation(): void;
+    data: any;
+    readonly AT_TARGET: number;
+    readonly BUBBLING_PHASE: number;
+    readonly CAPTURING_PHASE: number;
+    readonly NONE: number;
 
-interface Selection
-{
-    /** `true` if selection is collapsed to one position (anchor === focus) */
-    readonly isCollapsed: boolean;
-    /** Nearest container element that encloses as anchor as focus positions */
-    readonly commonAncestorContainer: Element;
-    readonly anchorNode: Node;
-    readonly anchorOffset: number;
-    /** Caret position */
-    readonly focusNode: Node;
-    readonly focusOffset: number;
-    readonly rangeCount: number;
-    readonly type: "Caret" | "Selection" | "Element" | "TableCells";
+    currentTarget: Element;
+    target: Element;
+    eventPhase: string;
 
-    /** Collapse selection to current focus (caret) position. */
-    collapse(): void;
-    /** Collapse selection to anchor or focus (the last in the DOM). */
-    collapseToEnd(): void;
-    /** Collapse selection to anchor or focus (the first in the DOM). */
-    collapseToStart(): void;
-    /** `true` if the selection contains the node. */
-    containsNode(node: Node): boolean;
-    /** Remove selection (but not its content). */
-    empty(): void;
-    /** Set focus (caret) position without changing anchor position. */
-    extend(node: Node, offset: number): void;
-    getRangeAt(index: number): Range;
-    selectNodeContent(node: Node): void;
-    setBaseAndExtent(anchorNode: Node, anchorOffset: number, focusNode: Node, focusOffset: number): void;
-    /** Return selected text. */
-    toString(): string;
+    altKey: boolean;
+    ctrlKey: boolean;
+    /** `Command` key on OSX, `win` on Windows */
+    metaKey: boolean;
+    shiftKey: boolean;
+    button: number;
+    buttons: number;
+
+    clientX: number;
+    clientY: number;
+    screenX: number;
+    screenY: number;
+    windowX: number;
+    windowY: number;
+    deltaX: number;
+    deltaY: number;
+    /** `0` - `deltaX/Y` are pixels coming from touch devices,  
+     *  `1` - `deltaX/Y` are in "lines" (a.k.a. mouse wheel "ticks"). */
+    deltaMode: number;
+
+    /** Coordinates relative to `currentTarget` - the element this event handler is attached to. */
+    x: number;
+    /** Coordinates relative to `currentTarget` - the element this event handler is attached to. */
+    y: number;
+    /** Used in some events to indicate auxiliary "source" element. */
+    source: Element;
+    /** Mouse event is on `foreground-image`, return Element containing the image */
+    isOnIcon: Element;
+
+    /** Returns pressed status of the key. */
+    keyState(key: string): boolean;
 }
-
-/** Runtime flags and state on element.  
- * Most of Element.State reflect so called CSS pseudo-classes (flags): 
- * `element:visited { color: red; }`*/
-interface State
-{
-    /** Computes current min and max widths of the element content. */
-    contentWidth(): [minWidth: number, maxWidth: number];
-    /** Computes current height of the element content with it given width. */
-    contentHeight(width: number): number;
-    /** Set/remove mouse capture(forward mouse event)  
-     *  `true` - captures mouse events by the element and its sub elements.  
-     *  `false` - remove capture if the element owns capture now.  
-     *  `"strict"` - mouse events will be delivered to the element only. */
-    capture(state: boolean|"strict"): boolean;
-    /** Returns various metrics of the element.  
-     *  @param property structure of returned value
-     *  @param metric particular metric of the element
-     *  @param relativeTo offset x/y are relative to
-     *  @param asPpx return coordinates in screen pixels otherwise DIPs
-     */
-    box(property: keyof typeof boxProperties, metric: keyof typeof boxMetric, relativeTo?: keyof typeof boxRelativeTo, asPpx?: boolean): array|number;
-    /** Parses length string as CSS length units or percentage and then converts them to CSS pixels.
-     *  Perecentage values are computed against element dimensions (inner box). */
-    pixelsIn(length: string, orientation?: "horizontal" |  "vertical"): number | undefined;
-    /** Maps local element coordinates to window coordinates.
-     *  This method accounts affine 2D transformation the element and its parents may have. */
-    mapLocalToWindow(x: number, y: number): [x: number, y: number];
-    /** Maps point on window to local coordinates of particular element.
-     *  This method accounts affine 2D transformation the element and its parents may have. */
-    mapWindowToLocal(x: number, y: number): [x: number, y: number];
-
-    focus: boolean;
-    readonly ownsfocus: boolean;
-    link: boolean;
-    visited: boolean;
-    hover: boolean;
-    selected: boolean;
-    current: boolean;
-    checked: boolean;
-    disabled: boolean;
-    readonly: boolean;
-    expanded: boolean;
-    collapsed: boolean;
-    invalid: boolean;
-    animating: boolean;
-    focusable: boolean;
-    anchor: boolean;
-    popup: boolean;
-    ownspopup: boolean;
-    tabfocus: boolean;
-    empty: boolean;
-    busy: boolean;
-    dragover: boolean;
-    dragsource: boolean;
-    droptarget: boolean;
-    moving: boolean;
-    copying: boolean;
-    pressed: boolean;
-    ready: boolean;
-    active: boolean;
-    /** `False` will prevent reconciliation of element's content by Reactor */
-    reactive: boolean;
-    /** Runtime value of native behavior attached to the element. Actual for input elements. */
-    value: any;
-    /** Reports visibility status of the element,  
-     *  if `0` then the element is visible in full, otherwise combination of these flags:  
-     *  `0x1` - left side of border box is clipped out (invisible).  
-     *  `0x2` - top side is clipped.  
-     *  `0x4` - right side is clipped.  
-     *  `0x8` - bottom side is clipped.  
-     *  `0xf` - the element is completely clipped out - invisible. */
-    occluded: number;
-
-    /** `True` if this is a root document of the window */
-    readonly windowroot: boolean;
-    /** Layout manager used by the element at the moment. */
-    readonly flow: "default" | "vertical" | "horizontal" | "horizontal-wrap" | "vertical-wrap" | "grid" | "table" | "table-fixed" | "table-row" | "table-body" | "columns" | "stack" | "text" | "null" | "image" | "svg" | "svg-child" | "";
-    readonly visible: boolean;
+declare var Event: {
+    new(type: string, eventInitDict?: EventInit): Event;
+    readonly AT_TARGET: number;
+    readonly BUBBLING_PHASE: number;
+    readonly CAPTURING_PHASE: number;
+    readonly NONE: number;
+};
+interface EventInit {
+    bubbles?: boolean;
+    cancelable?: boolean;
+    composed?: boolean;
+    data?: any;
 }
-enum boxProperties { "xywh", "rect", "position", "dimension", "left", "right", "top", "bottom", "width", "height" }
-enum boxMetric { "inner", "border", "padding", "margin", "client", "caret", "icon" }
-enum relativeTo { "element", "screen", "window", "document", "parent", "container", "self" }
+type eventFunction = function(Event, Element): void;
+enum eventType {
+    mouseMove,
+    mouseLeave,
+    mouseIdle,
+    mousetick,
+    mousedown,
+    mouseup,
+    mousewheel,
+    mousedragrequest,
+    dblclick,
+    doubleclick,
+    tripleclick,
 
-interface Document extends Element {
-    /** Load image from `url` and bind it to variable */
-    bindImage(url: string, img ?: Graphics.Image): Graphics.Image;
+    click,
+    input,
+    change,
+    press,
+    changing,
+    submit,
+    reset,
+    expand,
+    collapse,
+    statechange,
+    visualstatechange,
+    disabledstatechange,
+    readonlystatechange,
+    contextmenu,
+    contextmenusetup,
+    animationend,
+    animationstart,
+    animationloop,
+    transitionend,
+    transitionstart,
+    mediachange,
+    contentchange,
+    inputlangchange,
+    pastehtml,
+    pastetext,
+    pasteimage,
+    popuprequest,
+    popupready,
+    popupdismissing,
+    popupdismissed,
+    tooltiprequest,
 
-    /** return path relative to document path */
-    url(relpath ?: string): string;
+    focus,
+    focusin,
+    focusout,
+    blue,
 
-    /** Subscribe to any DOM event */
-    on(event: keyof typeof eventType, selector?: string, handler: eventFunction): void;
-    on(event: keyof typeof domEvent, handler: eventFunction): void;
+    keydown,
+    keyup,
+    keypress,
+    compostionstart,
+    compositionend,
+
+    scroll,
+    scrollanimationstart,
+    scrollanimationend,
+
+    sizechange,
+    visibilitychange,
+
+    load,
+    error,
     
+    drag,
+    dragenter,
+    dragleave,
+    drop,
+    dragaccept,
+    dropcancel,
+    willacceptdrop,
 
-    /* NATIVE */
-
-    body: Element;
-    head: Element;
-    /** Root(html) element */
-    documentElement: Element;
-    /** document loading state - `complete` | `interactive` */
-    readyState: string;
-    createElement(tag: string): Element;
-    createTextNode(): Node;
-    createComment(): Comment;
-    createDocumentFragment();
-    createNodeIterator(root: string, whatToShow?: string, filter?: string): NodeIterator;
+    play,
+    ended,
+    videocoordinate,
+    videoframeready,
 }
-declare var Document: {
-    new(): Document;
+/** Call function after x time
+ * @return Timeout ID for `clearTimeout(ID)`
+ */
+ declare function setTimeout(cb: function, milliseconds: number): number;
+ /** Cancel `setTimeout` function by it returned ID */
+ declare function clearTimeout(tID: number): void;
+ /** Call function every x amount of time
+  * @return Interval ID for `clearInterval(ID)`
+  */
+ declare function setInterval(cb: function, milliseconds: number): number;
+ /** Cancel `setInterval` function by it returned ID */
+ declare function clearInterval(iID: number): void;
+ /** Call function on every frame
+  * @return function ID for `cancelAnimationFrame(ID)`
+  */
+ declare function requestAnimationFrame(cb: function): number;
+ /** Cancel `requestAnimationFrame` function by it returned ID */
+ declare function cancelAnimationFrame(aID: number): void;
+ 
+ declare var console:
+ {
+     log(...arg: any): void;
+     warn(...arg: any): void;
+     error(...arg: any): void;
+ }
+ 
+ /**
+  * Format arguments using [C-style printf conventions](https://en.cppreference.com/w/cpp/io/c/fprintf).  
+  * Sciter specific:  
+     `%v` - print as JSON.stringify(arg);  
+     `%V` - print as JSON.stringify(arg, null, " ");
+  */
+ declare function printf(...args: string[]): string;
+ 
+ /**
+  * Format arguments using [C-style scanf conventions](https://en.cppreference.com/w/c/io/fscanf).  
+  */
+ declare function scanf(...args: string[]): array<string | number>;
+ 
+ /** Number of physical screen pixels in logical CSS px (dip) */
+ declare var devicePixelRatio: float;
+ declare module "@env" {
+    export const OS: string;
+    export const PLATFORM: string;
+    export const DEVICE: "desktop" | "mobile";
+    export function language(): string;
+    export function country(): string;
+    export function userName(): string;
+    export function machineName(): string;
+    export function domainName(): string;
+    /**
+     * Launch file/URL with default system application
+     */
+    export function launch(path:string): void;
+    export function home(relpath ?: string): string;
+    export function homeURL(relpath ?: string): string;
+    /**
+     * Return path of default system folder ie. documents|downloads
+     * @param name of default system folder
+     * @param relpath relative path to name
+     */
+    export function path(name: keyof typeof systemPath, relpath ?: string): string;
+    export function pathURL(name: string): string;
+    /**
+     * Execute comma seperated arguments
+     */
+    export function exec(...args: string[]): void;
+    
+}
+
+declare enum systemPath { "home", "root", "desktop", "applications", "downloads", "documents", "music", "videos", "pictures" }
+declare module "@sciter" {
+    export const VERSION: string;
+    export const REVISION: string;
+    export const QUICKJS_VERSION: string;
+    /** Returns first matched DOM element in current document. */
+    export function $(query: string): Element;
+    /** Returns list (array) of matched DOM elements. */
+    export function $$(query: string): array<Element>;
+//    export function import(path: string): object;
+    /**
+     * Load native Sciter extension
+     * @param name path to library without .dll/.dylib (relative to sciter.dll)
+     */
+    export function loadLibrary(name: string): any;
+    /** Passive json parser */
+    export function parseValue(val:string): any;
+    /** Converts length to device (screen) pixels */
+    export function devicePixels(length: number | string, axis: "width" | "height")
+    /** Generate unique id */
+    export function uuid(): string;
+    /** Subscribe to any DOM event */
+    export function on(event: keyof typeof eventType, selector?: string, handler: eventFunction): void;
+    /** Unsubscribe to any DOM event */
+    export function off(eventOrHandler: keyof typeof eventType | function): void;
+    export function encode(text: string, encoding ?: string): ArrayBuffer;
+    export function decode(bytes: ArrayBuffer, encoding ?: string): string;
+    export function compress(input: ArrayBuffer, method?: "gz" | "gzip" | "lzf"): ArrayBuffer;
+    export function decompress(input: ArrayBuffer, method?: "gz" | "gzip" | "lzf"): ArrayBuffer;
+    export function toBase64(input:ArrayBuffer): string;
+    export function fromBase64(input:string): ArrayBuffer;
+    export function md5(input:ArrayBuffer): string;
+    export function crc32(input:ArrayBuffer): number;
+}
+declare module "@sys" {
+    declare interface spawnOptions {stdout?: string, stdin?: string, stderr?: string}
+    export function spawn(args: array<string>, options?: spawnOptions ): Process;
+    export function hrtime(): bigint;
+    export function gettimeofday(): number;
+    export function uname(): unameObject;
+    /** Returns `true` if fd is an open file descriptor referring to a terminal. */
+    export function isatty(): boolean;
+    /** Retrieves all environment variables */
+    export function environ(): object;
+    export function getenv(name: string): string;
+    export function setenv(name: string, value: string): void;
+    export function unsetenv(name: string): void;
+    export function cwd(): string;
+    export function homedir(): string;
+    export function tmpdir(): string;
+    /** Return path of this executable file. */
+    export function exepath(): string;
+    export function random(buffer: ArrayBuffer);
+
+    namespace fs {
+        /**
+         * Watch directory for changes
+         * @param path 
+         * @param cb callback function
+         */
+        function watch(path:string, cb: (path:string, events: 0x01 | 0x02) => WatchFS);
+        /**
+         * Open file instance
+         * @param path 
+         * @param flags method to open the file with read/write
+         * @param mode file content encoding
+         */
+        function open(path:string, flags: keyof typeof OpenFlagOptions, mode ?: number): Promise<File>;
+        /**
+         * Synchronously open file instance
+         * @param path 
+         * @param flags method to open the file with read/write
+         * @param mode file content encoding
+         */
+        function $open(path:string, flags: keyof typeof OpenFlagOptions, mode ?: number): File;
+        function stat(path:string): Promise<StatStruct>;
+        function $stat(path:string): StatStruct;
+        function lstat(): Promise<StatStruct>;
+        function $lstat(): StatStruct;
+        /** Remove file */
+        function unlink(path:string): Promise;
+        function rename(oldpath:string, newpath: string) : Promise;
+        function mkdtemp(template:string) : Promise<string>;
+        function mkstemp(template:string) : Promise<string>;
+        function rmdir(path:string) : Promise;
+        function $rmdir(path:string);
+        function mkdir(path:string, mode ?: 0o777): Promise;
+        function $mkdir(path:string, mode ?: 0o777);
+        function copyfile(): Promise;
+        function readdir(path: string): Promise<FileList>;
+        function $readdir(path: string): FileList;
+        /** Read file content, check `$readfile` for sync method */
+        function readfile(path: string): Promise<ArrayBuffer>;
+        /** Synchronously read file content */
+        function $readfile(path: string): ArrayBuffer;
+        
+    }
+    
+    interface Dir {
+        close();
+        path: string;
+        next();
+        [async iterator];
+    }
+
+    declare interface File {
+        read (length?:number, fileposition ?: number): Promise<Uint8Array>;
+        $read(length?:number, fileposition ?: number): Uint8Array;
+        write (data:string|string[]|ArrayBuffer, filePosition ?: number) : Promise<number>;
+        $write(data:string|string[]|ArrayBuffer, filePosition ?: number) : number;
+        close (): Promise<undefined>;
+        $close(): undefined;
+        fileno(): number;
+        stat(): Promise<Object>;
+        path: string;
+    }
+
+    declare interface WatchFS {
+        readonly path: string;
+        close(): void;
+    }
+
+    declare interface StatStruct {
+        isFile ?: boolean;
+        isDirectory ?: boolean;
+        isSymbolicLink ?: boolean;
+        st_dev: number;
+        st_ino: number;
+        st_mode: number;
+        st_nlink: number;
+        st_uid: number;
+        st_gid: number;
+        st_rdev: number;
+        st_size: number;
+        st_blksize: number;
+        st_blocks: number;
+        st_atime: number;
+        st_mtime: number;
+        st_ctime: number;
+        st_birthtime: number;
+    }
+
+    interface unameObject {
+        /** OS code name: Windows_NT */
+        sysname: string;
+        /** OS version: 10.0.19044  */
+        release: string;
+        /** OS type: Windows 10 Enterprise */
+        version: string;
+        /** Processor type: i686 */
+        machine: string;
+    }
+}
+
+declare enum OpenFlagOptions { 'a', 'ax', 'a+', 'ax+', 'as', 'as+', 'r', 'r+', 'rs+', 'w', 'wx', 'w+', 'wx+' }
+
+declare interface Process {
+    kill();
+    wait(): Promise<ProcessStats>;
+    pid: number;
+    stdin: Pipe;
+    stdout: Pipe;
+    stderr: Pipe;
+}
+
+declare interface ProcessStats {
+    exit_status: number;
+    term_signal: number;
+    exitCode: number;
+    terminationSignal: number;
+}
+
+declare interface Socket {
+    close();
+    read();
+    write();
+    fileno();
+}
+declare interface Pipe extends Socket {
+    listen();
+    accept();
+    getsockname();
+    getpeername();
+    connect();
+    bind();
+}
+
+declare interface TTY extends Socket {
+    setMode();
+    getWinSize();
+}
+
+declare interface UDPSocket extends Socket {
+    close();
+    recv();
+    send();
+    getsockname();
+    getpeername();
+    connect();
+    bind();
+}
+
+declare interface TCPSocket {
+    shutdown();
+    fileno();
+    listen();
+    accept();
+    getsockname();
+    getpeername();
+    connect();
+    bind();
+}
+interface Node extends EventTarget {
+    /** Instance of Window that hosts this node; */
+    readonly parentWindow: Window;
+    /** Returns the previous sibling. */
+    readonly previousSibling: Node | null;
+    readonly nodeIndex: number;
+    remove(): void;
+
+    /** NATIVE */
+
+    /** Returns the children. */
+    readonly childNodes: NodeListOf<Node>;
+    /** Returns the first child. */
+    readonly firstChild: Node | null;
+    /** Returns the last child. */
+    readonly lastChild: Node | null;
+    /** Returns the next sibling. */
+    readonly nextSibling: Node | null;
+    /** Returns a string appropriate for the type of node. */
+    readonly nodeName: string;
+    /** Returns the type of node:  
+     * `1` : Element  
+     * `2` : Comment  
+     * `3` : Text
+    */
+    readonly nodeType: number;
+    nodeValue: string | null;
+    /** Returns the node document. Returns null for documents. */
+    readonly ownerDocument: Document | null;
+    /** Returns the parent element. */
+    readonly parentElement: Element | null;
+    /** Returns the parent. */
+    readonly parentNode: Node | null;
+    /** Textual content of an element and all its descendants */
+    textContent: string | null;
+    appendChild<T extends Node>(node: T): T;
+    /** Returns a copy of node. If deep is true, the copy also includes the node's descendants. */
+    cloneNode(deep?: boolean): Node;
+    /** Returns a bitmask indicating the position of other relative to node. */
+    compareDocumentPosition(other: Node): number;
+    /** Returns true if other is an inclusive descendant of node, and false otherwise. */
+    contains(other: Node | null): boolean;
+    /** Returns node's root. (\<html/>) */
+    getRootNode(options?: GetRootNodeOptions): Node;
+    /** Does this node have children. */
+    hasChildNodes(): boolean;
+    insertBefore<T extends Node>(node: T, child: Node | null): T;
+    /** Does this node and otherNode have the same properties. */
+    isEqualNode(otherNode: Node | null): boolean;
+    isSameNode(otherNode: Node | null): boolean;
+    removeChild<T extends Node>(child: T): T;
+    replaceChild<T extends Node>(node: Node, child: T): T;
+}
+declare var Node: {
+    new(): Node;
 };
 
-declare var document: Document;
-
-enum domEvent {
-    parsed,
-    ready,
-    DOMContentLoaded,
-    complete,
-    close,
-    unload,
-    beforeunload,
-    closerequest
+interface Text extends Node
+{
+    data: string;
+    readonly length: number;
+    readonly wholeText: string;
+}
+declare var Text: {
+    new(): Text;
 }
 
+interface Comment extends Node
+{
+    data: string;
+    readonly length: number;
+}
+declare var Comment: {
+    new(): Comment;
+}
+
+/** NodeList objects are collections of nodes, usually returned by properties such as Node.childNodes and methods such as document.querySelectorAll(). */
+interface NodeList {
+    /** Returns the number of nodes in the collection. */
+    readonly length: number;
+    /** Returns the node with index index from the collection. The nodes are sorted in tree order. */
+    item(index: number): Node | null;
+    /**
+     * Performs the specified action for each node in an list.
+     * @param callbackfn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the list.
+     * @param thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+     */
+    forEach(callbackfn: (value: Node, key: number, parent: NodeList) => void, thisArg?: any): void;
+    [index: number]: Node;
+}
+declare var NodeList: {
+    new(): NodeList;
+};
+
+interface NodeListOf<TNode extends Node> extends NodeList {
+    item(index: number): TNode;
+    /**
+     * Performs the specified action for each node in an list.
+     * @param callbackfn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the list.
+     * @param thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+     */
+    forEach(callbackfn: (value: TNode, key: number, parent: NodeListOf<TNode>) => void, thisArg?: any): void;
+    [index: number]: TNode;
+}
 interface Window {
     // new(param: object<windowParam>);
     //
@@ -1020,173 +1174,4 @@ interface selectFileParams {
     caption?: string;
     /** Initial directory to open the dialog at. */
     path?: string;
-}
-
-/** An event which takes place in the DOM. */
-interface Event {
-    /** True if event goes through its target's ancestors in reverse tree order, and false otherwise. */
-    readonly bubbles: boolean;
-    cancelBubble: boolean;
-    /** Can be canceled by invoking the preventDefault() method. */
-    readonly cancelable: boolean;
-    /** True if event invokes listeners past a ShadowRoot node that is the root of its target, and false otherwise. */
-    readonly composed: boolean;
-    /** Returns the Element whose event listener's callback is currently being invoked. */
-    readonly currentTarget: Element | null;
-    /** Returns true if preventDefault() was invoked successfully to indicate cancelation, and false otherwise. */
-    readonly defaultPrevented: boolean;
-    /** Returns the event's phase, which is one of `NONE`, `CAPTURING_PHASE`, `AT_TARGET`, and `BUBBLING_PHASE`. */
-    readonly eventPhase: number;
-    /** Returns true if event was dispatched by the user agent, and false otherwise. */
-    readonly isTrusted: boolean;
-    readonly srcElement: Element | null;
-    /** The element to which event is dispatched (its target). */
-    readonly target: Element | null;
-    /** Type of event, e.g. "click", "hashchange", or "submit". */
-    readonly type: string;
-    /** If invoked when the cancelable attribute value is true,
-     * and while executing a listener for the event with passive set to false,
-     * signals to the operation that caused event to be dispatched that it needs to be canceled. */
-    preventDefault(): void;
-    /** Invoking this method prevents event from reaching any registered event listeners
-     * after the current one finishes running and, when dispatched in a tree,
-     * also prevents event from reaching any other objects. */
-    stopImmediatePropagation(): void;
-    /** When dispatched in a tree, invoking this method prevents event
-     * from reaching any objects other than the current object. */
-    stopPropagation(): void;
-    data: any;
-    readonly AT_TARGET: number;
-    readonly BUBBLING_PHASE: number;
-    readonly CAPTURING_PHASE: number;
-    readonly NONE: number;
-
-    currentTarget: Element;
-    target: Element;
-    eventPhase: string;
-
-    altKey: boolean;
-    ctrlKey: boolean;
-    /** `Command` key on OSX, `win` on Windows */
-    metaKey: boolean;
-    shiftKey: boolean;
-    button: number;
-    buttons: number;
-
-    clientX: number;
-    clientY: number;
-    screenX: number;
-    screenY: number;
-    windowX: number;
-    windowY: number;
-    deltaX: number;
-    deltaY: number;
-    /** `0` - `deltaX/Y` are pixels coming from touch devices,  
-     *  `1` - `deltaX/Y` are in "lines" (a.k.a. mouse wheel "ticks"). */
-    deltaMode: number;
-
-    /** Coordinates relative to `currentTarget` - the element this event handler is attached to. */
-    x: number;
-    /** Coordinates relative to `currentTarget` - the element this event handler is attached to. */
-    y: number;
-    /** Used in some events to indicate auxiliary "source" element. */
-    source: Element;
-    /** Mouse event is on `foreground-image`, return Element containing the image */
-    isOnIcon: Element;
-
-    /** Returns pressed status of the key. */
-    keyState(key: string): boolean;
-}
-declare var Event: {
-    new(type: string, eventInitDict?: EventInit): Event;
-    readonly AT_TARGET: number;
-    readonly BUBBLING_PHASE: number;
-    readonly CAPTURING_PHASE: number;
-    readonly NONE: number;
-};
-interface EventInit {
-    bubbles?: boolean;
-    cancelable?: boolean;
-    composed?: boolean;
-    data?: any;
-}
-type eventFunction = function(Event, Element): void;
-enum eventType {
-    mouseMove,
-    mouseLeave,
-    mouseIdle,
-    mousetick,
-    mousedown,
-    mouseup,
-    mousewheel,
-    mousedragrequest,
-    dblclick,
-    doubleclick,
-    tripleclick,
-
-    click,
-    input,
-    change,
-    press,
-    changing,
-    submit,
-    reset,
-    expand,
-    collapse,
-    statechange,
-    visualstatechange,
-    disabledstatechange,
-    readonlystatechange,
-    contextmenu,
-    contextmenusetup,
-    animationend,
-    animationstart,
-    animationloop,
-    transitionend,
-    transitionstart,
-    mediachange,
-    contentchange,
-    inputlangchange,
-    pastehtml,
-    pastetext,
-    pasteimage,
-    popuprequest,
-    popupready,
-    popupdismissing,
-    popupdismissed,
-    tooltiprequest,
-
-    focus,
-    focusin,
-    focusout,
-    blue,
-
-    keydown,
-    keyup,
-    keypress,
-    compostionstart,
-    compositionend,
-
-    scroll,
-    scrollanimationstart,
-    scrollanimationend,
-
-    sizechange,
-    visibilitychange,
-
-    load,
-    error,
-    
-    drag,
-    dragenter,
-    dragleave,
-    drop,
-    dragaccept,
-    dropcancel,
-    willacceptdrop,
-
-    play,
-    ended,
-    videocoordinate,
-    videoframeready,
 }
