@@ -1,7 +1,7 @@
 # sciter.d.ts
 Sciter declaration files for linting intellisense in VSCode
 
-`0.8.1`
+`0.9.0`
 
 ### setup
 
@@ -30,6 +30,6 @@ the status of declarations and their documentations as of Sciter specific and de
 | Event | done | done |
 | modules | done | - |
 | Range/Node | - | done |
-| Graphic | - | - |
+| Graphic | done | done |
 
 initial credit [@patrick](https://sciter.com/forums/topic/typescript/#post-77670)

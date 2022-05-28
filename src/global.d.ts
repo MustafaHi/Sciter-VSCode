@@ -19,9 +19,9 @@
  
  declare var console:
  {
-     log(...arg: any): void;
-     warn(...arg: any): void;
-     error(...arg: any): void;
+    log(...arg: any): void;
+    warn(...arg: any): void;
+    error(...arg: any): void;
  }
  
  /**
@@ -39,5 +39,4 @@
  
  /** Number of physical screen pixels in logical CSS px (dip) */
  declare var devicePixelRatio: float;
- 
  

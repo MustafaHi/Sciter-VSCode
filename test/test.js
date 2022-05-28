@@ -2,6 +2,7 @@ import { encode, decode } from "@sciter"
 import { fs } from "@sys"
 import * as env from "@env"
 
+
 var x = document.getBoundingClientRect();
     x.bottom;
     

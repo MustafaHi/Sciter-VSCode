@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.8.1
+//| Sciter.d.ts v0.9.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Document extends Element {
@@ -43,6 +43,7 @@ enum domEvent {
     beforeunload,
     closerequest
 }
+
 interface Element extends Node {
     /** Get element matching the css selector */
     $(query: string): Element;
@@ -282,6 +283,7 @@ declare var DOMRect: {
     new(x?: number, y?: number, width?: number, height?: number): DOMRect;
     fromRect(other?: DOMRect): DOMRect;
 };
+
 interface Selection
 {
     /** `true` if selection is collapsed to one position (anchor === focus) */
@@ -314,6 +316,7 @@ interface Selection
     /** Return selected text. */
     toString(): string;
 }
+
 /** Runtime flags and state on element.  
  * Most of Element.State reflect so called CSS pseudo-classes (flags): 
  * `element:visited { color: red; }`*/
@@ -396,6 +399,7 @@ interface Selection
  enum boxProperties { "xywh", "rect", "position", "dimension", "left", "right", "top", "bottom", "width", "height" }
  enum boxMetric { "inner", "border", "padding", "margin", "client", "caret", "icon" }
  enum relativeTo { "element", "screen", "window", "document", "parent", "container", "self" }
+ 
  interface Style {
     getPropertyValue(name: string): string;
     setProperty(name: string, value: string|length, important?: boolean): void;
@@ -442,6 +446,7 @@ interface Selection
 
     [name: string]: string|length;
 }
+
 /** An event which takes place in the DOM. */
 interface Event {
     /** True if event goes through its target's ancestors in reverse tree order, and false otherwise. */
@@ -610,6 +615,7 @@ enum eventType {
     videocoordinate,
     videoframeready,
 }
+
 /** Call function after x time
  * @return Timeout ID for `clearTimeout(ID)`
  */
@@ -631,9 +637,9 @@ enum eventType {
  
  declare var console:
  {
-     log(...arg: any): void;
-     warn(...arg: any): void;
-     error(...arg: any): void;
+    log(...arg: any): void;
+    warn(...arg: any): void;
+    error(...arg: any): void;
  }
  
  /**
@@ -651,7 +657,215 @@ enum eventType {
  
  /** Number of physical screen pixels in logical CSS px (dip) */
  declare var devicePixelRatio: float;
- declare module "@env" {
+ 
+declare var Graphics: {
+    new(): Graphics;
+    Brush: Brush;
+    Color: Color;
+    Image: Image;
+    Path: Path;
+    Text: gText;
+};
+
+interface Graphics
+{
+    lineCap: string;
+    lineJoin: string;
+    strokeString: Graphics.Color | string | Graphics.Image;
+    lineWidth: number;
+    strokeWidth: number;
+    fillStyle: Graphics.Color | string | Graphics.Image;
+    font: string;
+
+    clearRect(x: number, y: number, w: number, h: number): void;
+    beginPath(): void;
+    moveTo(x: number, y: number): void;
+    lineTo(x: number, y: number): void;
+    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
+    bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
+    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, antiClockWise?: boolean): void;
+    arcTo(x: number, y: number, x2: number, y2: number, radius: number): void;
+    ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, antiClockWise?: boolean): void;
+    rect(x: number, y: number, w: number, h: number): void;
+    closePath(): void;
+    stroke(...args): void;
+    fill(...args): void;
+    strokeRect(x: number, y: number, w: number, h: number): void;
+    fillRect(x: number, y: number, w: number, h: number): void;
+    fillText(text: string, x: number, y: number, maxWidth: number): void;
+    setLineDash(...args): void;
+    save(): void;
+    restore(): void;
+    scale(x: number, y: number): void;
+    translate(x: number, y: number): void;
+    rotate(radian: number, x?: number, y?: number): void;
+    transform(a: number, b: number, c: number, d: number, e: number, f: number): void;
+    setTransform(a: number, b: number, c: number, d: number, e: number, f: number): void;
+
+    draw(path: Graphics.Path, params: drawPathParams);
+    draw(image: Graphics.Image, params: drawImageParams);
+    draw(text: Graphics.Text, params: drawTextParams);
+
+    pushLayer(x: number, y: number, w: number, h: number, opacity?: number, filter?: string): void;
+    pushLayer(clipAreaName: keyof typeof clipAreaName, opacity?: number, filter?: string): void;
+    pushLayer(path: Graphics.Path, opacity?: number): void;
+    pushLayer(mask: Graphics.Image, useAlpha: boolean, opacity?: number): void;
+    popLayer(): void;
+}
+
+interface drawPathParams {
+    x: number;
+    y: number;
+    fill?: "evenodd" | "nonzero";
+    stroke?: boolean;
+}
+
+interface drawImageParams {
+    x: number;
+    y: number;
+    width?: number;
+    height?: number;
+    srcX?: number;
+    srcY?: number;
+    srcWidth?: number;
+    srcHeight?: number;
+    opacity?: number;
+}
+
+interface drawTextParams {
+    x: number;
+    y: number;
+    alignment: number;
+    fill?: Graphics.Color;
+}
+
+type clipAreaName = "background-area" | "border-box" | "padding-box" | "margin-box" | "context-box";
+
+interface Brush
+{
+    type: number;
+    
+    addColorStop(pos: number, color: Graphics.Color): Graphics.Brush;
+    /** Creates linear gradient brush along the line from x1/y1 to x2/y2 */
+    createLinearGradient(x1: number, y1: number, x2: number, y2: number): Graphics.Brush;
+    /** Creates radial gradient brush with center at x/y and radius r */
+    createRadialGradient(x: number, y: number, r: number): Graphics.Brush;
+}
+
+interface Color
+{
+    /** float(0..1.0), red channel. */
+    readonly r: number;
+    /** float(0..1.0), green channel */
+    readonly g: number;
+    /** float(0..1.0), blue channel. */
+    readonly b: number;
+    /** float(0..1.0), alpha channel, 0.0 - fully transparent, 1.0 - fully opaque. */
+    readonly a: number;
+    /** int(0..255), red channel. */
+    readonly R: number;
+    /** int(0..255), green channel. */
+    readonly G: number;
+    /** int(0..255), blue channel. */
+    readonly B: number;
+    /** int(0..255), alpha channel, 0.0 - fully transparent, 1.0 - fully opaque. */
+    readonly A: number;
+    /** [hue:0..360, saturation:0..1, value: 0..1, alpha: 0..1], HSV color representation. */
+    readonly hsv: number[];
+    /**  [hue:0..360, saturation:0..1, lightness: 0..1], HSL color representation. */
+    readonly hsl: number[];
+
+    /** Produces strings in formats  
+     *  `#RRGGBB`, `#RRGGBBAA`, `rgb(255,255,255)` or `rgba(255,255,255,1.0)` */
+    toString(type?: "RGB" | "RGBA" | "rgb" | "rgba"): string;
+    /** Color packaged to uint32 as `(a << 24) | (b << 16) | (g << 8) | (r)` */
+    valueOf(): number;
+
+    /** Creates `Graphics.Color` instance from r,g,b,a components in float numbers  
+     * in `0.0-1.0` range. */
+    rgb(r: number, g: number, b: number, a?: number): Graphics.Color;
+    /** Creates `Graphics.Color` instance from r,g,b,a components in integers  
+     * in `0-255` range. */
+    rgb(r: number, g: number, b: number, a?: number): Graphics.Color;
+    /** Creates `Graphics.Color` instance from HSV components in float numbers  
+     * in `0.0-1.0` range but `h` is in `0.0-360.0` range. */
+    hsv(h: number, s: number, v: number, a?: number): Graphics.Color;
+    /** Creates `Graphics.Color` instance from HSL components in float numbers  
+     * in `0.0-1.0` range but `h` is in `0.0-360.0` range. */
+    rgb(r: number, g: number, b: number, a?: number): Graphics.Color;
+}
+
+interface Image
+{
+    /** Render arbitrary graphics on bitmap */
+    new(width: number, height: number, canvas: Graphics, initColor?: number);
+    /** Render DOM element onto bitmap. */
+    new(width: number, height: number, element: Element);
+
+    readonly src: string;
+    readonly width: number;
+    readonly height: number;
+    /** Image format `png`, `webp`, etc. */
+    readonly packaging: string;
+
+    load(url: string): Promise<Graphics.Image>;
+    update(...arg): void;
+    toBytes(format: "png" | "jpeg" | "webp" | "bgra", compression?: number): ArrayBuffer;
+    fromBytes(data: ArrayBuffer): Graphics.Image;
+    /** Returns pixel color at x/y. */
+    colorAt(x: number, y: number): Graphics.Color;
+    /** Compose this image with src image. */
+    compose(src: Graphics.Image, operation: keyof typeof composeOps, dstX?: number, dstY?: number, srcX?: number, srcY?: number, srcW?: number, srcH?: number): Graphics.Image;
+
+}
+
+enum composeOps {
+    "src-over", "dst-over", "src-in", "dst-in", "src-out", "dst-out", "src-atop", "dst-atop", "xor", "copy"
+}
+
+interface Path
+{
+    /** Constructs new path object. accepts SVG's <path>s [d attribute](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d) value. */
+    new(svgPath?: string);
+
+    moveTo(x: number, y: number): void;
+    lineTo(x: number, y: number): void;
+    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
+    bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
+    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, antiClockWise?: boolean): void;
+    arcTo(x: number, y: number, x2: number, y2: number, radius: number): void;
+    ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, antiClockWise?: boolean): void;
+    rect(x: number, y: number, w: number, h: number): void;
+    closePath(): void;
+    isPointInside(x: number, y: number): boolean;
+    bounds(): [x1: number, y1: number, x2: number, y2: number];
+    /**  */
+    combine(type: "union"|"intersect"|"xor"|"exclude", otherPath: Graphics.Path): Graphics.Path;
+}
+
+interface gText
+{
+    /** CSS style rules to decorate the text including fonts, alignment, borders and background.*/
+    style: string;
+    readonly lines: number;
+    /** Text to render. */
+    chars: string;
+    class: string;
+    
+    /** Reports minimal, maximal and used width of the text block. */
+    width(): [minWidth: number, maxWidth: number, usedWidth: number];
+    /** Sets used width of the text block. Note: `text.lines` property may change after that */
+    width(usedWidth: number): void;
+    /** Reports content and used height of the text block. */
+    height(): [contentHeight: number, usedHeight: number];
+    /** Sets used height of the text block. Note: `vertical-align` of text style may change location of glyphs on screen. */
+    height(usedHeight: number): void;
+    lineMetrics(lineNo: number): [posY: number, height: number, baselineOffset: number];
+    /** Textual content of the line */
+    lineChars(lineNo: number): string;
+}
+
+declare module "@env" {
     export const OS: string;
     export const PLATFORM: string;
     export const DEVICE: "desktop" | "mobile";
@@ -681,6 +895,7 @@ enum eventType {
 }
 
 declare enum systemPath { "home", "root", "desktop", "applications", "downloads", "documents", "music", "videos", "pictures" }
+
 declare module "@sciter" {
     export const VERSION: string;
     export const REVISION: string;
@@ -714,6 +929,7 @@ declare module "@sciter" {
     export function md5(input:ArrayBuffer): string;
     export function crc32(input:ArrayBuffer): number;
 }
+
 declare module "@sys" {
     declare interface spawnOptions {stdout?: string, stdin?: string, stderr?: string}
     export function spawn(args: array<string>, options?: spawnOptions ): Process;
@@ -892,6 +1108,7 @@ declare interface TCPSocket {
     connect();
     bind();
 }
+
 interface Node extends EventTarget {
     /** Instance of Window that hosts this node; */
     readonly parentWindow: Window;
@@ -996,6 +1213,7 @@ interface NodeListOf<TNode extends Node> extends NodeList {
     forEach(callbackfn: (value: TNode, key: number, parent: NodeListOf<TNode>) => void, thisArg?: any): void;
     [index: number]: TNode;
 }
+
 interface Window {
     // new(param: object<windowParam>);
     //
@@ -1175,3 +1393,4 @@ interface selectFileParams {
     /** Initial directory to open the dialog at. */
     path?: string;
 }
+
