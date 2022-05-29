@@ -1,0 +1,16 @@
+element {
+    hit-margin: 10px;
+    aspect: a;
+    prototype: a;
+    vertical-scrollbar: a;
+    horizontal-scrollbar: a;
+    horizontal-align: a;
+    context-menu: a;
+    font-rendering-mode: sub-pixel;
+    scroll-manner: a;
+    popup-position: a;
+    flow: horizontal;
+    border-spacing: 10px;
+    style-set: a;
+    foreground: a;
+}

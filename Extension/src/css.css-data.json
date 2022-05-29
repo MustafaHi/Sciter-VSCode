@@ -1,0 +1,108 @@
+{
+  "version": 1.1,
+  "properties": [
+    {
+      "name": "size",
+      "description": "define width height",
+      "references": [
+        {
+          "name": "GitHub",
+          "url": "https://github.com/postcss/postcss-size"
+        }
+      ]
+    },
+    {
+      "name": "behavior",
+      "description": "`name url(path)` define native behavior "
+    },
+    {
+      "name": "prototype",
+      "description": "`name [ url(...) ]` Name of the class in the script, Such a class can define methods, properties and event handling methods of the whole class of elements this style applies to."
+    },
+    {
+      "name": "aspect",
+      "description": "`functionName [ url(...) ]` One or list of name/url pairs. functions are called once on initialization."
+    },
+    {
+      "name": "font-rendering-mode",
+      "description": "`sub-pixel|snap-pixel` font rendering algorithms for quality/speed."
+    },
+    {
+      "name": "hit-margin",
+      "description": "defines hover area of the element. Positive values increase hover area and negative values decrease it. Hit margins are calculated from border box of the element."
+    },
+    {
+      "name": "context-menu",
+      "description": "`selector(#menu) | url(menu.htm)` use custom (right click) context menu"
+    },
+    {
+      "name": "scroll-manner",
+      "description": "`scroll-manner( animation:false, step:auto... )` define scroll animation and behavior."
+    },
+    {
+      "name": "vertical-scrollbar",
+      "description": "`style-set-name` - style set that defines styles of vertical scrollbar."
+    },
+    {
+      "name": "horizontal-scrollbar",
+      "description": "`style-set-name` - style set that defines styles of horizontal scrollbar."
+    },
+    {
+      "name": "popup-position",
+      "description": "`default|top-left|top-center|middle-left|bottom-right`... relative to the element that requested the popup (popup anchor element)."
+    },
+    {
+      "name": "flow",
+      "description": "`vertical|horizontal|vertical-wrap|horizontal-wrap`... direction of child elements in block containers (e.g. DIVs). This attribute defines type of layout manager (LM) used by the block container.",
+      "references": [{
+        "name": "Documentation",
+        "url": "https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/css/css-layout.md#basic-flow"
+      }]
+    },
+    {
+      "name": "flow-columns",
+      "description": "`<width-def>`... define lists of column size defintions of the grid.",
+      "references": [{
+        "name": "Documentation",
+        "url": "https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/css/css-layout.md#flow-columns-and-flow-rows"
+      }]
+    },
+    {
+      "name": "flow-rows",
+      "description": "`<height-def>`... define lists of row size defintions of the grid.",
+      "references": [{
+        "name": "Documentation",
+        "url": "https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/css/css-layout.md#flow-columns-and-flow-rows"
+      }]
+    },
+    {
+      "name": "horizontal-align",
+      "description": "`center|left|right|start|end` horizontal alignment of content",
+      "references": [{
+        "name": "Documentation",
+        "url": "https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/css/css-layout.md#basic-content-alignment"
+      }]
+    },
+    {
+      "name": "border-spacing",
+      "description": "`10px` Defines spacing between all direct child elements (inter-cell spacing);",
+      "references": [{
+        "name": "Documentation",
+        "url": "https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/css/css-layout.md#spacing"
+      }]
+    },
+    {
+      "name": "style-set",
+      "description": "named block of style rules declarations that are applied to elements DOM sub-tree.",
+      "references": [{
+        "name": "Documentation",
+        "url": "https://sciter.com/style-sets-in-h-smile-core/"
+      }]
+    },
+    {
+      "name": "foreground",
+      "description": "has the same set of attributes as background, but is drawn on top of everything."
+    }
+  ],
+  "pseudoClasses": []
+}
