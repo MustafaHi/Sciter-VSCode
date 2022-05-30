@@ -3,13 +3,7 @@
   "properties": [
     {
       "name": "size",
-      "description": "define width height",
-      "references": [
-        {
-          "name": "GitHub",
-          "url": "https://github.com/postcss/postcss-size"
-        }
-      ]
+      "description": "define width height"
     },
     {
       "name": "behavior",

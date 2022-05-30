@@ -1,19 +1,34 @@
 {
-  "name": "SciterJS",
+  "name": "sciterjs",
   "displayName": "Sciter JS",
-  "description": "Sciter.JS Extension",
-  "version": "0.9.0",
+  "description": "Sciter.JS Intellisense and auto-completion",
+  "version": "0.9.1",
+  "publisher": "MustafaHi",
+  "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "vscode": "^1.5.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Linters",
+    "Snippets"
   ],
+  "keywords": ["sciter"],
+  "icon": "icon.png",
   "activationEvents": [
     "onCommand:SciterJS.initSciter",
     "onStartupFinished"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MustafaHi/Sciter-VSCode"
+  },
+  "homepage": "https://github.com/MustafaHi/Sciter-VSCode",
+  "bugs": {
+    "url": "https://github.com/MustafaHi/Sciter-VSCode/issues"
+  },
   "main": "./out/extension.js",
+  "browser": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -34,25 +49,32 @@
       }
     ],
     "css": {
-      "customData": ["./src/css.css-data.json"]
+      "customData": [
+        "./src/css.css-data.json"
+      ]
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
+    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+    "test-compile": "tsc -p ./"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",
     "@types/mocha": "^9.1.1",
     "@types/node": "14.x",
-    "@types/vscode": "^1.67.0",
+    "@types/vscode": "^1.5.0",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
     "@vscode/test-electron": "^2.1.3",
+    "esbuild": "^0.14.42",
     "eslint": "^8.14.0",
     "glob": "^8.0.1",
     "mocha": "^9.2.2",
