@@ -1,4 +1,26 @@
+# Sciter JS Extension
+
+Visual Studio Code extension
+
+`0.9.1`
+
+## Features
+
+- Intellisense for Sciter specific JavaScript, CSS and HTML
+- Auto update for Intellisense
+
+## Usage
+
+- [Download Extension from vscode marketplace](https://marketplace.visualstudio.com/items?itemName=MustafaHi.sciterjs)
+- Run the command `Initialize Sciter Project`, <kbd>CTRL+SHIFT+P</kbd> then command
+- Intellisense will be auto update on every editor start, you can disable that in preferences `SciterJS.autoUpdate`
+- HTML and CSS support work with/out the 2nd step
+
+
+
+
 # sciter.d.ts
+
 Sciter declaration files for linting intellisense in VSCode
 
 `0.9.0`
@@ -31,5 +53,7 @@ the status of declarations and their documentations as of Sciter specific and de
 | modules | done | - |
 | Range/Node | - | done |
 | Graphic | done | done |
+| Window | done | - |
+| global | - | - |
 
 initial credit [@patrick](https://sciter.com/forums/topic/typescript/#post-77670)
