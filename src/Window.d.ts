@@ -23,7 +23,7 @@ interface Window {
     aspectRatio: number;
     
     /** If set by element, direct all UI events to that element and its children. */
-    eventRoot: Element|null;
+    eventsRoot: Element|null;
     focus: Element;
     readonly parent: Window|null;
     readonly document: Document;
@@ -69,7 +69,7 @@ interface Window {
      * `untilMouseUp` - executes events until mouseup event arrives, used for various drag cases;  
      * `untilQuit` - performs run loop - executes all events until application quit message arrives;  
      * `I/O` - performs events associated with I/O; */
-    doEvent(mode: "wait"|"noWait"|"untileMouseUp"|"untilQuit"|"I/O");
+    doEvent(mode?: "wait"|"noWait"|"untileMouseUp"|"untilQuit"|"I/O");
 
 
     /** Show tray icon with the image and tooltip text.  

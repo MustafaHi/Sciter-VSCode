@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.9.0
+//| Sciter.d.ts v0.10.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Document extends Element {
@@ -195,8 +195,8 @@ interface Element extends Node {
     removeAttribute(name: string): void;
     attributes: array<string|number>;
     classList: {
-        add(name: string[], value: string|number): void;
-        remove(name: string[]): void;
+        add(...name: string[]): void;
+        remove(...name: string[]): void;
         toggle(name: string, state?: boolean): boolean;
         contains(name: string): boolean;
         length: number;
@@ -481,6 +481,7 @@ interface Event {
      * from reaching any objects other than the current object. */
     stopPropagation(): void;
     data: any;
+    readonly code: string;
     readonly AT_TARGET: number;
     readonly BUBBLING_PHASE: number;
     readonly CAPTURING_PHASE: number;
@@ -619,45 +620,48 @@ enum eventType {
 /** Call function after x time
  * @return Timeout ID for `clearTimeout(ID)`
  */
- declare function setTimeout(cb: function, milliseconds: number): number;
- /** Cancel `setTimeout` function by it returned ID */
- declare function clearTimeout(tID: number): void;
- /** Call function every x amount of time
-  * @return Interval ID for `clearInterval(ID)`
-  */
- declare function setInterval(cb: function, milliseconds: number): number;
- /** Cancel `setInterval` function by it returned ID */
- declare function clearInterval(iID: number): void;
- /** Call function on every frame
-  * @return function ID for `cancelAnimationFrame(ID)`
-  */
- declare function requestAnimationFrame(cb: function): number;
- /** Cancel `requestAnimationFrame` function by it returned ID */
- declare function cancelAnimationFrame(aID: number): void;
- 
- declare var console:
- {
-    log(...arg: any): void;
-    warn(...arg: any): void;
-    error(...arg: any): void;
- }
- 
- /**
-  * Format arguments using [C-style printf conventions](https://en.cppreference.com/w/cpp/io/c/fprintf).  
-  * Sciter specific:  
-     `%v` - print as JSON.stringify(arg);  
-     `%V` - print as JSON.stringify(arg, null, " ");
-  */
- declare function printf(...args: string[]): string;
- 
- /**
-  * Format arguments using [C-style scanf conventions](https://en.cppreference.com/w/c/io/fscanf).  
-  */
- declare function scanf(...args: string[]): array<string | number>;
- 
- /** Number of physical screen pixels in logical CSS px (dip) */
- declare var devicePixelRatio: float;
- 
+declare function setTimeout(cb: function, milliseconds: number): number;
+/** Cancel `setTimeout` function by it returned ID */
+declare function clearTimeout(tID: number): void;
+/** Call function every x amount of time
+ * @return Interval ID for `clearInterval(ID)`
+ */
+declare function setInterval(cb: function, milliseconds: number): number;
+/** Cancel `setInterval` function by it returned ID */
+declare function clearInterval(iID: number): void;
+/** Call function on every frame
+ * @return function ID for `cancelAnimationFrame(ID)`
+ */
+declare function requestAnimationFrame(cb: function): number;
+/** Cancel `requestAnimationFrame` function by it returned ID */
+declare function cancelAnimationFrame(aID: number): void;
+
+declare var console:
+{
+   log(...arg: any): void;
+   warn(...arg: any): void;
+   error(...arg: any): void;
+}
+
+/**
+ * Format arguments using [C-style printf conventions](https://en.cppreference.com/w/cpp/io/c/fprintf).  
+ * Sciter specific:  
+    `%v` - print as JSON.stringify(arg);  
+    `%V` - print as JSON.stringify(arg, null, " ");
+ */
+declare function printf(...args: string[]): string;
+
+/**
+ * Format arguments using [C-style scanf conventions](https://en.cppreference.com/w/c/io/fscanf).  
+ */
+declare function scanf(...args: string[]): array<string | number>;
+
+/** Number of physical screen pixels in logical CSS px (dip) */
+declare var devicePixelRatio: float;
+
+/** Current document directory */
+declare const __DIR__: string;
+
 declare var Graphics: {
     new(): Graphics;
     Brush: Brush;
@@ -863,6 +867,18 @@ interface gText
     lineMetrics(lineNo: number): [posY: number, height: number, baselineOffset: number];
     /** Textual content of the line */
     lineChars(lineNo: number): string;
+}
+
+/** Enable JSX React support */
+declare var React: any;
+
+declare namespace JSX {
+    /** Custom Element documentation support */
+    interface IntrinsicElements {
+        /** Root document element */
+        html: any;
+        [tagName: string]: any;
+    }
 }
 
 declare module "@env" {
@@ -1239,7 +1255,7 @@ interface Window {
     aspectRatio: number;
     
     /** If set by element, direct all UI events to that element and its children. */
-    eventRoot: Element|null;
+    eventsRoot: Element|null;
     focus: Element;
     readonly parent: Window|null;
     readonly document: Document;
@@ -1285,7 +1301,7 @@ interface Window {
      * `untilMouseUp` - executes events until mouseup event arrives, used for various drag cases;  
      * `untilQuit` - performs run loop - executes all events until application quit message arrives;  
      * `I/O` - performs events associated with I/O; */
-    doEvent(mode: "wait"|"noWait"|"untileMouseUp"|"untilQuit"|"I/O");
+    doEvent(mode?: "wait"|"noWait"|"untileMouseUp"|"untilQuit"|"I/O");
 
 
     /** Show tray icon with the image and tooltip text.  

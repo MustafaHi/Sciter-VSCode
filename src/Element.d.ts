@@ -149,8 +149,8 @@ interface Element extends Node {
     removeAttribute(name: string): void;
     attributes: array<string|number>;
     classList: {
-        add(name: string[], value: string|number): void;
-        remove(name: string[]): void;
+        add(...name: string[]): void;
+        remove(...name: string[]): void;
         toggle(name: string, state?: boolean): boolean;
         contains(name: string): boolean;
         length: number;

@@ -32,6 +32,7 @@ interface Event {
      * from reaching any objects other than the current object. */
     stopPropagation(): void;
     data: any;
+    readonly code: string;
     readonly AT_TARGET: number;
     readonly BUBBLING_PHASE: number;
     readonly CAPTURING_PHASE: number;
