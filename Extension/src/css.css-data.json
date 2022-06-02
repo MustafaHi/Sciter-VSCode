@@ -3,11 +3,12 @@
   "properties": [
     {
       "name": "size",
-      "description": "define width height"
+      "description": "define width height",
+      "restrictions": ["length"]
     },
     {
       "name": "behavior",
-      "description": "`name url(path)` define native behavior "
+      "description": "`name url(path)` define native behavior."
     },
     {
       "name": "prototype",
@@ -19,35 +20,47 @@
     },
     {
       "name": "font-rendering-mode",
-      "description": "`sub-pixel|snap-pixel` font rendering algorithms for quality/speed."
+      "description": "Font rendering algorithms for quality/speed.",
+      "values": [
+        {
+          "name": "sub-pixel",
+          "description": "Higher quality rendering, letters are place between pixels."
+        },
+        {
+          "name": "snap-pixel",
+          "description": "Faster rendering method."
+        }
+      ]
     },
     {
       "name": "hit-margin",
-      "description": "defines hover area of the element. Positive values increase hover area and negative values decrease it. Hit margins are calculated from border box of the element."
+      "description": "defines hover area of the element. Positive values increase hover area and negative values decrease it. Hit margins are calculated from border box of the element.",
+      "restrictions": ["length"]
     },
     {
       "name": "context-menu",
-      "description": "`selector(#menu) | url(menu.htm)` use custom (right click) context menu"
-    },
-    {
-      "name": "scroll-manner",
-      "description": "`scroll-manner( animation:false, step:auto... )` define scroll animation and behavior."
+      "description": "`selector(#menu) | url(menu.htm)` use as custom (right click) context menu",
+      "syntax": "selector(#element) | url(file.htm)"
     },
     {
       "name": "vertical-scrollbar",
-      "description": "`style-set-name` - style set that defines styles of vertical scrollbar."
+      "description": "`style-set-name` - style set that defines styles of vertical scrollbar.",
+      "restrictions": ["string"]
     },
     {
       "name": "horizontal-scrollbar",
-      "description": "`style-set-name` - style set that defines styles of horizontal scrollbar."
-    },
-    {
-      "name": "popup-position",
-      "description": "`default|top-left|top-center|middle-left|bottom-right`... relative to the element that requested the popup (popup anchor element)."
+      "description": "`style-set-name` - style set that defines styles of horizontal scrollbar.",
+      "restrictions": ["string"]
     },
     {
       "name": "flow",
       "description": "`vertical|horizontal|vertical-wrap|horizontal-wrap`... direction of child elements in block containers (e.g. DIVs). This attribute defines type of layout manager (LM) used by the block container.",
+      "values": [
+        { "name": "vertical" },
+        { "name": "horizontal" },
+        { "name": "vertical-wrap" },
+        { "name": "horizontal-wrap" }
+      ],
       "references": [{
         "name": "Documentation",
         "url": "https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/css/css-layout.md#basic-flow"
@@ -56,6 +69,8 @@
     {
       "name": "flow-columns",
       "description": "`<width-def>`... define lists of column size defintions of the grid.",
+      "syntax": "<width-def>",
+      "restrictions": ["enum"],
       "references": [{
         "name": "Documentation",
         "url": "https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/css/css-layout.md#flow-columns-and-flow-rows"
@@ -64,6 +79,8 @@
     {
       "name": "flow-rows",
       "description": "`<height-def>`... define lists of row size defintions of the grid.",
+      "syntax": "<height-def>",
+      "restrictions": ["enum"],
       "references": [{
         "name": "Documentation",
         "url": "https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/css/css-layout.md#flow-columns-and-flow-rows"
@@ -72,6 +89,14 @@
     {
       "name": "horizontal-align",
       "description": "`center|left|right|start|end` horizontal alignment of content",
+      "values": [
+        { "name": "center" },
+        { "name": "left" },
+        { "name": "right" },
+        { "name": "start" },
+        { "name": "end" }
+      ],
+      "restrictions": ["string"],
       "references": [{
         "name": "Documentation",
         "url": "https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/css/css-layout.md#basic-content-alignment"
@@ -80,6 +105,7 @@
     {
       "name": "border-spacing",
       "description": "`10px` Defines spacing between all direct child elements (inter-cell spacing);",
+      "restrictions": ["length"],
       "references": [{
         "name": "Documentation",
         "url": "https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/css/css-layout.md#spacing"
@@ -93,10 +119,299 @@
         "url": "https://sciter.com/style-sets-in-h-smile-core/"
       }]
     },
+
+    {
+      "name": "text-selection",
+      "description": "named block of style rules declarations that are applied to elements DOM sub-tree.",
+      "syntax": "<text-color> <background-text-color>",
+      "restrictions": ["color"]
+    },
+    {
+      "name": "text-selection-color",
+      "description": "Color of selected text.",
+      "restrictions": ["color"]
+    },
+    {
+      "name": "text-selection-caret-color",
+      "description": "named block of style rules declarations that are applied to elements DOM sub-tree.",
+      "restrictions": ["color"]
+    },
+    {
+      "name": "text-selection-background-color",
+      "description": "Background color of text selection.",
+      "restrictions": ["color"]
+    },
+
     {
       "name": "foreground",
-      "description": "has the same set of attributes as background, but is drawn on top of everything."
+      "description": "has the same set of attributes as background, but is drawn on top of everything.",
+      "syntax": "[ <bg-layer> , ]* <final-bg-layer>",
+			"restrictions": [
+				"enum",
+				"image",
+				"color",
+				"position",
+				"length",
+				"repeat",
+				"percentage",
+				"box"
+			],
+      "references": [
+				{
+					"name": "MDN Reference",
+					"url": "https://developer.mozilla.org/docs/Web/CSS/background"
+				}
+			]
+    },
+    {
+			"name": "foreground-color",
+			"syntax": "<color>",
+			"description": "Sets the background color of an element.",
+			"restrictions": [
+				"color"
+			],
+			"references": [
+				{
+					"name": "MDN Reference",
+					"url": "https://developer.mozilla.org/docs/Web/CSS/background-color"
+				}
+			]
+		},
+    {
+			"name": "foreground-attachment",
+			"values": [
+				{
+					"name": "fixed",
+					"description": "The foreground is fixed with regard to the viewport. In paged media where there is no viewport, a 'fixed' foreground is fixed with respect to the page box and therefore replicated on every page."
+				},
+				{
+					"name": "local",
+					"description": "The foreground is fixed with regard to the element’s contents: if the element has a scrolling mechanism, the foreground scrolls with the element’s contents."
+				},
+				{
+					"name": "scroll",
+					"description": "The foreground is fixed with regard to the element itself and does not scroll with its contents. (It is effectively attached to the element’s border.)"
+				}
+			],
+			"syntax": "<attachment>#",
+			"description": "Specifies whether the foreground images are fixed with regard to the viewport ('fixed') or scroll along with the element ('scroll') or its contents ('local').",
+			"restrictions": [
+				"enum"
+			],
+      "references": [
+				{
+					"name": "MDN Reference",
+					"url": "https://developer.mozilla.org/docs/Web/CSS/background-attachment"
+				}
+			]
+		},
+    {
+			"name": "foreground-image",
+			"values": [
+				{
+					"name": "none",
+					"description": "Counts as an image layer but draws nothing."
+				}
+			],
+			"syntax": "<bg-image>#",
+			"references": [
+				{
+					"name": "MDN Reference",
+					"url": "https://developer.mozilla.org/docs/Web/CSS/background-image"
+				}
+			],
+			"description": "Sets the foreground image(s) of an element.",
+			"restrictions": [
+				"image",
+				"enum"
+			]
+		},
+    {
+			"name": "foreground-position",
+			"syntax": "<bg-position>#",
+			"references": [
+				{
+					"name": "MDN Reference",
+					"url": "https://developer.mozilla.org/docs/Web/CSS/background-position"
+				}
+			],
+			"description": "Specifies the initial position of the foreground image(s) (after any resizing) within their corresponding foreground positioning area.",
+			"restrictions": [
+				"position",
+				"length",
+				"percentage"
+			]
+		},
+    {
+			"name": "foreground-repeat",
+			"values": [
+        {
+          "name": "expand",
+          "description": "Expandable filling mode"
+        },
+        {
+          "name": "stretch",
+          "description": "Image is stretched to fill background in full. This is the same mode as rendering of image in <IMG> element. If stretch is combined with keep-ratio then images is resized with preservation of aspect ratio. To position such an image use foreground-position attribute."
+        }
+      ],
+			"syntax": "<repeat-style>#",
+			"references": [
+				{
+					"name": "MDN Reference",
+					"url": "https://developer.mozilla.org/docs/Web/CSS/background-repeat"
+				}
+			],
+			"description": "Specifies how foreground images are tiled after they have been sized and positioned.",
+			"restrictions": [
+				"repeat"
+			]
+		},
+    {
+			"name": "foreground-image-cursor",
+			"values": [
+        { "name": "auto" },
+        { "name": "crosshair" },
+        { "name": "default" },
+        { "name": "pointer" },
+        { "name": "move" },
+        { "name": "e-resize" },
+        { "name": "ne-resize" },
+        { "name": "nw-resize" },
+        { "name": "n-resize" },
+        { "name": "s-resize" },
+        { "name": "se-resize" },
+        { "name": "sw-resize" },
+        { "name": "w-resize" },
+        { "name": "text" },
+        { "name": "wait" },
+        { "name": "help" },
+        { "name": "progress" },
+        { "name": "no-drop" }
+      ],
+			"description": "Used when foreground-repeat has no-repeat value to define when mouse hovers foreground-image area.",
+			"restrictions": [
+				"url"
+			]
+		},
+
+    {
+      "name": "list-marker-color",
+      "description": "Sets the color of the list marker (bullet, number or tree line)",
+      "restrictions": ["color"]
+    },
+    {
+      "name": "list-marker-size",
+      "description": "Sets the color of the list marker (bullet, number or tree line)",
+      "restrictions": ["length"]
+    },
+    {
+      "name": "list-marker-style",
+      "description": "Sets the color of the list marker (bullet, number or tree line)",
+      "values": [
+        { "name": "none" },
+        { "name": "dotted" },
+        { "name": "dashed" },
+        { "name": "solid" }
+      ]
+    },
+
+    {
+      "name": "overflow",
+      "values": [
+        {
+          "name": "hidden-scroll",
+          "description": "The scrollbar is not shown but content of the element is scrollable."
+        },
+        {
+          "name": "scroll-indicator",
+          "description": "Element shows scroll position indicator when mouse is hovering this element."
+        },
+        {
+          "name": "none",
+          "description": "That's an equivalent of defining `{ overflow:visible; min-width:min-content; min-height:min-content; }`"
+        }
+      ]
+    },
+
+    {
+      "name": "scroll-manner",
+      "description": "`scroll-manner( animation:false, step:auto... )` define scroll animation and behavior."
+    },
+    {
+      "name": "scroll-manner-x",
+      "description": "`scroll-manner( animation:false, step:auto... )` define scroll animation and behavior."
+    },
+    {
+      "name": "scroll-manner-y",
+      "description": "`scroll-manner( animation:false, step:auto... )` define scroll animation and behavior."
+    },
+    {
+      "name": "mapping",
+      "description": "`defines mapping of directional related properties. `left-to-right(border,margin)`",
+      "syntax": "inherit( <part-list> ) | none( <part-list> ) | left-to-right( <part-list> ) | top-to-right( <part-list> )",
+      "values": [
+        { "name": "none" },
+        { "name": "left-to-right" },
+        { "name": "top-to-right" }
+      ]
+    },
+
+    {
+      "name": "popup-position",
+      "description": "`default|top-left|top-center|middle-left|bottom-right`... relative to the element that requested the popup (popup anchor element).",
+      "syntax": "<popup-reference-point> <anchor-reference-point> | <advisory-position>",
+      "values": [
+        {
+          "name": "at-tail",
+          "description": "popup appears as popup element of the <select> - underneath the anchor element. Or if not enough space - on top of it."
+        },
+        {
+          "name": "at-head",
+          "description": "popup appears above the anchor."
+        },
+        {
+          "name": "at-end",
+          "description": "popup appears aside of the anchor (like secondary popup menu). Particular side is determined by available space and directionality."
+        },
+        {
+          "name": "at-start",
+          "description": "normally appears on the left of anchor. For RTL direction - on the right."
+        }
+      ]
+    },
+    {
+      "name": "popup-anchor-reference-point",
+      "description": "",
+      "values": [
+        { "name": "default" },
+        { "name": "top-left" },
+        { "name": "top-center" },
+        { "name": "top-right" },
+        { "name": "middle-left" },
+        { "name": "middle-center" },
+        { "name": "middle-right" },
+        { "name": "bottom-left" },
+        { "name": "bottom-center" },
+        { "name": "bottom-right" }
+      ]
+    },
+    {
+      "name": "popup-reference-point",
+      "description": "",
+      "values": [
+        { "name": "default" },
+        { "name": "top-left" },
+        { "name": "top-center" },
+        { "name": "top-right" },
+        { "name": "middle-left" },
+        { "name": "middle-center" },
+        { "name": "middle-right" },
+        { "name": "bottom-left" },
+        { "name": "bottom-center" },
+        { "name": "bottom-right" }
+      ]
     }
+
   ],
   "pseudoClasses": []
 }

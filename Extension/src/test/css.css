@@ -1,16 +1,52 @@
 element {
-    hit-margin: 10px;
     aspect: a;
     prototype: a;
     vertical-scrollbar: a;
     horizontal-scrollbar: a;
     horizontal-align: a;
-    context-menu: a;
-    font-rendering-mode: sub-pixel;
     scroll-manner: a;
-    popup-position: a;
-    flow: horizontal;
-    border-spacing: 10px;
+    scroll-manner-x: a;
+    scroll-manner-y: a;
+    mapping: a;
+
+    context-menu: a;
     style-set: a;
+    scroll-manner: a;
+    font-rendering-mode: sub-pixel;
+
+    popup-position: a;
+    popup-anchor-reference-point: a;
+    popup-reference-point: a;
+    
+    flow: horizontal;
+    flow-rows: a;
+    flow-columns: a;
+
+    text-selection: a;
+    text-selection-color: a;
+    text-selection-background-color: a;
+    text-selection-caret-color: a;
+    
+    size: a;
+    hit-margin: a;
+    border-spacing: a;
+
+    list-marker-color: a;
+    list-marker-size: a;
+    list-marker-style: a;
+
     foreground: a;
+    foreground-color: a;
+    foreground-image: a;
+    foreground-attachment: a;
+    foreground-repeat: a;
+    foreground-position: a;
+    foreground-image-cursor: a;
+}
+
+@style-set a
+{
+    element {
+        width: a;
+    }
 }
