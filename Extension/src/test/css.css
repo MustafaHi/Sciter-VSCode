@@ -44,9 +44,22 @@ element {
     foreground-image-cursor: a;
 }
 
-@style-set a
+@set a
 {
     element {
         width: a;
     }
 }
+
+@mixin a(a)
+{
+
+}
+
+@image-map a
+{
+
+}
+
+@const DARK: #111;
+

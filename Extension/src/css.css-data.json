@@ -440,5 +440,35 @@
     }
 
   ],
-  "pseudoClasses": []
+  "pseudoClasses": [],
+  "atDirectives": [
+    {
+      "name": "@set",
+      "description": {
+        "kind": "markdown",
+        "value": "Custom defined styles applying for `:root` element and it children"
+      }
+    },
+    {
+      "name": "@mixin",
+      "description": {
+        "kind": "markdown",
+        "value": "Named set of CSS properties that can be applied by `@name` to CSS rules, can use params."
+      }
+    },
+    {
+      "name": "@image-map",
+      "description": {
+        "kind": "markdown",
+        "value": "Map images."
+      }
+    },
+    {
+      "name": "@const",
+      "description": {
+        "kind": "markdown",
+        "value": "Constent global property `@const DARK : #222;`"
+      }
+    }
+  ]
 }
