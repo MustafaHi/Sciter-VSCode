@@ -2,7 +2,7 @@
 
 Visual Studio Code extension
 
-`0.9.2`
+`0.9.3`
 
 ## Features
 

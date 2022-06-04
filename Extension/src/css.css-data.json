@@ -3,20 +3,29 @@
   "properties": [
     {
       "name": "size",
-      "description": "define width height",
+      "description": "Define <width> <height>",
       "restrictions": ["length"]
     },
     {
       "name": "behavior",
-      "description": "`name url(path)` define native behavior."
+      "description": {
+        "kind": "markdown",
+        "value": "`name url(path)` define native behavior."
+      }
     },
     {
       "name": "prototype",
-      "description": "`name [ url(...) ]` Name of the class in the script, Such a class can define methods, properties and event handling methods of the whole class of elements this style applies to."
+      "description": {
+        "kind": "markdown",
+        "value": "`name [ url(...) ]` Name of the class in the script, Such a class can define methods, properties and event handling methods of the whole class of elements this style applies to."
+      }
     },
     {
       "name": "aspect",
-      "description": "`functionName [ url(...) ]` One or list of name/url pairs. functions are called once on initialization."
+      "description": {
+        "kind": "markdown",
+        "value": "`functionName [ url(...) ]` One or list of name/url pairs. functions are called once on initialization."
+      }
     },
     {
       "name": "font-rendering-mode",
@@ -39,22 +48,28 @@
     },
     {
       "name": "context-menu",
-      "description": "`selector(#menu) | url(menu.htm)` use as custom (right click) context menu",
+      "description": "Use as custom (right click) context menu",
       "syntax": "selector(#element) | url(file.htm)"
     },
     {
       "name": "vertical-scrollbar",
-      "description": "`style-set-name` - style set that defines styles of vertical scrollbar.",
+      "description": {
+        "kind": "markdown",
+        "value": "`style-set-name` - style set that defines styles of vertical scrollbar."
+      },
       "restrictions": ["string"]
     },
     {
       "name": "horizontal-scrollbar",
-      "description": "`style-set-name` - style set that defines styles of horizontal scrollbar.",
+      "description": {
+        "kind": "markdown",
+        "value": "`style-set-name` - style set that defines styles of horizontal scrollbar."
+      },
       "restrictions": ["string"]
     },
     {
       "name": "flow",
-      "description": "`vertical|horizontal|vertical-wrap|horizontal-wrap`... direction of child elements in block containers (e.g. DIVs). This attribute defines type of layout manager (LM) used by the block container.",
+      "description": "Direction of child elements flow. This attribute defines type of layout manager (LM) used by the block container.",
       "values": [
         { "name": "vertical" },
         { "name": "horizontal" },
@@ -68,8 +83,8 @@
     },
     {
       "name": "flow-columns",
-      "description": "`<width-def>`... define lists of column size defintions of the grid.",
-      "syntax": "<width-def>",
+      "description": "Define lists of column size defintions of the grid.",
+      "syntax": "<width-def>...",
       "restrictions": ["enum"],
       "references": [{
         "name": "Documentation",
@@ -78,8 +93,8 @@
     },
     {
       "name": "flow-rows",
-      "description": "`<height-def>`... define lists of row size defintions of the grid.",
-      "syntax": "<height-def>",
+      "description": "Define lists of row size defintions of the grid.",
+      "syntax": "<height-def>...",
       "restrictions": ["enum"],
       "references": [{
         "name": "Documentation",
@@ -88,7 +103,7 @@
     },
     {
       "name": "horizontal-align",
-      "description": "`center|left|right|start|end` horizontal alignment of content",
+      "description": "Horizontal alignment of content",
       "values": [
         { "name": "center" },
         { "name": "left" },
@@ -104,7 +119,7 @@
     },
     {
       "name": "border-spacing",
-      "description": "`10px` Defines spacing between all direct child elements (inter-cell spacing);",
+      "description": "Defines spacing between all direct child elements (inter-cell spacing);",
       "restrictions": ["length"],
       "references": [{
         "name": "Documentation",
@@ -122,7 +137,7 @@
 
     {
       "name": "text-selection",
-      "description": "named block of style rules declarations that are applied to elements DOM sub-tree.",
+      "description": "Define text color and background of selected text.",
       "syntax": "<text-color> <background-text-color>",
       "restrictions": ["color"]
     },
@@ -133,7 +148,7 @@
     },
     {
       "name": "text-selection-caret-color",
-      "description": "named block of style rules declarations that are applied to elements DOM sub-tree.",
+      "description": "Color of cursor(caret).",
       "restrictions": ["color"]
     },
     {
@@ -296,17 +311,17 @@
 
     {
       "name": "list-marker-color",
-      "description": "Sets the color of the list marker (bullet, number or tree line)",
+      "description": "Sets the color of the list marker",
       "restrictions": ["color"]
     },
     {
       "name": "list-marker-size",
-      "description": "Sets the color of the list marker (bullet, number or tree line)",
+      "description": "Sets the size of the list marker",
       "restrictions": ["length"]
     },
     {
       "name": "list-marker-style",
-      "description": "Sets the color of the list marker (bullet, number or tree line)",
+      "description": "Sets the style of the list marker.",
       "values": [
         { "name": "none" },
         { "name": "dotted" },
@@ -335,19 +350,31 @@
 
     {
       "name": "scroll-manner",
-      "description": "`scroll-manner( animation:false, step:auto... )` define scroll animation and behavior."
+      "description": {
+        "kind": "markdown",
+        "value": "`scroll-manner( animation:false, step:auto... )` define scroll animation and behavior."
+      }
     },
     {
       "name": "scroll-manner-x",
-      "description": "`scroll-manner( animation:false, step:auto... )` define scroll animation and behavior."
+      "description": {
+        "kind": "markdown",
+        "value": "`scroll-manner( animation:false, step:auto... )` define scroll animation and behavior."
+      }
     },
     {
       "name": "scroll-manner-y",
-      "description": "`scroll-manner( animation:false, step:auto... )` define scroll animation and behavior."
+      "description": {
+        "kind": "markdown",
+        "value": "`scroll-manner( animation:false, step:auto... )` define scroll animation and behavior."
+      }
     },
     {
       "name": "mapping",
-      "description": "`defines mapping of directional related properties. `left-to-right(border,margin)`",
+      "description": {
+        "kind": "markdown",
+        "value": "defines mapping of directional related properties. `left-to-right(border,margin)`"
+      },
       "syntax": "inherit( <part-list> ) | none( <part-list> ) | left-to-right( <part-list> ) | top-to-right( <part-list> )",
       "values": [
         { "name": "none" },
@@ -358,7 +385,7 @@
 
     {
       "name": "popup-position",
-      "description": "`default|top-left|top-center|middle-left|bottom-right`... relative to the element that requested the popup (popup anchor element).",
+      "description": "Popup position relative to the element that requested the popup (anchor element).",
       "syntax": "<popup-reference-point> <anchor-reference-point> | <advisory-position>",
       "values": [
         {
