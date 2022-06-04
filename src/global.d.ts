@@ -43,9 +43,13 @@ declare var devicePixelRatio: float;
 /** Current document directory */
 declare const __DIR__: string;
 
+declare var globalThis: object;
+declare var window: globalThis;
+
 declare function getComputedStyle(el: Element, pseudoElement?: Element): Style;
 
-declare function fetch(url: string, params: fetchParams): Promise<object>;
+
+declare function fetch(url: string, params: fetchParams): Promise<Response>;
 
 interface fetchParams
 {
@@ -58,7 +62,7 @@ interface fetchParams
    integrity?: string;
    keepalive?: boolean;
    sync?: boolean;
-   body?: Response;
+   body?: string|formData;
    headers?: {
       'Content-Type': 'application/json'|'application/x-www-form-urlencoded';
       [name: string]: string|boolean;
