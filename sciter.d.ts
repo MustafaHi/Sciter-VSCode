@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.10.0
+//| Sciter.d.ts v0.11.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Document extends Element {
@@ -661,6 +661,50 @@ declare var devicePixelRatio: float;
 
 /** Current document directory */
 declare const __DIR__: string;
+
+declare function getComputedStyle(el: Element, pseudoElement?: Element): Style;
+
+declare function fetch(url: string, params: fetchParams): Promise<object>;
+
+interface fetchParams
+{
+   method?: 'POST'|'GET'|'PUT'|'DELETE';
+   mode?: 'cors'|'no-cors'|'same-origin';
+   cache?: 'default'|'no-cache'|'reload'|'force-cache'|'only-if-cached';
+   credentials?: 'same-origin'|'include'|'omit';
+   redirect?: 'follow'|'manual'|'error';
+   referrerPolicy?: 'non-referrer-when-downgrade'|'non-referrer'|'origin'|'origin-when-cross-origin'|'same-origin'|'strict-origin'|'strict-origin-when-cross-origin'|'unsafe-url';
+   integrity?: string;
+   keepalive?: boolean;
+   sync?: boolean;
+   body?: Response;
+   headers?: {
+      'Content-Type': 'application/json'|'application/x-www-form-urlencoded';
+      [name: string]: string|boolean;
+   }
+}
+
+interface Response
+{
+   readonly body: string;
+   readonly bodyUsed: boolean;
+   readonly headers: object;
+   readonly ok: boolean;
+   readonly redirected: string[]|undefined;
+   readonly status: number;
+   readonly statusText: string;
+   readonly type: string;
+   readonly url: string;
+   
+   arrayBuffer(): Promise<ArrayBuffer>;
+   blob(): Promise<ArrayBuffer>;
+   clone(): Response;
+   error(): Response;
+   redirect(url: string, status?: number): Response;
+   formData(): Promise<FormData>;
+   json(): Promise<object>;
+   text(): Promise<string>;
+}
 
 declare var Graphics: {
     new(): Graphics;
