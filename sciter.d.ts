@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.13.0
+//| Sciter.d.ts v0.14.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Document extends Element {
@@ -11,7 +11,7 @@ interface Document extends Element {
     /** Subscribe to any DOM event */
     on(event: keyof typeof eventType, selector?: string, handler: eventFunction): void;
     on(event: keyof typeof domEvent, handler: eventFunction): void;
-    
+    ready: Function;
 
     /* NATIVE */
 
@@ -963,20 +963,64 @@ declare namespace JSX {
     }
 }
 
+declare module "@debug" {
+    /** Gets call stack item at level */
+    export function callStackAt(level: number): callStack;
+    /** Catch unhandeld exceptions.
+     * @param cb function taking (Error) as argument
+     */
+    export function setUnhandledExeceptionHandler(cb: Function): void;
+    /** Redirect console output. make sure to reset `Console.log`...
+     * @param cb function taking `(subsystem: number, severity: number, msg: any)` as argument
+     */
+    export function setConsoleOutputHandler(cb: Function): void;
+    export function setBreakpointHandler(cb: Function): void;
+    export function setBreakpoints(cb: Function): void;
+    export function getElementByUID(id: number): Element;
+    export function getUIDofElement(el: Element): number;
+    export function highlightElement(el: Element): void;
+    export function getStyleRulesOfElement(el: Element): Style;
+    export function containerId(): number;
+    export function objectKind(object: Object): string;
+    export function sublimatedValue(value: any, expanded: any): any;
+    export function sublimatedValueElements(): any;
+    export function frameVariables(id: number): any;
+}
+
+interface callStack {
+    /** Is that call stack frame is of native function. */
+    isNative: boolean;
+    functionName: string;
+    /** line number of function declaration */
+    functionLineNo: number;
+    fileName: string;
+    /** line number inside the function. */
+    LineNo: number;
+}
+
 declare module "@env" {
+    /** OS identification name: `"Windows-10.1"`... */
     export const OS: string;
+    /** OS/platform generic name: `"Windows", "OSX", "Linux", "Android"`, etc. */
     export const PLATFORM: string;
+    /** Device type */
     export const DEVICE: "desktop" | "mobile";
+    /** Returns two-letter language abbreviation of user's default language. */
     export function language(): string;
+    /** Returns two-letter country abbreviation of the user's country */
     export function country(): string;
     export function userName(): string;
+    /** Machine network name. */
     export function machineName(): string;
+    /** Machine network domain. */
     export function domainName(): string;
     /**
      * Launch file/URL with default system application
      */
     export function launch(path:string): void;
+    /** Converts relative path to absolute path using location of `sciter.dll` as a base. */
     export function home(relpath ?: string): string;
+    /** Converts relative path to absolute path prefixed by `file://` using location of sciter.dll as a base. */
     export function homeURL(relpath ?: string): string;
     /**
      * Return path of default system folder ie. documents|downloads
@@ -984,15 +1028,21 @@ declare module "@env" {
      * @param relpath relative path to name
      */
     export function path(name: keyof typeof systemPath, relpath ?: string): string;
-    export function pathURL(name: string): string;
+    /**
+     * Return path of default system folder ie. documents|downloads, prefixed by `file://`
+     * @param name of default system folder
+     * @param relpath relative path to name
+     */
+    export function pathURL(name: keyof typeof systemPath): string;
+    /** Get/Set environment variable */
+    export function variable(key: string, value?: string): string;
     /**
      * Execute comma seperated arguments
      */
     export function exec(...args: string[]): void;
-    
 }
 
-declare enum systemPath { "home", "root", "desktop", "applications", "downloads", "documents", "music", "videos", "pictures" }
+enum systemPath { "home", "root", "desktop", "applications", "downloads", "documents", "music", "videos", "pictures" }
 
 declare module "@sciter" {
     export const VERSION: string;
