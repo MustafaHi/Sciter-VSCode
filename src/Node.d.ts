@@ -1,4 +1,4 @@
-interface Node extends EventTarget {
+interface Node {
     /** Instance of Window that hosts this node; */
     readonly parentWindow: Window;
     /** Returns the previous sibling. */
@@ -101,5 +101,50 @@ interface NodeListOf<TNode extends Node> extends NodeList {
      */
     forEach(callbackfn: (value: TNode, key: number, parent: NodeListOf<TNode>) => void, thisArg?: any): void;
     [index: number]: TNode;
+}
+
+
+interface Range
+{
+    /** `true` if selection is collapsed to one position (anchor === focus) */
+    readonly isCollapsed: boolean;
+    /** Nearest container element that encloses as anchor as focus positions */
+    readonly commonAncestorContainer: Element;
+    readonly endContainer: Node;
+    readonly endOffset: number;
+    readonly startContainer: Node;
+    readonly startOffset: number;
+    readonly start: [node: Node, offset: number];
+    readonly end: [node: Node, offset: number];
+
+    setStart(node: Node, offset: number): void;
+    setEnd(node: Node, offset: number): void;
+    setStartBefore(node: Node): void;
+    setEndBefore(node: Node): void;
+    setStartAfter(node: Node): void;
+    setEndAfter(node: Node): void;
+    selectNode(node: Node): void;
+    selectNodeContents(node: Node): void;
+    selectNodeContent(node: Node): void;
+    getRangeAt(index: number): Range;
+    /** Set cursor to the start or end of selection. */
+    collapse(toStart?: boolean): void;
+    cloneRange(): Range;
+
+    /** Apply marks to the selected range */
+    applyMark(name: string|string[]): void;
+    /** Apply marks to the selected range */
+    highlight(name: string|string[]): void;
+    /** Remove marks applied to the selected range */
+    clearMark(name: string|string[]);
+    /** Remove marks applied to the selected range */
+    clearHighlight(name: string|string[]): void;
+    /** Return list of the applied mark names inside the range */
+    marks(): string[];
+    /** Set the range to the start-end of character having the given mark name */
+    setToMark(name: string): void;
+}
+declare var Range: {
+    new(): Range;
 }
 

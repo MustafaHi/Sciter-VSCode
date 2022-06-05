@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.12.0
+//| Sciter.d.ts v0.13.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Document extends Element {
@@ -1207,7 +1207,7 @@ declare interface TCPSocket {
     bind();
 }
 
-interface Node extends EventTarget {
+interface Node {
     /** Instance of Window that hosts this node; */
     readonly parentWindow: Window;
     /** Returns the previous sibling. */
@@ -1312,6 +1312,51 @@ interface NodeListOf<TNode extends Node> extends NodeList {
     [index: number]: TNode;
 }
 
+
+interface Range
+{
+    /** `true` if selection is collapsed to one position (anchor === focus) */
+    readonly isCollapsed: boolean;
+    /** Nearest container element that encloses as anchor as focus positions */
+    readonly commonAncestorContainer: Element;
+    readonly endContainer: Node;
+    readonly endOffset: number;
+    readonly startContainer: Node;
+    readonly startOffset: number;
+    readonly start: [node: Node, offset: number];
+    readonly end: [node: Node, offset: number];
+
+    setStart(node: Node, offset: number): void;
+    setEnd(node: Node, offset: number): void;
+    setStartBefore(node: Node): void;
+    setEndBefore(node: Node): void;
+    setStartAfter(node: Node): void;
+    setEndAfter(node: Node): void;
+    selectNode(node: Node): void;
+    selectNodeContents(node: Node): void;
+    selectNodeContent(node: Node): void;
+    getRangeAt(index: number): Range;
+    /** Set cursor to the start or end of selection. */
+    collapse(toStart?: boolean): void;
+    cloneRange(): Range;
+
+    /** Apply marks to the selected range */
+    applyMark(name: string|string[]): void;
+    /** Apply marks to the selected range */
+    highlight(name: string|string[]): void;
+    /** Remove marks applied to the selected range */
+    clearMark(name: string|string[]);
+    /** Remove marks applied to the selected range */
+    clearHighlight(name: string|string[]): void;
+    /** Return list of the applied mark names inside the range */
+    marks(): string[];
+    /** Set the range to the start-end of character having the given mark name */
+    setToMark(name: string): void;
+}
+declare var Range: {
+    new(): Range;
+}
+
 interface Window {
     // new(param: object<windowParam>);
     //
@@ -1353,19 +1398,28 @@ interface Window {
     blurBehind: "none" | "auto" | "dark" | "ultra-dark" | "light" | "ultra-light";
 
     /** Minimal size of resizable window `[width, height]` */
-    minSize: array;
+    minSize: [width: number, height: number];
     /** Maximum size of resizable window `[width, height]` */
-    maxSize: array;
+    maxSize: [width: number, height: number];
 
     frameType: keyof typeof frameType;
 
+    /** The function allows to enumerate elements in tab order.
+     * reference element must be selectable.  
+     * to select element use `window.this.focus = element`
+    */
+    focusable(direction: "next"|"prior"|"first"|"last", reference: Element): Element;
+    /** Set input focus to window */
+    active(bringToFront: boolean): void;
+    /** Request to update the window. */
+    update(): void;
     /** move/size window.  
      * x, y, width, height are in PPX (physical screen pixels).  
      * If `client` is provided then parameters are window client area coordinates. */
     move(x: number, y: number, width?: number, height?: number, client?: boolean): void;
     /** move/size window to particular monitor.  
      * x, y, width, height are in DIPs - device independent pixels (a.k.a. CSS pixels). */
-    move(monitor: number, x: number, y: number, width?: number, height?: number, client?: boolean): void;
+    moveTo(monitor: number, x: number, y: number, width?: number, height?: number, client?: boolean): void;
 
     /** Subscribe to window related events, init callback everytime the event occurs. */
     addEventHandler(event: windowEvent, handler: funcion): Window;
@@ -1384,7 +1438,11 @@ interface Window {
      * `untilQuit` - performs run loop - executes all events until application quit message arrives;  
      * `I/O` - performs events associated with I/O; */
     doEvent(mode?: "wait"|"noWait"|"untileMouseUp"|"untilQuit"|"I/O");
-
+    /** Interaction with native behaviors attached to the window. */
+    xcall(name: string, ...args): any;
+    /** Performs drag-and-drop using system D&D mechanism. */
+    perfromDrag(data: dragParams, mode: "copy"|"move", dragIcon: Graphic.Image|Element,
+                dragIconXoff?: number, dragIconYoff?: number): null|"copy"|"move";
 
     /** Show tray icon with the image and tooltip text.  
      * Tray icon will generate "trayiconclick" event for Window on user clicks */
@@ -1395,6 +1453,19 @@ interface Window {
     trayIcon(command: "place"): [x: number, y: number, w: number, h: number];
     /** Request user attention by flashing or bouncing window icon in task/dock bar. */
     requestAttention(command: "info" | "alert" | "stop"): void;
+
+    /** gets/sets media variable that can be used in CSS as `@media name {...}` */
+    mediaVar(name: string, value?: string): string|number|void;
+    /** gets/sets media multiple variables. */
+    mediaVars(values?: object): object|void;
+    /** Show a new window as dialog, returns
+     * close value of `window.close(valToReturn)` call inside the window.  
+     * [Documentation](https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/Window.md#windowmodaljsx-any)*/
+    modal(params: windowParam): any;
+    modal(params: JSX): any;
+
+    /** Close this window and return the given value to parent window. */
+    close(value?: string): boolean;
 }
 
 declare var Window: {
@@ -1419,6 +1490,8 @@ declare var Window: {
     /** Synchronously sends global event to all windows in current process.  
      * Sending stops on first window that will consume the event by returning true from event handler of this event. */
     send(event: Event): void;
+    /** Get command line arguments in a scapp app */
+    scapp: {argv: array};
 
 
     readonly POPUP_WINDOW : 0;
@@ -1490,5 +1563,14 @@ interface selectFileParams {
     caption?: string;
     /** Initial directory to open the dialog at. */
     path?: string;
+}
+
+interface dragParams {
+    text?: string;
+    html?: string;
+    /** Single or multiple file names; */
+    file?: string|string[];
+    /** Any data that can be `JSON.stringify`'ed; */
+    json: any;
 }
 
