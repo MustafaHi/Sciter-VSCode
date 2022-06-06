@@ -5,7 +5,7 @@ declare module "@debug" {
      * @param cb function taking (Error) as argument
      */
     export function setUnhandledExeceptionHandler(cb: Function): void;
-    /** Redirect console output. make sure to reset `Console.log`...
+    /** Redirect console output. make sure to reset `console.log`...
      * @param cb function taking `(subsystem: number, severity: number, msg: any)` as argument
      */
     export function setConsoleOutputHandler(cb: Function): void;

@@ -44,7 +44,7 @@ declare var devicePixelRatio: float;
 declare const __DIR__: string;
 
 declare var globalThis: object;
-declare var window: globalThis;
+declare var window: typeof globalThis;
 
 declare function getComputedStyle(el: Element, pseudoElement?: Element): Style;
 
@@ -123,5 +123,53 @@ interface FormData extends requestObject
 declare var FormData:
 {
    new(): FormData;
+}
+
+interface URL
+{
+   new(url: string): URL;
+   /** `#hash` */
+   readonly hash: string;
+   /** `sub.domain.org` */
+   readonly host: string;
+   readonly hostname: string;
+   /** Full URL */
+   readonly href: string;
+   /** `https://sub.domain.org` */
+   readonly origin: string;
+   /** `/path/without/host` */
+   readonly pathname: string;
+   readonly port: number;
+   /** Protocol type: `https:|http:|file:` */
+   readonly protocol: string;
+   /** Query paramters: `?q=1&w=w` */
+   readonly search: string;
+
+   readonly filename: string;
+   readonly dir: string;
+   readonly extension: string;
+}
+declare var URL: {
+   new(): URL;
+   guessMimeType(): string;
+   /** Decode and remove prefix */
+   toPath(path: string): string;
+   /** Encode and prefix path with `file://` */
+   fromPath(path: string): string;
+}
+
+/** Creates binary JSON pack/unpack context. */
+interface BJSON
+{
+   /** Serializes JSON data to the ArrayBuffer */
+   pack(data: JSON): ArrayBuffer;
+   /** Restore data from BJSON blob
+    * @param data previously packed JSON data
+    * @param cb function taking `(data)` as argument
+   */
+   unpack(data: ArrayBuffer, cb: Function): void;
+}
+declare var BJSON: {
+   new(): BJSON;
 }
 

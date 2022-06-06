@@ -8,7 +8,6 @@ interface Document extends Element {
     /** Subscribe to any DOM event */
     on(event: keyof typeof eventType, selector?: string, handler: eventFunction): void;
     on(event: keyof typeof domEvent, handler: eventFunction): void;
-    ready: Function;
 
     /* NATIVE */
 

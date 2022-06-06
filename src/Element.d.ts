@@ -197,7 +197,16 @@ interface Element extends Node {
     removeEventListener(name: string, handler: function): void;
     /** Fire event synchronously, `postEvent` for async method */
     dispatchEvent(event: Event);
+
+    // EventTarget
+    ready: Function;
+    onclick: Function;
+    onchange: Function;
 }
+declare var Element: {
+    new(): Element;
+}
+
 type InsertPosition = "beforebegin" | "afterbegin" | "beforeend" | "afterend";
 interface popupParams {
     /** 1..9, reference point on anchor border box (see keyboard numpad for the meaning) */

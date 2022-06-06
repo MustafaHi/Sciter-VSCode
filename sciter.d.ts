@@ -1,5 +1,95 @@
-//| Sciter.d.ts v0.14.0
+//| Sciter.d.ts v0.15.0
 //| https://github.com/MustafaHi/sciter-vscode
+
+interface behaviors
+{
+    // FRAME
+    frame: frame;
+    // VIRTUAL_LIST
+    vlist: vlist;
+    // SELECT
+    select: {options: Element};
+    // TEXTAREA
+    textarea: textarea;
+    // SCROLLBAR
+    scrollbar: scrollbar;
+}
+
+interface frame
+{
+    /** Initiates loading of the document from the URL.  
+      * calls `newdocument/complete` events */
+    loadFile(path: string): boolean;
+    /** Initiates loading of the document from the html string or bytes.  
+      * calls `newdocument/complete` events */
+    loadHTML(html: string|ArrayBuffer, baseURL: string): boolean;
+    /** Clear the content of the frame by loading empty document in it. */
+    loadEmpty(): void;
+    /** Save document to the file in UTF-8 encoding. */
+    saveFile(path: string): boolean;
+    /** Save document into ArrayBuffer as sequence of UTF-8 encoded bytes. */
+    saveBytes(): ArrayBuffer;
+    
+    readonly document: Document;
+    /**  Get/Set key/value map of media variables used by the document. */
+    mediaVars: object;
+    /** URL of document loaded into the frame. */
+    url: string;
+}
+
+interface vlist
+{
+    navigateTo(target: number|"start"|"end"|"pagenext"|"pageprior"|"itemnext"|"itemprior"): void;
+    /** scroll to given record number. By default it performs animated scroll.  
+        Returns DOM element representing the record. */
+    advanceTo(target: number): Element;
+
+    /** Get of first visible item in the buffer. */
+    readonly firstVisibleItem: Element;
+    /** Get of last visible item in the buffer. */
+    readonly lastVisibleItem: Element;
+    readonly firstBufferIndex: number;
+    readonly lastBufferIndex: number;
+    readonly itemsTotal: number;
+    itemsBefore: number;
+    itemsAfter: number;
+}
+
+interface textarea
+{
+    /** Index of first selected character. */
+    readonly selectionStart: number;
+    /** Index of last select character+1/ */
+    readonly selectionEnd: number;
+    /** selected text or empty sting if there is no selection or selection is collapsed. */
+    readonly selectionText: string;
+
+    selectAll(): void;
+    selectRange(start: number, end: number): void;
+    appendText(text: string): boolean;
+    /** Replace select text with given text. */
+    insertText(text: string): boolean;
+    /** Remove selected text. */
+    removeText(): boolean;
+}
+
+interface scrollbar
+{
+    /** Sets values of scrollbar element - position, min, max,
+     * page - reflects to size of scrollbar slider,
+     * step - increment value of on arrow buttons clicks. */
+    values(position:number, min:number, max:number, page:number, step:number): void;
+
+    readonly max: number;
+    readonly min: number;
+    /** Page value, size of scrollbar's slider. */
+    readonly page: number;
+    /** Defines position increment/decrement of clicks on arrow buttons. */
+    readonly step: number;
+
+    /** Current slider position. */
+    position: number;
+}
 
 interface Document extends Element {
     /** Load image from `url` and bind it to variable */
@@ -11,7 +101,6 @@ interface Document extends Element {
     /** Subscribe to any DOM event */
     on(event: keyof typeof eventType, selector?: string, handler: eventFunction): void;
     on(event: keyof typeof domEvent, handler: eventFunction): void;
-    ready: Function;
 
     /* NATIVE */
 
@@ -243,7 +332,16 @@ interface Element extends Node {
     removeEventListener(name: string, handler: function): void;
     /** Fire event synchronously, `postEvent` for async method */
     dispatchEvent(event: Event);
+
+    // EventTarget
+    ready: Function;
+    onclick: Function;
+    onchange: Function;
 }
+declare var Element: {
+    new(): Element;
+}
+
 type InsertPosition = "beforebegin" | "afterbegin" | "beforeend" | "afterend";
 interface popupParams {
     /** 1..9, reference point on anchor border box (see keyboard numpad for the meaning) */
@@ -663,7 +761,7 @@ declare var devicePixelRatio: float;
 declare const __DIR__: string;
 
 declare var globalThis: object;
-declare var window: globalThis;
+declare var window: typeof globalThis;
 
 declare function getComputedStyle(el: Element, pseudoElement?: Element): Style;
 
@@ -742,6 +840,54 @@ interface FormData extends requestObject
 declare var FormData:
 {
    new(): FormData;
+}
+
+interface URL
+{
+   new(url: string): URL;
+   /** `#hash` */
+   readonly hash: string;
+   /** `sub.domain.org` */
+   readonly host: string;
+   readonly hostname: string;
+   /** Full URL */
+   readonly href: string;
+   /** `https://sub.domain.org` */
+   readonly origin: string;
+   /** `/path/without/host` */
+   readonly pathname: string;
+   readonly port: number;
+   /** Protocol type: `https:|http:|file:` */
+   readonly protocol: string;
+   /** Query paramters: `?q=1&w=w` */
+   readonly search: string;
+
+   readonly filename: string;
+   readonly dir: string;
+   readonly extension: string;
+}
+declare var URL: {
+   new(): URL;
+   guessMimeType(): string;
+   /** Decode and remove prefix */
+   toPath(path: string): string;
+   /** Encode and prefix path with `file://` */
+   fromPath(path: string): string;
+}
+
+/** Creates binary JSON pack/unpack context. */
+interface BJSON
+{
+   /** Serializes JSON data to the ArrayBuffer */
+   pack(data: JSON): ArrayBuffer;
+   /** Restore data from BJSON blob
+    * @param data previously packed JSON data
+    * @param cb function taking `(data)` as argument
+   */
+   unpack(data: ArrayBuffer, cb: Function): void;
+}
+declare var BJSON: {
+   new(): BJSON;
 }
 
 declare var Graphics: {
@@ -970,7 +1116,7 @@ declare module "@debug" {
      * @param cb function taking (Error) as argument
      */
     export function setUnhandledExeceptionHandler(cb: Function): void;
-    /** Redirect console output. make sure to reset `Console.log`...
+    /** Redirect console output. make sure to reset `console.log`...
      * @param cb function taking `(subsystem: number, severity: number, msg: any)` as argument
      */
     export function setConsoleOutputHandler(cb: Function): void;
@@ -1058,7 +1204,7 @@ declare module "@sciter" {
      * @param name path to library without .dll/.dylib (relative to sciter.dll)
      */
     export function loadLibrary(name: string): any;
-    /** Passive json parser */
+    /** Parses string by "JSON++ rules" returning it actual value: Date, Array, Angle, Hex... */
     export function parseValue(val:string): any;
     /** Converts length to device (screen) pixels */
     export function devicePixels(length: number | string, axis: "width" | "height")
@@ -1068,7 +1214,9 @@ declare module "@sciter" {
     export function on(event: keyof typeof eventType, selector?: string, handler: eventFunction): void;
     /** Unsubscribe to any DOM event */
     export function off(eventOrHandler: keyof typeof eventType | function): void;
+    /** Encodes text to sequence of bytes (ArrayBuffer). Default encoding is "utf-8". */
     export function encode(text: string, encoding ?: string): ArrayBuffer;
+    /** Decodes sequence of bytes of buffer to string. Default encoding is "utf-8". */
     export function decode(bytes: ArrayBuffer, encoding ?: string): string;
     export function compress(input: ArrayBuffer, method?: "gz" | "gzip" | "lzf"): ArrayBuffer;
     export function decompress(input: ArrayBuffer, method?: "gz" | "gzip" | "lzf"): ArrayBuffer;
