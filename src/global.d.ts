@@ -127,7 +127,6 @@ declare var FormData:
 
 interface URL
 {
-   new(url: string): URL;
    /** `#hash` */
    readonly hash: string;
    /** `sub.domain.org` */
@@ -150,7 +149,7 @@ interface URL
    readonly extension: string;
 }
 declare var URL: {
-   new(): URL;
+   new(url: string): URL;
    guessMimeType(): string;
    /** Decode and remove prefix */
    toPath(path: string): string;
