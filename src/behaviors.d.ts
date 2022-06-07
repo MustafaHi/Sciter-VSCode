@@ -1,4 +1,4 @@
-interface behaviors
+interface Behaviors
 {
     // FRAME
     frame: frame;
@@ -19,7 +19,7 @@ interface frame
     loadFile(path: string): boolean;
     /** Initiates loading of the document from the html string or bytes.  
       * calls `newdocument/complete` events */
-    loadHTML(html: string|ArrayBuffer, baseURL: string): boolean;
+    loadHtml(html: string|ArrayBuffer, baseURL?: string): boolean;
     /** Clear the content of the frame by loading empty document in it. */
     loadEmpty(): void;
     /** Save document to the file in UTF-8 encoding. */

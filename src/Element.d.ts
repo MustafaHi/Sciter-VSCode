@@ -1,4 +1,4 @@
-interface Element extends Node {
+interface Element extends Node, Behaviors {
     /** Get element matching the css selector */
     $(query: string): Element;
     /** Get array of elements matching the css selector */
