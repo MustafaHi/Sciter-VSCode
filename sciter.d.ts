@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.16.0
+//| Sciter.d.ts v0.17.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -8,18 +8,20 @@ interface Behaviors
     history: history;
     
     from: form;
-    select: {options: Element};
+    select: select;
     calender: calender
     textarea: textarea;
     edit: edit;
     masked: masked;
     
     plaintext: plaintext;
+    richtext: richtext;
     
-    vlist: vlist;
+    vlist: virtualList;
     scrollbar: scrollbar;
     
     lottie: lottie;
+    video: video;
 }
 
 interface frame
@@ -65,7 +67,18 @@ interface form
     reset(): void;
 }
 
-interface vlist
+interface select
+{
+    /** Shows popup list of options */
+    showPopup(): void;
+    /** Closes popup list of options if it is open */
+    hidePopup(): void;
+
+    /** Reference to DOM element that holds `<option>` list. */
+    options: Element;
+}
+
+interface virtualList
 {
     navigateTo(target: number|"start"|"end"|"pagenext"|"pageprior"|"itemnext"|"itemprior"): void;
     /** scroll to given record number. By default it performs animated scroll.  
@@ -227,9 +240,97 @@ interface plaintext
     insertLine(index: number, text: string|string[]): boolean;
     /** Remove line/s starting from index */
     removeLine(index: number, count?: number): boolean;
-    /** Performs transactional update.  
+    /** Performs transactional (undoable) content update.  
      * [Documentation](https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/behaviors/behavior-richtext.md#richtextupdatemutatorfunctiontctx-bool) */
-    update(mutator: Function): boolean;
+    update(mutator: (context: Transaction) => {}): boolean;
+}
+
+interface richtext
+{
+    /** Get/Set url of loaded document. */
+    url: string;
+
+    /** Load Content from URL */
+    load(url: string): boolean;
+    /** loads content from bytes or string (html source) into the editor;
+     * url is used to resolve relative URLs (if any). */
+    load(html: string|ArrayBuffer, url?: string): boolean;
+    /** Save Content to URL(file path) */
+    save(url: string): boolean;
+    /** Clear the content by loading empty document in it. */
+    loadEmpty(): boolean;
+    /** Set content to the html at given selection. */
+    sourceToContent(html: string, url: string, selectionStart: number, selectionEnd: number): boolean;
+    /** Return content and selection as an array. */
+    contentToSource(): [html: string, url: string, selectionStart: number, selectionEnd: number];
+    /** Performs transactional (undoable) content update.  
+     * [Documentation](https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/behaviors/behavior-richtext.md#richtextupdatemutatorfunctiontctx-bool) */
+    update(mutator: (context: Transaction) => {}): boolean;
+}
+
+interface Transaction
+{
+    /** Add or change value of one attribute. */
+    setAttribute(el: Element, name: string, value: string): void;
+    /** Remove one attribute. */
+    removeAttribute(el: Element, name: string): void;
+    /** Change tag of the element. */
+    setTag(el: Element, name: string): void;
+    /** Change node text. */
+    setText(node: Node, text: string): void;
+    /** splits node at offset position until the parent element.
+     * Similar to pressing ENTER in the middle of paragraph -
+     * text node and p[aragraph] element will be split to two paragraphs; */
+    split(node: Node, offset: number, parentEl: Element): [node: Node, offset: number];
+    /** Wrap the range into element. */
+    wrap(startNode: Node, startOffset: number, endNote: Node, endOffset: number, tag: string): void;
+    /** Remove the element and add it content to parent element. */
+    unwrap(el: Element): void;
+    /** Same as `Element.execCommand()` but all mutations will go into this transaction. */
+    execCommand(name: string, params?: object): void;
+
+    /** Insert text at given node/offset position. */
+    insertText(at: Node|number, text: string): [node: Node, offset: number];
+    /** Insert HTML at given node/offset position, return list of nodes inserted; */
+    insertHTML(at: Node|number, html: string): Node[];
+    /** Insert node at given node/offset position. */
+    insertNode(at: Node|number, html: string): [node: Node, offset: number];
+    
+    /** Delete current selected range (if any). */
+    deleteSelection(): [node: Node, offset: number];
+    deleteRange(startNode: Node, startOffset: number, endNote: Node, endOffset: number): void;
+    /** Delete given node or element. */
+    deleteNode(node: Node): void;
+}
+
+interface video
+{
+    /** Report playback status. If true then video is playing at the moment. */
+    readonly isPlaying: boolean;
+    /** If video playback has reached the end of the movie. */
+    readonly isEnded: boolean;
+    /** Duration in seconds of the movie. If duration is not available it returns 0. */
+    readonly duration: number;
+    /** Reports natural width and height of video frame of the movie. */
+    readonly height, readonly width: number;
+    /** Reports video box rectangle in pixels relative to the content box of the element.
+     * Note if sizing attribute is "cover" then either x or y can be negative. */
+    readonly renderingBox: [x, y, width, height];
+    /** float (0.0...1.0). Current volume level of audio track.
+     * 1.0 correspond to 0db, 0.0 (mute) -100db. */
+    audioVolume: number;
+    /** float ( -1.0 ... +1.0 ). Current stereo balance. */
+    audioBalance: number;
+    /** float, Get/Set current playback position, in seconds. */
+    position: number;
+
+    /** Loads video file into the player. use `play()` to start. */
+    load(url: string): boolean;
+    /** Stops video playback and unloads the movie. */
+    unload(): void;
+    /** Start playback at current `position` */
+    play(): void;
+    stop(): void;
 }
 
 interface Document extends Element {

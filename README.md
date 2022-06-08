@@ -23,7 +23,7 @@ Visual Studio Code extension
 
 Sciter declaration files for linting intellisense in VSCode
 
-`0.16.0`
+`0.17.0`
 
 ### setup
 
@@ -55,6 +55,6 @@ the status of declarations and their documentations as of Sciter specific and de
 | Graphic | done | done |
 | Window | done | - |
 | global | done | - |
-| behaviors | - | done |
+| behaviors | done | done |
 
 initial credit [@patrick](https://sciter.com/forums/topic/typescript/#post-77670)
