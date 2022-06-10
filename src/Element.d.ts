@@ -10,31 +10,30 @@ interface Element extends Node, Behaviors {
     /** Check element match the selector */
     $is(query: string): boolean;
     /** Posts a function or event to event queue. */
-    post(eventOrHandler: function | Event, avoidDuplicates?: boolean);
+    post(eventOrHandler: function(this: Element, ...any) | Event, avoidDuplicates?: boolean);
     /** Fire event asynchronously, `dispatchEvent` for sync method */
     postEvent(event: Event);
     /** jQuery style event subscription:  
         @param event `^name` for handling events in capturing phase
         @param query subscribe to all children that match the css selector otherwise this element
-        @param handler `function(Event, Element)` - `this` is set to the element the handler is attached to
+        @param handler `Function(Event, Element)` - `this` is set to the element the handler is attached to
         */
     on(event: keyof typeof eventType, query: string, handler: eventFunction): Element;
     on(event: keyof typeof eventType, handler: eventFunction): Element;
-    off(eventOrHandler: keyof typeof eventType|string|function): Element;
+    off(eventOrHandler: keyof typeof eventType|string|Function): Element;
     /** jQuery style event subscription to application wide events:  
      *  The element gets unsubscribed automatically when it is disconnected from DOM
         @param event `^name` for handling events in capturing phase
-        @param query subscribe to all children that match the css selector otherwise this element
-        @param handler `function(Event, Element)` - `this` is set to the element the handler is attached to
+        @param handler `Function(Event, Element)` - `this` is set to the element the handler is attached to
         */
-    onGlobalEvent(event: string, handler: function): Element;
+    onGlobalEvent(event: string, handler: function(this: Element, ...any)): Element;
     /** Unsubscribe this element from particular event, if no argument is provided unsubscribe from all events */
-    offGlobalEvent(eventOrHandler?: string | function): Element;
+    offGlobalEvent(eventOrHandler?: string | function(this: Element, ...any)): Element;
     /** Starts timer on element.
      *  If the element already has a timer with the same callback, it first gets removed and timer is restarted.
      *  This allows to implement effective throttling (debounce).
      *  @param callback `this` is set to the element, `return true` to repeat. */
-    timer(milliseconds: number, callback: function): boolean;
+    timer(milliseconds: number, callback: function(this: Element, ...any): boolean): boolean;
     /** Removes content of the element, makes it empty. */
     clear();
     /** Interaction with native behaviors attached to the element. */
@@ -74,7 +73,7 @@ interface Element extends Node, Behaviors {
      *  `function(progress: 0.0...1.0)`: true | false  
      *  Sciter will call handler with animation frame rate passing current progress value.
      *  return false to stop animation. */
-    animate(handler: function, params: animateParams): void;
+    animate(handler: Function, params: animateParams): void;
     /** Make the element "airborn" - to be replaced outside of host window */
     takeOff(params: takeoffParams): void;
     /** Append element as last child */
@@ -193,8 +192,8 @@ interface Element extends Node, Behaviors {
     click(): void;
     focus(): void;
     /** Call handler each time the event is fired */
-    addEventListener(name: string, handler: function, flags?: string): void;
-    removeEventListener(name: string, handler: function): void;
+    addEventListener(name: string, handler: Function, flags?: object): void;
+    removeEventListener(name: string, handler: Function): void;
     /** Fire event synchronously, `postEvent` for async method */
     dispatchEvent(event: Event);
 

@@ -23,9 +23,12 @@ Visual Studio Code extension
 
 Sciter declaration files for linting intellisense in VSCode
 
-`0.17.0`
+`0.17.1`
 
 ### setup
+
+If you have the extension installed:
+Run the command `Initialize Sciter Project`, <kbd>CTRL+SHIFT+P</kbd> then command. otherwise
 
 Include `jsconfig.json` and `sciter.d.ts` to your VSCode workspace, or where the js files reside
 
@@ -36,10 +39,10 @@ If you want to have the default declarations clear the `jsconfig.json` file (eve
 
 ### contribute
 
-There is still much to be added, open an issue before contributing to avoid conflict
+This is not complete or perfect if you find issue report it
+with sample code and references to how it should work.
 
-commit with version major.minor.fix
-
+release version: major.minor.fix
 
 ### status
 
