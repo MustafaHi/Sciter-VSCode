@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.18.0
+//| Sciter.d.ts v0.18.1
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -419,9 +419,10 @@ interface Element extends Node, Behaviors {
     unwrapElement();
     /** Wraps range of nodes from start to end into wrap element - opposite action to `unwrapElement()` */
     wrapNodes(start: Node, end: Node, wrap: Element);
-    checkCommand(command: string, params?: object): commandFlags;
-    /** Execute behavior specific commands */
-    execCommand(command: string, params?: object): commandFlags;
+    /** Reports state and allowance of particular command. The method accepts the same parameters as the `Element.execCommand()`.  */
+    checkCommand(command: string, params?: object|string): 1|2;
+    /** Execute undoable behavior specific commands. */
+    execCommand(command: string, params?: object|string): boolean;
     /** Immediate mode drawing "ports".
      *  Functions assigned to these properties will be called when the element is rendered on screen
      *  so they can draw anything on top (or below) of default HTML/CSS rendering. */
