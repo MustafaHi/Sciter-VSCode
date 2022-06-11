@@ -1,19 +1,19 @@
 /** Call function after x time
  * @return Timeout ID for `clearTimeout(ID)`
  */
-declare function setTimeout(cb: function, milliseconds: number): number;
+declare function setTimeout(cb: Function, milliseconds: number): number;
 /** Cancel `setTimeout` function by it returned ID */
 declare function clearTimeout(tID: number): void;
 /** Call function every x amount of time
  * @return Interval ID for `clearInterval(ID)`
  */
-declare function setInterval(cb: function, milliseconds: number): number;
+declare function setInterval(cb: Function, milliseconds: number): number;
 /** Cancel `setInterval` function by it returned ID */
 declare function clearInterval(iID: number): void;
 /** Call function on every frame
  * @return function ID for `cancelAnimationFrame(ID)`
  */
-declare function requestAnimationFrame(cb: function): number;
+declare function requestAnimationFrame(cb: Function): number;
 /** Cancel `requestAnimationFrame` function by it returned ID */
 declare function cancelAnimationFrame(aID: number): void;
 
@@ -170,5 +170,24 @@ interface BJSON
 }
 declare var BJSON: {
    new(): BJSON;
+}
+
+declare var Clipboard:
+{
+   read(): clipboardObject;
+   readText(): string;
+   write(data: clipboardObject): boolean;
+   writeText(text: string): boolean;
+   has(type: "text"|"html"|"image"|"file"|"json"|"link"): boolean;
+}
+interface clipboardObject
+{
+   text?: string;
+   html?: string;
+   json?: object;
+   /** List of files path */
+   file?: string[];
+   link?: { caption: string, url: string };
+   image?: Graphics.Image;
 }
 

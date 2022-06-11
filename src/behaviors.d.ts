@@ -228,9 +228,9 @@ interface plaintext
     /** Save Content to URL(file path) */
     save(url: string): boolean;
     /** Select text range; */
-    selectionRange(startLine: number, startPosition: number, endLine: number, endPosition: number): void;
+    selectRange(startLine: number, startPosition: number, endLine: number, endPosition: number): void;
     /** Select all text; */
-    selectAll(): void;
+    selectAll(): boolean;
     /** Append line/s at the end of the text; */
     appendLine(text: string|string[]): boolean;
     /** Inserts line/s at line index; */

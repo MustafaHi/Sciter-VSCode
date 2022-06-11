@@ -44,7 +44,7 @@ interface Element extends Node, Behaviors {
     wrapNodes(start: Node, end: Node, wrap: Element);
     checkCommand(command: string, params?: object): commandFlags;
     /** Execute behavior specific commands */
-    executeCommand(command: string, params?: object): commandFlags;
+    execCommand(command: string, params?: object): commandFlags;
     /** Immediate mode drawing "ports".
      *  Functions assigned to these properties will be called when the element is rendered on screen
      *  so they can draw anything on top (or below) of default HTML/CSS rendering. */
@@ -201,6 +201,7 @@ interface Element extends Node, Behaviors {
     ready: Function;
     onclick: Function;
     onchange: Function;
+    onKeydown: Function;
 }
 declare var Element: {
     new(): Element;

@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.17.1
+//| Sciter.d.ts v0.18.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -231,9 +231,9 @@ interface plaintext
     /** Save Content to URL(file path) */
     save(url: string): boolean;
     /** Select text range; */
-    selectionRange(startLine: number, startPosition: number, endLine: number, endPosition: number): void;
+    selectRange(startLine: number, startPosition: number, endLine: number, endPosition: number): void;
     /** Select all text; */
-    selectAll(): void;
+    selectAll(): boolean;
     /** Append line/s at the end of the text; */
     appendLine(text: string|string[]): boolean;
     /** Inserts line/s at line index; */
@@ -421,7 +421,7 @@ interface Element extends Node, Behaviors {
     wrapNodes(start: Node, end: Node, wrap: Element);
     checkCommand(command: string, params?: object): commandFlags;
     /** Execute behavior specific commands */
-    executeCommand(command: string, params?: object): commandFlags;
+    execCommand(command: string, params?: object): commandFlags;
     /** Immediate mode drawing "ports".
      *  Functions assigned to these properties will be called when the element is rendered on screen
      *  so they can draw anything on top (or below) of default HTML/CSS rendering. */
@@ -578,6 +578,7 @@ interface Element extends Node, Behaviors {
     ready: Function;
     onclick: Function;
     onchange: Function;
+    onKeydown: Function;
 }
 declare var Element: {
     new(): Element;
@@ -800,7 +801,7 @@ interface Event {
     /** Returns true if preventDefault() was invoked successfully to indicate cancelation, and false otherwise. */
     readonly defaultPrevented: boolean;
     /** Returns the event's phase, which is one of `NONE`, `CAPTURING_PHASE`, `AT_TARGET`, and `BUBBLING_PHASE`. */
-    readonly eventPhase: number;
+    readonly eventPhase: "NONE"|"CAPTURING_PHASE"|"AT_TARGET"|"BUBBLING_PHASE";
     /** Returns true if event was dispatched by the user agent, and false otherwise. */
     readonly isTrusted: boolean;
     readonly srcElement: Element | null;
@@ -819,45 +820,47 @@ interface Event {
     /** When dispatched in a tree, invoking this method prevents event
      * from reaching any objects other than the current object. */
     stopPropagation(): void;
-    data: any;
+    /** String representation of keyCode "KeyA", "F1", "Enter"... */
     readonly code: string;
+    /** keyCode list at [include/sciter-x-key-codes.h](https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/include/sciter-x-key-codes.h) */
+    readonly keyCode: number;
+    /** Platform's native key code, e.g, wParam in WM_KEYDOWN on Windows. */
+    readonly platformKeyCode: string;
     readonly AT_TARGET: number;
     readonly BUBBLING_PHASE: number;
     readonly CAPTURING_PHASE: number;
     readonly NONE: number;
 
-    currentTarget: Element;
-    target: Element;
-    eventPhase: string;
+    data, details: any;
 
-    altKey: boolean;
-    ctrlKey: boolean;
-    /** `Command` key on OSX, `win` on Windows */
-    metaKey: boolean;
-    shiftKey: boolean;
-    button: number;
-    buttons: number;
+    readonly altKey: boolean;
+    readonly ctrlKey: boolean;
+    /** `command` key on OSX, `win` on Windows */
+    readonly metaKey: boolean;
+    readonly shiftKey: boolean;
+    readonly button: number;
+    readonly buttons: number;
 
-    clientX: number;
-    clientY: number;
-    screenX: number;
-    screenY: number;
-    windowX: number;
-    windowY: number;
-    deltaX: number;
-    deltaY: number;
+    readonly clientX: number;
+    readonly clientY: number;
+    readonly screenX: number;
+    readonly screenY: number;
+    readonly windowX: number;
+    readonly windowY: number;
+    readonly deltaX: number;
+    readonly deltaY: number;
     /** `0` - `deltaX/Y` are pixels coming from touch devices,  
      *  `1` - `deltaX/Y` are in "lines" (a.k.a. mouse wheel "ticks"). */
-    deltaMode: number;
+    readonly deltaMode: number;
 
     /** Coordinates relative to `currentTarget` - the element this event handler is attached to. */
-    x: number;
+    readonly x: number;
     /** Coordinates relative to `currentTarget` - the element this event handler is attached to. */
-    y: number;
+    readonly y: number;
     /** Used in some events to indicate auxiliary "source" element. */
-    source: Element;
+    readonly source: Element;
     /** Mouse event is on `foreground-image`, return Element containing the image */
-    isOnIcon: Element;
+    readonly isOnIcon: Element;
 
     /** Returns pressed status of the key. */
     keyState(key: string): boolean;
@@ -877,17 +880,8 @@ interface EventInit {
 }
 type eventFunction = function(Event, Element): void;
 enum eventType {
-    mouseMove,
-    mouseLeave,
-    mouseIdle,
-    mousetick,
-    mousedown,
-    mouseup,
-    mousewheel,
-    mousedragrequest,
-    dblclick,
-    doubleclick,
-    tripleclick,
+    ready,
+    complete,
 
     click,
     input,
@@ -926,6 +920,18 @@ enum eventType {
     focusout,
     blue,
 
+    mouseMove,
+    mouseLeave,
+    mouseIdle,
+    mousetick,
+    mousedown,
+    mouseup,
+    mousewheel,
+    mousedragrequest,
+    dblclick,
+    doubleclick,
+    tripleclick,
+
     keydown,
     keyup,
     keypress,
@@ -959,19 +965,19 @@ enum eventType {
 /** Call function after x time
  * @return Timeout ID for `clearTimeout(ID)`
  */
-declare function setTimeout(cb: function, milliseconds: number): number;
+declare function setTimeout(cb: Function, milliseconds: number): number;
 /** Cancel `setTimeout` function by it returned ID */
 declare function clearTimeout(tID: number): void;
 /** Call function every x amount of time
  * @return Interval ID for `clearInterval(ID)`
  */
-declare function setInterval(cb: function, milliseconds: number): number;
+declare function setInterval(cb: Function, milliseconds: number): number;
 /** Cancel `setInterval` function by it returned ID */
 declare function clearInterval(iID: number): void;
 /** Call function on every frame
  * @return function ID for `cancelAnimationFrame(ID)`
  */
-declare function requestAnimationFrame(cb: function): number;
+declare function requestAnimationFrame(cb: Function): number;
 /** Cancel `requestAnimationFrame` function by it returned ID */
 declare function cancelAnimationFrame(aID: number): void;
 
@@ -1128,6 +1134,25 @@ interface BJSON
 }
 declare var BJSON: {
    new(): BJSON;
+}
+
+declare var Clipboard:
+{
+   read(): clipboardObject;
+   readText(): string;
+   write(data: clipboardObject): boolean;
+   writeText(text: string): boolean;
+   has(type: "text"|"html"|"image"|"file"|"json"|"link"): boolean;
+}
+interface clipboardObject
+{
+   text?: string;
+   html?: string;
+   json?: object;
+   /** List of files path */
+   file?: string[];
+   link?: { caption: string, url: string };
+   image?: Graphics.Image;
 }
 
 declare var Graphics: {
