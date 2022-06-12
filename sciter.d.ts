@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.18.1
+//| Sciter.d.ts v0.18.2
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -489,7 +489,7 @@ interface Element extends Node, Behaviors {
     nextElementSibling: Element;
     previousElementSibling: Element;
     childElementCount: number;
-    children: array<Element>;
+    children: Element[];
     childElement(index: number): Element;
     readonly ownerDocument: Document;
 
@@ -518,20 +518,20 @@ interface Element extends Node, Behaviors {
     checked: boolean;
     src: string;
 
-    readonly attributes: array<string>;
+    readonly attributes: string[];
     hasAttribute(name: string): boolean;
     getAttribute(name: string): string;
-    getAttributeNames(): array<string>;
+    getAttributeNames(): string[];
     setAttribute(name: string, value: string|number|undefined): void;
     removeAttribute(name: string): void;
-    attributes: array<string|number>;
+    attributes: string[]|number[];
     classList: {
         add(...name: string[]): void;
         remove(...name: string[]): void;
         toggle(name: string, state?: boolean): boolean;
         contains(name: string): boolean;
         length: number;
-        readonly entries(): array<string>;
+        readonly entries(): string[];
     }
 
     id: string;
@@ -545,6 +545,12 @@ interface Element extends Node, Behaviors {
     innerText: string;
     value: string|number|boolean|undefined;
 
+    scrollBy(x: number, y: number): void;
+    scrollBy(options: {
+        left?: number;
+        top?: number;
+        behavior?: "instant" | "smooth";
+    }): void;
     scrollTo(x: number, y: number): void;
     scrollTo(options: {
         left?: number;
@@ -579,7 +585,8 @@ interface Element extends Node, Behaviors {
     ready: Function;
     onclick: Function;
     onchange: Function;
-    onKeydown: Function;
+    onkeydown: Function;
+    onwheel: Function;
 }
 declare var Element: {
     new(): Element;
