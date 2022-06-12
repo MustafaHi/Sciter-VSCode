@@ -258,6 +258,36 @@
 			]
 		},
     {
+			"name": "foreground-size",
+			"values": [
+				{
+					"name": "auto",
+					"description": "Resolved by using the image’s intrinsic ratio and the size of the other dimension, or failing that, using the image’s intrinsic size, or failing that, treating it as 100%."
+				},
+				{
+					"name": "contain",
+					"description": "Scale the image, while preserving its intrinsic aspect ratio (if any), to the largest size such that both its width and its height can fit inside the foreground positioning area."
+				},
+				{
+					"name": "cover",
+					"description": "Scale the image, while preserving its intrinsic aspect ratio (if any), to the smallest size such that both its width and its height can completely cover the foreground positioning area."
+				}
+			],
+			"syntax": "<bg-size>#",
+			"relevance": 85,
+			"references": [
+				{
+					"name": "MDN Reference",
+					"url": "https://developer.mozilla.org/docs/Web/CSS/background-size"
+				}
+			],
+			"description": "Specifies the size of the foreground images.",
+			"restrictions": [
+				"length",
+				"percentage"
+			]
+    },
+    {
 			"name": "foreground-repeat",
 			"values": [
         {

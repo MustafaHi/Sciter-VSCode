@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { request } from "undici";
-import { copyFileSync } from 'fs';
 
 export function activate(context: vscode.ExtensionContext) {
 	let config = vscode.workspace.getConfiguration("SciterJS");

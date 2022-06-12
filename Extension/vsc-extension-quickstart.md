@@ -1,3 +1,12 @@
+
+
+# REFERENCES
+  - css properties: https://github.com/microsoft/vscode-css-languageservice/blob/main/src/data/webCustomData.ts
+
+
+
+------------------------
+
 # Welcome to your VS Code Extension
 
 ## What's in the folder
