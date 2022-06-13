@@ -87,7 +87,7 @@ interface EventInit {
     bubbles?: boolean;
     cancelable?: boolean;
     composed?: boolean;
-    data?: any;
+    data?,detail?: any;
 }
 type eventFunction = function(Event, Element): void;
 enum eventType {

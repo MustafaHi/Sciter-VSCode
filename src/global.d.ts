@@ -161,7 +161,7 @@ declare var URL: {
 interface BJSON
 {
    /** Serializes JSON data to the ArrayBuffer */
-   pack(data: JSON): ArrayBuffer;
+   pack(data: object): ArrayBuffer;
    /** Restore data from BJSON blob
     * @param data previously packed JSON data
     * @param cb function taking `(data)` as argument

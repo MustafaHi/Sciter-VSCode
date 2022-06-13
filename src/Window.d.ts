@@ -51,9 +51,13 @@ interface Window {
     */
     focusable(direction: "next"|"prior"|"first"|"last", reference: Element): Element;
     /** Set input focus to window */
-    active(bringToFront: boolean): void;
+    activate(bringToFront: boolean): void;
     /** Request to update the window. */
     update(): void;
+    /** Report geometry and information of the given screen (monitor). */
+    screenBox(type: 'frame'|'workarea'|'device'|'isPrimary'|'snapshot', property: keyof typeof boxProperties, asPpx?: boolean): number[];
+    /** Report geometry of the window. */
+    box(property: keyof typeof boxProperties, metric: keyof typeof boxMetric, relativeTo?: keyof typeof boxRelativeTo, asPpx?: boolean): number[];
     /** move/size window.  
      * x, y, width, height are in PPX (physical screen pixels).  
      * If `client` is provided then parameters are window client area coordinates. */
@@ -120,7 +124,8 @@ declare var Window: {
     share: object;
     /** Number of monitors in the system */
     readonly screens: number;
-    screenBox(screen: number, what: string, boxPart: string): any;
+    /** Report geometry and information of the given screen (monitor). */
+    screenBox(screen: number, type: 'frame'|'workarea'|'device'|'isPrimary'|'snapshot', property: keyof typeof boxProperties): number[];
     /** Return DOM element under screenX/screenY position.  
      * @Note: this method may return DOM element belonging to any Sciter window in current process. */
     elementAt(x: number, y: number): Element;

@@ -146,5 +146,6 @@ interface Range
 }
 declare var Range: {
     new(): Range;
+    new(start: number, end: number): Range;
 }
 

@@ -42,5 +42,5 @@ declare module "@env" {
     export function exec(...args: string[]): void;
 }
 
-enum systemPath { "home", "root", "desktop", "applications", "downloads", "documents", "music", "videos", "pictures" }
+enum systemPath { "home", "root", "desktop", "applications", "downloads", "documents", "music", "videos", "pictures", "USER_APPDATA" }
 

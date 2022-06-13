@@ -10,14 +10,17 @@ interface Element extends Node, Behaviors {
     /** Check element match the selector */
     $is(query: string): boolean;
     /** Posts a function or event to event queue. */
-    post(eventOrHandler: function(this: Element, ...any) | Event, avoidDuplicates?: boolean);
-    /** Fire event asynchronously, `dispatchEvent` for sync method */
-    postEvent(event: Event);
+    post(eventOrHandler: function(this: Element, ...any) | Event, avoidDuplicates?: boolean): boolean;
+    /** Fire event asynchronously, `Event.target` will be set to this element,  
+     * use `dispatchEvent` for sync method
+     * @return `false` if event is canceled with `Event.preventDefault()`.
+     */
+    postEvent(event: Event, avoidDuplicates?: boolean): boolean;
     /** jQuery style event subscription:  
         @param event `^name` for handling events in capturing phase
         @param query subscribe to all children that match the css selector otherwise this element
         @param handler `Function(Event, Element)` - `this` is set to the element the handler is attached to
-        */
+    */
     on(event: keyof typeof eventType, query: string, handler: eventFunction): Element;
     on(event: keyof typeof eventType, handler: eventFunction): Element;
     off(eventOrHandler: keyof typeof eventType|string|Function): Element;
@@ -25,7 +28,7 @@ interface Element extends Node, Behaviors {
      *  The element gets unsubscribed automatically when it is disconnected from DOM
         @param event `^name` for handling events in capturing phase
         @param handler `Function(Event, Element)` - `this` is set to the element the handler is attached to
-        */
+    */
     onGlobalEvent(event: string, handler: function(this: Element, ...any)): Element;
     /** Unsubscribe this element from particular event, if no argument is provided unsubscribe from all events */
     offGlobalEvent(eventOrHandler?: string | function(this: Element, ...any)): Element;
@@ -33,13 +36,13 @@ interface Element extends Node, Behaviors {
      *  If the element already has a timer with the same callback, it first gets removed and timer is restarted.
      *  This allows to implement effective throttling (debounce).
      *  @param callback `this` is set to the element, `return true` to repeat. */
-    timer(milliseconds: number, callback: function(this: Element, ...any): boolean): boolean;
+    timer(milliseconds: number, callback: function(this: Element, ...any): void|boolean): boolean;
     /** Removes content of the element, makes it empty. */
-    clear();
+    clear(): boolean;
     /** Interaction with native behaviors attached to the element. */
     xcall(name: string, ...args): any
     /** Removes the element and moves its content in place in the DOM. */
-    unwrapElement();
+    unwrapElement(): boolean;
     /** Wraps range of nodes from start to end into wrap element - opposite action to `unwrapElement()` */
     wrapNodes(start: Node, end: Node, wrap: Element);
     /** Reports state and allowance of particular command. The method accepts the same parameters as the `Element.execCommand()`.  */
@@ -78,16 +81,16 @@ interface Element extends Node, Behaviors {
     /** Make the element "airborn" - to be replaced outside of host window */
     takeOff(params: takeoffParams): void;
     /** Append element as last child */
-    append(JSX: VNode): void;
+    append(JSX: JSX): void;
     /** Insert element as the first child */
-    prepend(JSX: VNode): void;
+    prepend(JSX: JSX): void;
     /** Replace content by element */
-    content(JSX: VNode): void;
-    /** patches content of the element by VNode using rules of React[or].  
+    content(JSX: JSX): void;
+    /** patches content of the element by JSX using rules of React[or].  
      *  If second parameter is true the function patches only children but not element itself. */
-    patch(JSX: VNode, onlyChildren?: true): void;
+    patch(JSX: JSX, onlyChildren?: true): void;
     /** Patch properties and enqueue rendering */
-    componentUpdate(object: object): void;
+    componentUpdate(object?: object): Element;
     /** Return collapsed range (caret position) at point x/y.
      *  x/a are local coordinates - relative to origin of element's inner box. */
     rangeFromPoint(x: number, y: number): Range | null;
@@ -166,7 +169,7 @@ interface Element extends Node, Behaviors {
     innerHTML: string;
     outerHTML: string;
     innerText: string;
-    value: string|number|boolean|undefined;
+    value: any;
 
     scrollBy(x: number, y: number): void;
     scrollBy(options: {
@@ -201,8 +204,11 @@ interface Element extends Node, Behaviors {
     /** Call handler each time the event is fired */
     addEventListener(name: string, handler: Function, flags?: object): void;
     removeEventListener(name: string, handler: Function): void;
-    /** Fire event synchronously, `postEvent` for async method */
-    dispatchEvent(event: Event);
+    /** Fire event synchronously, `Event.target` will be set to this element,  
+     * use `postEvent` for async method
+     * @return `false` if event is canceled with `Event.preventDefault()`.
+     */
+    dispatchEvent(event: Event, avoidDuplicates?: boolean): boolean;
 
     // EventTarget
     ready: Function;
