@@ -284,7 +284,7 @@ interface Transaction
     /** Remove the element and add it content to parent element. */
     unwrap(el: Element): void;
     /** Same as `Element.execCommand()` but all mutations will go into this transaction. */
-    execCommand(name: string, params?: object): void;
+    execCommand(command: string, params?: object|string): boolean;
 
     /** Insert text at given node/offset position. */
     insertText(at: Node|number, text: string): [node: Node, offset: number];
