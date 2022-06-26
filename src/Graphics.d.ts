@@ -156,7 +156,10 @@ interface Image
     colorAt(x: number, y: number): Graphics.Color;
     /** Compose this image with src image. */
     compose(src: Graphics.Image, operation: keyof typeof composeOps, dstX?: number, dstY?: number, srcX?: number, srcY?: number, srcW?: number, srcH?: number): Graphics.Image;
-
+    /** Return fragment of an image at position.
+     * @version 5+
+     */
+    crop(x: number, y: number, width: number, height: number): Graphics.Image;
 }
 
 enum composeOps {
