@@ -2,7 +2,7 @@
   "name": "sciterjs",
   "displayName": "Sciter JS",
   "description": "Sciter.JS Intellisense and auto-completion",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "publisher": "MustafaHi",
   "license": "SEE LICENSE IN LICENSE",
   "engines": {
@@ -51,6 +51,11 @@
     "css": {
       "customData": [
         "./css.css-data.json"
+      ]
+    },
+    "html": {
+      "customData": [
+        "./html.html-data.json"
       ]
     }
   },

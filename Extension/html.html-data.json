@@ -1,0 +1,189 @@
+{
+  "version": 1.1,
+  "tags": [
+    {
+      "name": "html",
+      "attributes": [
+        {
+          "name": "window-frame",
+          "description": "Define window type",
+          "values": [
+            { "name": "default" },
+            { "name": "standard" },
+            { "name": "solid" },
+            { "name": "solid-with-shadow" },
+            { "name": "extended" },
+            { "name": "transparent" }
+          ]
+        },
+        {
+          "name": "window-icon",
+          "description": "Window icon URL"
+        },
+        {
+          "name": "window-title",
+          "description": "Define indow title"
+        },
+        {
+          "name": "window-width",
+          "description": "initial width of the window."
+        },
+        {
+          "name": "window-height",
+          "description": "initial height of the window."
+        },
+        {
+          "name": "window-min-width",
+          "description": "minimal width of the window."
+        },
+        {
+          "name": "window-min-width",
+          "description": "minimal width of the window."
+        },
+        {
+          "name": "window-min-height",
+          "description": "minimal height of the window."
+        },
+        {
+          "name": "window-max-width",
+          "description": "maximal width of the window."
+        },
+        {
+          "name": "window-max-height",
+          "description": "maximal height of the window."
+        },
+        {
+          "name": "window-resizable",
+          "description": "true|false|LENGTH-UNIT i.e. 10px counted from window frame inwards."
+        },
+        {
+          "name": "window-minimizable",
+          "description": "true|false can/cannot minimize the window."
+        },
+        {
+          "name": "window-maximizable",
+          "description": "true|false can/cannot maximize the window."
+        },
+        {
+          "name": "window-blurbehind",
+          "description": "Define translucent effect.",
+          "values": [
+            { "name": "auto" },
+            { "name": "dark" },
+            { "name": "light" },
+            { "name": "ultra-dark" },
+            { "name": "ultra-light" }
+          ]
+        },
+        {
+          "name": "window-state",
+          "description": "Define initial state of HTML window.",
+          "values": [
+            { "name": "shown" },
+            { "name": "minimized" },
+            { "name": "maximized" },
+            { "name": "full-screen" },
+            { "name": "hidden" }
+          ]
+        },
+        {
+          "name": "lang",
+          "description": "ISO 639-1 value, define dictionary for spellcheck, Date...."
+        },
+        {
+          "name": "disable-debug",
+          "description": "Do not connect to inspector"
+        }
+      ]
+    },
+    {
+      "name": "frameset",
+      "description": "Child elements to be resizable window blocks",
+      "attributes": [
+        {
+          "name": "rows",
+          "description": {
+            "kind": "markdown",
+            "value": "`rows='widths list'` declares rows layout and specifies initial size of rows"
+            }
+        },
+        {
+          "name": "cols",
+          "description": {
+            "kind": "markdown",
+            "value": "`rows='height list'` declares column layout and specifies initial size of columns"
+            }
+        }
+      ]
+    },
+    {
+      "name": "splitter",
+      "description": "Panes of `<frameset>` can be split by `<splitter>` elements if some special styling of splitters is required."
+    },
+    {
+      "name": "popup",
+      "description": "popup element (preferred to be placed in `<head>`)"
+    },
+    {
+      "name": "plaintext",
+      "description": "Multiline text editor, each line is a `<text>` element",
+      "attributes": [{
+        "name": "src",
+        "description": "Initial source content"
+      }]
+    },
+    {
+      "name": "htmlarea",
+      "description": "WYSIWYG/richtext/html editor",
+      "attributes": [{
+        "name": "src",
+        "description": "Initial source content"
+      }]
+    },
+    {
+      "name": "include",
+      "description": "Inserts HTML fragment file in place.",
+      "attributes": [{
+        "name": "src",
+        "description": "html content to replace with on document load."
+      }]
+    }
+  ],
+  "globalAttributes": [
+    {
+      "name": "spellcheck",
+      "description": "enable or disable spell checking.",
+      "valueSet": "boolean"
+    },
+    {
+      "name": "novalue",
+      "description": "synonym of placeholder."
+    },
+    {
+      "name": "role",
+      "description": "systematic behavioral rules",
+      "values": [
+        {
+          "name": "window-caption",
+          "description": "Allow to drag the window through this element"
+        },
+        {
+          "name": "window-minimize",
+          "description": "Instructs the element to behave as window minimize button"
+        },
+        {
+          "name": "window-maximize",
+          "description": "Instructs the element to behave as window maximize button"
+        },
+        {
+          "name": "window-close",
+          "description": "Instructs the element to behave as window close button"
+        },
+        {
+          "name": "window-icon",
+          "description": "Instructs the element to behave as window icon - on Windows it shows window menu on click on it."
+        }
+      ]
+    }
+  ]
+}

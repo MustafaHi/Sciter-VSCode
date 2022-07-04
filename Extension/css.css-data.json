@@ -33,7 +33,7 @@
       "values": [
         {
           "name": "sub-pixel",
-          "description": "Higher quality rendering, letters are place between pixels."
+          "description": "Higher quality rendering, letters are placed between pixels."
         },
         {
           "name": "snap-pixel",
