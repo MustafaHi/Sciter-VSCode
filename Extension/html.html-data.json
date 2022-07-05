@@ -147,13 +147,41 @@
         "name": "src",
         "description": "html content to replace with on document load."
       }]
+    },
+    {
+      "name": "select",
+      "attributes": [
+        {
+          "name": "type",
+          "description": "Define select type.",
+          "values": [ { "name": "list" }, { "name": "tree" }, { "name": "dropdown" } ]
+        },
+        {
+          "name": "size",
+          "description": "Number of visible elements in list.",
+          "valueSet": "number"
+        },
+        {
+          "name": "placeholder",
+          "description": "Display this text if no option is selected."
+        },
+        {
+          "name": "as",
+          "description": "Defines `<option value='...'>` interpretation rule.",
+          "values": [ { "name": "auto" }, { "name": "integer" }, { "name": "float" }, { "name": "numeric" }, { "name": "string" }]
+        },
+        {
+          "name": "editable",
+          "description": "Allow to edit caption",
+          "values": [ { "name": "false" }, { "name": "true" }]
+        }
+      ]
     }
   ],
   "globalAttributes": [
     {
-      "name": "spellcheck",
-      "description": "enable or disable spell checking.",
-      "valueSet": "boolean"
+      "name": "selectable",
+      "description": "Allow content selection!"
     },
     {
       "name": "novalue",

@@ -2,7 +2,7 @@
   "name": "sciterjs",
   "displayName": "Sciter JS",
   "description": "Sciter.JS Intellisense and auto-completion",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "publisher": "MustafaHi",
   "license": "SEE LICENSE IN LICENSE",
   "engines": {
