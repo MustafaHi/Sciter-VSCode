@@ -23,7 +23,7 @@ Visual Studio Code extension
 
 Sciter declaration files for linting intellisense in VSCode
 
-`0.18.5`
+`0.19.0`
 
 ### setup
 

@@ -51,6 +51,9 @@ interface Graphics
     pushLayer(path: Graphics.Path, opacity?: number): void;
     pushLayer(mask: Graphics.Image, useAlpha: boolean, opacity?: number): void;
     popLayer(): void;
+
+    createTile(image: Graphics.Image): Brush;
+    createSolid(color: Graphics.Color): Brush;
 }
 
 interface drawPathParams {

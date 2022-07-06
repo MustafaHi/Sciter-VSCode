@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.18.5
+//| Sciter.d.ts v0.19.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -1002,6 +1002,8 @@ declare var console:
    error(...arg: any): void;
 }
 
+declare function getComputedStyle(el: Element, pseudoElement?: Element): Style;
+
 /**
  * Format arguments using [C-style printf conventions](https://en.cppreference.com/w/cpp/io/c/fprintf).  
  * Sciter specific:  
@@ -1015,6 +1017,20 @@ declare function printf(...args: string[]): string;
  */
 declare function scanf(...args: string[]): array<string | number>;
 
+/** 
+ * "module" version of stock `eval()` function.  
+ * It evaluates the text as a module body. If the url is provided it is used as a base URL
+ * for resolving relative paths in `import ... from "relpath"` statements inside.
+ * @return module's exported data as an object.
+ */
+declare function evalModule(text: string, url?: string): object;
+
+/** Loads and executes JavaScript at url synchronously. */
+declare function loadScript(url: string): void;
+
+/** Loads and executes JavaScript module at url synchronously. Returns modules exports object */
+declare function loadScriptModule(url: string): object;
+
 /** Number of physical screen pixels in logical CSS px (dip) */
 declare var devicePixelRatio: float;
 
@@ -1023,8 +1039,6 @@ declare const __DIR__: string;
 
 declare var globalThis: object;
 declare var window: typeof globalThis;
-
-declare function getComputedStyle(el: Element, pseudoElement?: Element): Style;
 
 
 declare function fetch(url: string, params: fetchParams): Promise<Response>;
@@ -1048,6 +1062,9 @@ interface fetchParams
       'Content-Language'?: string;
       [name: string]: string|boolean;
    }
+   /** Callback function to be called on download progress.  
+    * Note: total argument can be zero if server does not provide `Content-Length` info. */
+   downloadProgress: (fetched: number, total: number) => void;
 }
 
 interface Response
@@ -1222,6 +1239,9 @@ interface Graphics
     pushLayer(path: Graphics.Path, opacity?: number): void;
     pushLayer(mask: Graphics.Image, useAlpha: boolean, opacity?: number): void;
     popLayer(): void;
+
+    createTile(image: Graphics.Image): Brush;
+    createSolid(color: Graphics.Color): Brush;
 }
 
 interface drawPathParams {
