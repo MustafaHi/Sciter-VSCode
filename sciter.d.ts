@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.19.0
+//| Sciter.d.ts v0.20.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -1186,6 +1186,33 @@ interface clipboardObject
    image?: Graphics.Image;
 }
 
+/** The Zip class allows access to the content of a zip file or blob.
+ * @version 5.0.0.2+
+ */
+interface Zip
+{
+   /** Number of files(items) in the Zip. */
+   readonly length: number;
+   /** Fetch file by it index. */
+   item(index: number): ZipItem;
+   /** Fetch file by it path (local to the zip). */
+   item(path: string ): ZipItem;
+}
+declare var Zip:
+{
+   openFile(path: string): Zip;
+   openData(data: ArrayBuffer): Zip;
+}
+interface ZipItem
+{
+   readonly isDir: boolean;
+   readonly isFile: boolean;
+   /** Local path of the item inside the zip. */
+   readonly path: string;
+   /** Data of the item as ArrayBuffer. */
+   readonly data: ArrayBuffer;
+}
+
 declare var Graphics: {
     new(): Graphics;
     Brush: Brush;
@@ -1403,7 +1430,7 @@ interface gText
 declare var React: any;
 
 declare namespace JSX {
-    /** Custom Element documentation support */
+    // Custom Element documentation support
     interface IntrinsicElements {
         /** Root document element */
         html: any;

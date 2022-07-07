@@ -2,7 +2,7 @@
 
 Visual Studio Code extension
 
-`0.10.2`
+`0.11.1`
 
 ## Features
 
@@ -23,7 +23,7 @@ Visual Studio Code extension
 
 Sciter declaration files for linting intellisense in VSCode
 
-`0.19.0`
+`0.20.0`
 
 ### setup
 
