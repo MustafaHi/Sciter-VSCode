@@ -5,8 +5,8 @@ Provide Intellisense and auto-complete for [Sciter](https://sciter.com/) specifi
 ## Features
 
 - Intellisense for Sciter specific JavaScript
-- Support for Sciter's CSS properties
-- Auto Update
+- Support for Sciter's HTML and CSS properties
+- Auto Update Intellisense declarations
 
 Request feature and report issues at https://github.com/MustafaHi/Sciter-VSCode
 

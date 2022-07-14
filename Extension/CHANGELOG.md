@@ -2,8 +2,5 @@
 
 All notable changes to the "SciterJS" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+Request feature and report issues at https://github.com/MustafaHi/Sciter-VSCode
 
-## [Unreleased]
-
-- Initial release
