@@ -2,14 +2,14 @@ interface Style {
     getPropertyValue(name: string): string;
     setProperty(name: string, value: string|length, important?: boolean): void;
     removeProperty(name: string): void;
-    colorOf(name: string): Graphics.Color | null;
+    colorOf(name: string): Color | null;
     pixelsOf(name: string): number | null;
-    imageOf(name: string): Graphics.Image | null;
+    imageOf(name: string): Image | null;
     /** Get/Set CSS variables applied to the element
      * @return `{name: value...}`
      */
     variables(variables?: object): object;
-    setCursor(cursor: Graphic.Image|null, x: number, y: number): void;
+    setCursor(cursor: Image|null, x: number, y: number): void;
 
 
     behavior: string;

@@ -44,7 +44,7 @@ interface Graphics
 
     draw(path: Path, params: drawPathParams);
     draw(image: Image, params: drawImageParams);
-    draw(text: Text, params: drawTextParams);
+    draw(text: gText, params: drawTextParams);
 
     pushLayer(x: number, y: number, w: number, h: number, opacity?: number, filter?: string): void;
     pushLayer(clipAreaName: keyof typeof clipAreaName, opacity?: number, filter?: string): void;
@@ -78,6 +78,9 @@ interface drawImageParams {
 interface drawTextParams {
     x: number;
     y: number;
+    /** 1..9, defines meaning of x/y coordinates, see NUMPAD.  
+     * `5` - center of text,  
+     * `7` - left/top corner, etc. */
     alignment: number;
     fill?: Color;
 }
@@ -191,7 +194,7 @@ interface Path
 
 interface gText
 {
-    new(...args: string): gText;
+    new(...args: string[]): gText;
     /** CSS style rules to decorate the text including fonts, alignment, borders and background.*/
     style: string;
     readonly lines: number;

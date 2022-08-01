@@ -86,12 +86,12 @@ interface Window {
     /** Interaction with native behaviors attached to the window. */
     xcall(name: string, ...args): any;
     /** Performs drag-and-drop using system D&D mechanism. */
-    perfromDrag(data: dragParams, mode: "copy"|"move", dragIcon: Graphic.Image|Element,
+    perfromDrag(data: dragParams, mode: "copy"|"move", dragIcon: Image|Element,
                 dragIconXoff?: number, dragIconYoff?: number): null|"copy"|"move";
 
     /** Show tray icon with the image and tooltip text.  
      * Tray icon will generate "trayiconclick" event for Window on user clicks */
-    trayIcon<Image extends Graphics.Image>({image: Image, text: string}): boolean;
+    trayIcon({image: Image, text: string}): boolean;
     /** Remove tray icon */
     trayIcon(command: "remove"): boolean;
     /** Report location of the icon on desktop, coordinates are in screen pixels. */

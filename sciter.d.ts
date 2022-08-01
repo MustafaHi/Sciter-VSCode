@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.20.1
+//| Sciter.d.ts v0.20.2
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -213,7 +213,7 @@ interface lottie
     /** Stop (pause) animation. */
     stop(): boolean;
     /** Update animation properties dynamically at runtime. */
-    update(keyPath: string, propName: string, value: Graphics.Color|number): boolean;
+    update(keyPath: string, propName: string, value: Color|number): boolean;
 }
 
 interface plaintext
@@ -335,7 +335,7 @@ interface video
 
 interface Document extends Element {
     /** Load image from `url` and bind it to variable */
-    bindImage(url: string, img ?: Graphics.Image): Graphics.Image;
+    bindImage(url: string, img ?: Image): Image;
 
     /** return path relative to document path */
     url(relpath ?: string): string;
@@ -758,14 +758,14 @@ interface Style {
     getPropertyValue(name: string): string;
     setProperty(name: string, value: string|length, important?: boolean): void;
     removeProperty(name: string): void;
-    colorOf(name: string): Graphics.Color | null;
+    colorOf(name: string): Color | null;
     pixelsOf(name: string): number | null;
-    imageOf(name: string): Graphics.Image | null;
+    imageOf(name: string): Image | null;
     /** Get/Set CSS variables applied to the element
      * @return `{name: value...}`
      */
     variables(variables?: object): object;
-    setCursor(cursor: Graphic.Image|null, x: number, y: number): void;
+    setCursor(cursor: Image|null, x: number, y: number): void;
 
 
     behavior: string;
@@ -1183,7 +1183,7 @@ interface clipboardObject
    /** List of files path */
    file?: string[];
    link?: { caption: string, url: string };
-   image?: Graphics.Image;
+   image?: Image;
 }
 
 /** The Zip class allows access to the content of a zip file or blob.
@@ -1259,7 +1259,7 @@ interface Graphics
 
     draw(path: Path, params: drawPathParams);
     draw(image: Image, params: drawImageParams);
-    draw(text: Text, params: drawTextParams);
+    draw(text: gText, params: drawTextParams);
 
     pushLayer(x: number, y: number, w: number, h: number, opacity?: number, filter?: string): void;
     pushLayer(clipAreaName: keyof typeof clipAreaName, opacity?: number, filter?: string): void;
@@ -1293,6 +1293,9 @@ interface drawImageParams {
 interface drawTextParams {
     x: number;
     y: number;
+    /** 1..9, defines meaning of x/y coordinates, see NUMPAD.  
+     * `5` - center of text,  
+     * `7` - left/top corner, etc. */
     alignment: number;
     fill?: Color;
 }
@@ -1406,7 +1409,7 @@ interface Path
 
 interface gText
 {
-    new(...args: string): gText;
+    new(...args: string[]): gText;
     /** CSS style rules to decorate the text including fonts, alignment, borders and background.*/
     style: string;
     readonly lines: number;
@@ -1974,12 +1977,12 @@ interface Window {
     /** Interaction with native behaviors attached to the window. */
     xcall(name: string, ...args): any;
     /** Performs drag-and-drop using system D&D mechanism. */
-    perfromDrag(data: dragParams, mode: "copy"|"move", dragIcon: Graphic.Image|Element,
+    perfromDrag(data: dragParams, mode: "copy"|"move", dragIcon: Image|Element,
                 dragIconXoff?: number, dragIconYoff?: number): null|"copy"|"move";
 
     /** Show tray icon with the image and tooltip text.  
      * Tray icon will generate "trayiconclick" event for Window on user clicks */
-    trayIcon<Image extends Graphics.Image>({image: Image, text: string}): boolean;
+    trayIcon({image: Image, text: string}): boolean;
     /** Remove tray icon */
     trayIcon(command: "remove"): boolean;
     /** Report location of the icon on desktop, coordinates are in screen pixels. */

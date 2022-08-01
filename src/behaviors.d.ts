@@ -210,7 +210,7 @@ interface lottie
     /** Stop (pause) animation. */
     stop(): boolean;
     /** Update animation properties dynamically at runtime. */
-    update(keyPath: string, propName: string, value: Graphics.Color|number): boolean;
+    update(keyPath: string, propName: string, value: Color|number): boolean;
 }
 
 interface plaintext

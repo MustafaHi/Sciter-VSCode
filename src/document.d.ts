@@ -1,6 +1,6 @@
 interface Document extends Element {
     /** Load image from `url` and bind it to variable */
-    bindImage(url: string, img ?: Graphics.Image): Graphics.Image;
+    bindImage(url: string, img ?: Image): Image;
 
     /** return path relative to document path */
     url(relpath ?: string): string;

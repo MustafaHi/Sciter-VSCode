@@ -205,7 +205,7 @@ interface clipboardObject
    /** List of files path */
    file?: string[];
    link?: { caption: string, url: string };
-   image?: Graphics.Image;
+   image?: Image;
 }
 
 /** The Zip class allows access to the content of a zip file or blob.
