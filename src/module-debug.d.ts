@@ -1,7 +1,7 @@
 declare module "@debug" {
     /** Gets call stack item at level */
     export function callStackAt(level: number): callStack;
-    /** Catch unhandeld exceptions.
+    /** Catch unhandled exceptions. pass `0` to get info about current function.
      * @param cb function taking (Error) as argument
      */
     export function setUnhandledExeceptionHandler(cb: Function): void;

@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.20.0
+//| Sciter.d.ts v0.20.1
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -1226,10 +1226,10 @@ interface Graphics
 {
     lineCap: string;
     lineJoin: string;
-    strokeString: Graphics.Color | string | Graphics.Image;
+    strokeString: Color | string | Image;
     lineWidth: number;
     strokeWidth: number;
-    fillStyle: Graphics.Color | string | Graphics.Image;
+    fillStyle: Color | string | Image;
     font: string;
 
     clearRect(x: number, y: number, w: number, h: number): void;
@@ -1257,18 +1257,18 @@ interface Graphics
     transform(a: number, b: number, c: number, d: number, e: number, f: number): void;
     setTransform(a: number, b: number, c: number, d: number, e: number, f: number): void;
 
-    draw(path: Graphics.Path, params: drawPathParams);
-    draw(image: Graphics.Image, params: drawImageParams);
-    draw(text: Graphics.Text, params: drawTextParams);
+    draw(path: Path, params: drawPathParams);
+    draw(image: Image, params: drawImageParams);
+    draw(text: Text, params: drawTextParams);
 
     pushLayer(x: number, y: number, w: number, h: number, opacity?: number, filter?: string): void;
     pushLayer(clipAreaName: keyof typeof clipAreaName, opacity?: number, filter?: string): void;
-    pushLayer(path: Graphics.Path, opacity?: number): void;
-    pushLayer(mask: Graphics.Image, useAlpha: boolean, opacity?: number): void;
+    pushLayer(path: Path, opacity?: number): void;
+    pushLayer(mask: Image, useAlpha: boolean, opacity?: number): void;
     popLayer(): void;
 
-    createTile(image: Graphics.Image): Brush;
-    createSolid(color: Graphics.Color): Brush;
+    createTile(image: Image): Brush;
+    createSolid(color: Color): Brush;
 }
 
 interface drawPathParams {
@@ -1294,7 +1294,7 @@ interface drawTextParams {
     x: number;
     y: number;
     alignment: number;
-    fill?: Graphics.Color;
+    fill?: Color;
 }
 
 type clipAreaName = "background-area" | "border-box" | "padding-box" | "margin-box" | "context-box";
@@ -1303,11 +1303,11 @@ interface Brush
 {
     type: number;
     
-    addColorStop(pos: number, color: Graphics.Color): Graphics.Brush;
+    addColorStop(pos: number, color: Color): Brush;
     /** Creates linear gradient brush along the line from x1/y1 to x2/y2 */
-    createLinearGradient(x1: number, y1: number, x2: number, y2: number): Graphics.Brush;
+    createLinearGradient(x1: number, y1: number, x2: number, y2: number): Brush;
     /** Creates radial gradient brush with center at x/y and radius r */
-    createRadialGradient(x: number, y: number, r: number): Graphics.Brush;
+    createRadialGradient(x: number, y: number, r: number): Brush;
 }
 
 interface Color
@@ -1341,22 +1341,22 @@ interface Color
 
     /** Creates `Graphics.Color` instance from r,g,b,a components in float numbers  
      * in `0.0-1.0` range. */
-    rgb(r: number, g: number, b: number, a?: number): Graphics.Color;
+    rgb(r: number, g: number, b: number, a?: number): Color;
     /** Creates `Graphics.Color` instance from r,g,b,a components in integers  
      * in `0-255` range. */
-    rgb(r: number, g: number, b: number, a?: number): Graphics.Color;
+    rgb(r: number, g: number, b: number, a?: number): Color;
     /** Creates `Graphics.Color` instance from HSV components in float numbers  
      * in `0.0-1.0` range but `h` is in `0.0-360.0` range. */
-    hsv(h: number, s: number, v: number, a?: number): Graphics.Color;
+    hsv(h: number, s: number, v: number, a?: number): Color;
     /** Creates `Graphics.Color` instance from HSL components in float numbers  
      * in `0.0-1.0` range but `h` is in `0.0-360.0` range. */
-    rgb(r: number, g: number, b: number, a?: number): Graphics.Color;
+    rgb(r: number, g: number, b: number, a?: number): Color;
 }
 
 interface Image
 {
     /** Render arbitrary graphics on bitmap */
-    new(width: number, height: number, canvas: Graphics, initColor?: number);
+    new(width: number, height: number, canvas: Graphics, initColor?: number): Image;
     /** Render DOM element onto bitmap. */
     new(width: number, height: number, element: Element);
 
@@ -1366,18 +1366,18 @@ interface Image
     /** Image format `png`, `webp`, etc. */
     readonly packaging: string;
 
-    load(url: string): Promise<Graphics.Image>;
+    load(url: string): Promise<Image>;
     update(...arg): void;
     toBytes(format: "png" | "jpeg" | "webp" | "bgra", compression?: number): ArrayBuffer;
-    fromBytes(data: ArrayBuffer): Graphics.Image;
+    fromBytes(data: ArrayBuffer): Image;
     /** Returns pixel color at x/y. */
-    colorAt(x: number, y: number): Graphics.Color;
+    colorAt(x: number, y: number): Color;
     /** Compose this image with src image. */
-    compose(src: Graphics.Image, operation: keyof typeof composeOps, dstX?: number, dstY?: number, srcX?: number, srcY?: number, srcW?: number, srcH?: number): Graphics.Image;
+    compose(src: Image, operation: keyof typeof composeOps, dstX?: number, dstY?: number, srcX?: number, srcY?: number, srcW?: number, srcH?: number): Image;
     /** Return fragment of an image at position.
      * @version 5+
      */
-    crop(x: number, y: number, width: number, height: number): Graphics.Image;
+    crop(x: number, y: number, width: number, height: number): Image;
 }
 
 enum composeOps {
@@ -1387,7 +1387,7 @@ enum composeOps {
 interface Path
 {
     /** Constructs new path object. accepts SVG's <path>s [d attribute](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d) value. */
-    new(svgPath?: string);
+    new(svgPath?: string): Path;
 
     moveTo(x: number, y: number): void;
     lineTo(x: number, y: number): void;
@@ -1401,11 +1401,12 @@ interface Path
     isPointInside(x: number, y: number): boolean;
     bounds(): [x1: number, y1: number, x2: number, y2: number];
     /**  */
-    combine(type: "union"|"intersect"|"xor"|"exclude", otherPath: Graphics.Path): Graphics.Path;
+    combine(type: "union"|"intersect"|"xor"|"exclude", otherPath: Path): Path;
 }
 
 interface gText
 {
+    new(...args: string): gText;
     /** CSS style rules to decorate the text including fonts, alignment, borders and background.*/
     style: string;
     readonly lines: number;
@@ -1441,7 +1442,7 @@ declare namespace JSX {
 declare module "@debug" {
     /** Gets call stack item at level */
     export function callStackAt(level: number): callStack;
-    /** Catch unhandeld exceptions.
+    /** Catch unhandled exceptions. pass `0` to get info about current function.
      * @param cb function taking (Error) as argument
      */
     export function setUnhandledExeceptionHandler(cb: Function): void;
