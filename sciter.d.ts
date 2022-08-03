@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.20.2
+//| Sciter.d.ts v0.20.3
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -536,6 +536,8 @@ interface Element extends Node, Behaviors {
         length: number;
         readonly entries(): string[];
     }
+    /** Returns a drawing context of the canvas, instance of Graphics object. */
+    getContext(type: '2d'): Graphics;
 
     id: string;
     name: string;
@@ -1226,7 +1228,7 @@ interface Graphics
 {
     lineCap: string;
     lineJoin: string;
-    strokeString: Color | string | Image;
+    strokeStyle: Color | string | Image;
     lineWidth: number;
     strokeWidth: number;
     fillStyle: Color | string | Image;
@@ -1315,6 +1317,7 @@ interface Brush
 
 interface Color
 {
+    new(color: string): Color;
     /** float(0..1.0), red channel. */
     readonly r: number;
     /** float(0..1.0), green channel */
@@ -1361,7 +1364,7 @@ interface Image
     /** Render arbitrary graphics on bitmap */
     new(width: number, height: number, canvas: Graphics, initColor?: number): Image;
     /** Render DOM element onto bitmap. */
-    new(width: number, height: number, element: Element);
+    new(width: number, height: number, element: Element): Image;
 
     readonly src: string;
     readonly width: number;
@@ -2012,7 +2015,7 @@ declare var Window: {
     /** share is an object shared between all documents and windows in the application.
      * CAUTION: use it responsibly.If temporary window or document populates
      * shared object then it should clean it in `beforeunload` document event. */
-    share: object;
+    share: any;
     /** Number of monitors in the system */
     readonly screens: number;
     /** Report geometry and information of the given screen (monitor). */

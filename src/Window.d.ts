@@ -121,7 +121,7 @@ declare var Window: {
     /** share is an object shared between all documents and windows in the application.
      * CAUTION: use it responsibly.If temporary window or document populates
      * shared object then it should clean it in `beforeunload` document event. */
-    share: object;
+    share: any;
     /** Number of monitors in the system */
     readonly screens: number;
     /** Report geometry and information of the given screen (monitor). */

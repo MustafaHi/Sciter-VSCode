@@ -11,7 +11,7 @@ interface Graphics
 {
     lineCap: string;
     lineJoin: string;
-    strokeString: Color | string | Image;
+    strokeStyle: Color | string | Image;
     lineWidth: number;
     strokeWidth: number;
     fillStyle: Color | string | Image;
@@ -100,6 +100,7 @@ interface Brush
 
 interface Color
 {
+    new(color: string): Color;
     /** float(0..1.0), red channel. */
     readonly r: number;
     /** float(0..1.0), green channel */
@@ -146,7 +147,7 @@ interface Image
     /** Render arbitrary graphics on bitmap */
     new(width: number, height: number, canvas: Graphics, initColor?: number): Image;
     /** Render DOM element onto bitmap. */
-    new(width: number, height: number, element: Element);
+    new(width: number, height: number, element: Element): Image;
 
     readonly src: string;
     readonly width: number;

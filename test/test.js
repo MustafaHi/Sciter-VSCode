@@ -1,6 +1,7 @@
 import { encode, decode } from "@sciter"
 import { fs } from "@sys"
 import * as env from "@env"
+import { printf, Zip } from "../sciter";
 
 
 var x = document.getBoundingClientRect();
@@ -43,6 +44,10 @@ Window.this.isActive
 
 Window.this.frameType
 const k = new Window({ width: 16, parent: Window.this});
+
+const z = Zip.openFile("test.zip");
+      z.length;
+      z.item(0).path;
 
 document.head.children.item
 

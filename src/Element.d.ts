@@ -159,6 +159,8 @@ interface Element extends Node, Behaviors {
         length: number;
         readonly entries(): string[];
     }
+    /** Returns a drawing context of the canvas, instance of Graphics object. */
+    getContext(type: '2d'): Graphics;
 
     id: string;
     name: string;
