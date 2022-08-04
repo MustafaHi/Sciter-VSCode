@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.20.3
+//| Sciter.d.ts v0.20.4
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -882,17 +882,21 @@ interface Event {
     keyState(key: string): boolean;
 }
 declare var Event: {
-    new(type: string, eventInitDict?: EventInit): Event;
+    new(type: string, options?: EventOptions): Event;
     readonly AT_TARGET: number;
     readonly BUBBLING_PHASE: number;
     readonly CAPTURING_PHASE: number;
     readonly NONE: number;
 };
-interface EventInit {
+interface EventOptions {
+    /** True if event goes through its target's ancestors in reverse tree order, and false otherwise. */
     bubbles?: boolean;
+    /** Can be canceled by invoking the preventDefault() method. */
     cancelable?: boolean;
+    /** True if event invokes listeners past a ShadowRoot node that is the root of its target, and false otherwise. */
     composed?: boolean;
-    data?,detail?: any;
+    /** Property passed to event listener. `evt.data/details` */
+    data?,details?: any;
 }
 type eventFunction = function(Event, Element): void;
 enum eventType {
@@ -1350,13 +1354,13 @@ interface Color
     rgb(r: number, g: number, b: number, a?: number): Color;
     /** Creates `Graphics.Color` instance from r,g,b,a components in integers  
      * in `0-255` range. */
-    rgb(r: number, g: number, b: number, a?: number): Color;
+    RGB(r: number, g: number, b: number, a?: number): Color;
     /** Creates `Graphics.Color` instance from HSV components in float numbers  
      * in `0.0-1.0` range but `h` is in `0.0-360.0` range. */
     hsv(h: number, s: number, v: number, a?: number): Color;
     /** Creates `Graphics.Color` instance from HSL components in float numbers  
      * in `0.0-1.0` range but `h` is in `0.0-360.0` range. */
-    rgb(r: number, g: number, b: number, a?: number): Color;
+    hsl(r: number, g: number, b: number, a?: number): Color;
 }
 
 interface Image

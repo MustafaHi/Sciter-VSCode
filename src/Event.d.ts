@@ -77,17 +77,21 @@ interface Event {
     keyState(key: string): boolean;
 }
 declare var Event: {
-    new(type: string, eventInitDict?: EventInit): Event;
+    new(type: string, options?: EventOptions): Event;
     readonly AT_TARGET: number;
     readonly BUBBLING_PHASE: number;
     readonly CAPTURING_PHASE: number;
     readonly NONE: number;
 };
-interface EventInit {
+interface EventOptions {
+    /** True if event goes through its target's ancestors in reverse tree order, and false otherwise. */
     bubbles?: boolean;
+    /** Can be canceled by invoking the preventDefault() method. */
     cancelable?: boolean;
+    /** True if event invokes listeners past a ShadowRoot node that is the root of its target, and false otherwise. */
     composed?: boolean;
-    data?,detail?: any;
+    /** Property passed to event listener. `evt.data/details` */
+    data?,details?: any;
 }
 type eventFunction = function(Event, Element): void;
 enum eventType {

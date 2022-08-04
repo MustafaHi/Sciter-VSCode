@@ -133,13 +133,13 @@ interface Color
     rgb(r: number, g: number, b: number, a?: number): Color;
     /** Creates `Graphics.Color` instance from r,g,b,a components in integers  
      * in `0-255` range. */
-    rgb(r: number, g: number, b: number, a?: number): Color;
+    RGB(r: number, g: number, b: number, a?: number): Color;
     /** Creates `Graphics.Color` instance from HSV components in float numbers  
      * in `0.0-1.0` range but `h` is in `0.0-360.0` range. */
     hsv(h: number, s: number, v: number, a?: number): Color;
     /** Creates `Graphics.Color` instance from HSL components in float numbers  
      * in `0.0-1.0` range but `h` is in `0.0-360.0` range. */
-    rgb(r: number, g: number, b: number, a?: number): Color;
+    hsl(r: number, g: number, b: number, a?: number): Color;
 }
 
 interface Image
