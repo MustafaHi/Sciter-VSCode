@@ -12,13 +12,14 @@ interface State
      *  `false` - remove capture if the element owns capture now.  
      *  `"strict"` - mouse events will be delivered to the element only. */
     capture(state: boolean|"strict"): boolean;
-    /** Returns various metrics of the element.  
-     *  @param property structure of returned value
-     *  @param metric particular metric of the element
-     *  @param relativeTo offset x/y are relative to
-     *  @param asPpx return coordinates in screen pixels otherwise DIPs
+    /** Report geometry of the window.  
+     *  @param property value type to return.
+     *  @param metric value in relation to.
+     *  @param relativeTo offset x/y are relative to.
+     *  @param asPpx return coordinates in screen pixels otherwise DIPs.
      */
-    box(property: keyof typeof boxProperties, metric: keyof typeof boxMetric, relativeTo?: keyof typeof boxRelativeTo, asPpx?: boolean): array|number;
+    box(property: "xywh"|"rect"|"position"|"dimension", metric: keyof typeof boxMetric, relativeTo?: keyof typeof boxRelativeTo, asPpx?: boolean): number[];
+    box(property: keyof typeof boxProperties, metric: keyof typeof boxMetric, relativeTo?: keyof typeof boxRelativeTo, asPpx?: boolean): number;
     /** Parses length string as CSS length units or percentage and then converts them to CSS pixels.
      *  Perecentage values are computed against element dimensions (inner box). */
     pixelsIn(length: string, orientation?: "horizontal" |  "vertical"): number | undefined;
@@ -79,5 +80,5 @@ interface State
 }
 enum boxProperties { "xywh", "rect", "position", "dimension", "left", "right", "top", "bottom", "width", "height" }
 enum boxMetric { "inner", "border", "padding", "margin", "client", "caret", "icon" }
-enum relativeTo { "element", "screen", "window", "document", "parent", "container", "self" }
+enum boxRelativeTo { "element", "screen", "window", "document", "parent", "container", "self" }
 

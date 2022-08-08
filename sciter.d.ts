@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.20.4
+//| Sciter.d.ts v0.20.5
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -687,13 +687,14 @@ interface State
      *  `false` - remove capture if the element owns capture now.  
      *  `"strict"` - mouse events will be delivered to the element only. */
     capture(state: boolean|"strict"): boolean;
-    /** Returns various metrics of the element.  
-     *  @param property structure of returned value
-     *  @param metric particular metric of the element
-     *  @param relativeTo offset x/y are relative to
-     *  @param asPpx return coordinates in screen pixels otherwise DIPs
+    /** Report geometry of the window.  
+     *  @param property value type to return.
+     *  @param metric value in relation to.
+     *  @param relativeTo offset x/y are relative to.
+     *  @param asPpx return coordinates in screen pixels otherwise DIPs.
      */
-    box(property: keyof typeof boxProperties, metric: keyof typeof boxMetric, relativeTo?: keyof typeof boxRelativeTo, asPpx?: boolean): array|number;
+    box(property: "xywh"|"rect"|"position"|"dimension", metric: keyof typeof boxMetric, relativeTo?: keyof typeof boxRelativeTo, asPpx?: boolean): number[];
+    box(property: keyof typeof boxProperties, metric: keyof typeof boxMetric, relativeTo?: keyof typeof boxRelativeTo, asPpx?: boolean): number;
     /** Parses length string as CSS length units or percentage and then converts them to CSS pixels.
      *  Perecentage values are computed against element dimensions (inner box). */
     pixelsIn(length: string, orientation?: "horizontal" |  "vertical"): number | undefined;
@@ -754,7 +755,7 @@ interface State
 }
 enum boxProperties { "xywh", "rect", "position", "dimension", "left", "right", "top", "bottom", "width", "height" }
 enum boxMetric { "inner", "border", "padding", "margin", "client", "caret", "icon" }
-enum relativeTo { "element", "screen", "window", "document", "parent", "container", "self" }
+enum boxRelativeTo { "element", "screen", "window", "document", "parent", "container", "self" }
 
 interface Style {
     getPropertyValue(name: string): string;
@@ -1897,9 +1898,6 @@ declare var Range: {
 }
 
 interface Window {
-    // new(param: object<windowParam>);
-    //
-    new(): Window;
     state: number| keyof typeof windowState;
 
     /** Window has input focus. */
@@ -1926,7 +1924,7 @@ interface Window {
     readonly parent: Window|null;
     readonly document: Document;
     /** Parameters provided by constructor, available inside the window as they are. */
-    parameters: object;
+    parameters: any;
 
     /** Monitor index where the current window is on */
     readonly screen: number;
@@ -1952,10 +1950,23 @@ interface Window {
     activate(bringToFront: boolean): void;
     /** Request to update the window. */
     update(): void;
-    /** Report geometry and information of the given screen (monitor). */
-    screenBox(type: 'frame'|'workarea'|'device'|'isPrimary'|'snapshot', property: keyof typeof boxProperties, asPpx?: boolean): number[];
-    /** Report geometry of the window. */
-    box(property: keyof typeof boxProperties, metric: keyof typeof boxMetric, relativeTo?: keyof typeof boxRelativeTo, asPpx?: boolean): number[];
+    /** Report geometry and data of the screen (monitor) the window is on. */
+    screenBox(type: keyof typeof screenBoxType, property: "xywh"|"rect"|"position"|"dimension", asPpx?: boolean): number[];
+    screenBox(type: keyof typeof screenBoxType, property: keyof typeof boxProperties, asPpx?: boolean): number;
+    /** Return name of device */
+    screenBox(type: 'device'): string;
+    /** Is window on primary monitor. */
+    screenBox(type: 'isPrimary'): boolean;
+    /** Return screenshot of the monitor the window is on. */
+    screenBox(type: 'snapshot'): Image;
+    /** Report geometry of the window.  
+     *  @param property value type to return.
+     *  @param metric value in relation to.
+     *  @param relativeTo offset x/y are relative to.
+     *  @param asPpx return coordinates in screen pixels otherwise DIPs.
+     */
+    box(property: "xywh"|"rect"|"position"|"dimension", metric: keyof typeof windowBoxMetric, relativeTo?: keyof typeof windowBoxRelativeTo, asPpx?: boolean): number[];
+    box(property: keyof typeof boxProperties, metric: keyof typeof windowBoxMetric, relativeTo?: keyof typeof windowBoxRelativeTo, asPpx?: boolean): number;
     /** move/size window.  
      * x, y, width, height are in PPX (physical screen pixels).  
      * If `client` is provided then parameters are window client area coordinates. */
@@ -1965,13 +1976,13 @@ interface Window {
     moveTo(monitor: number, x: number, y: number, width?: number, height?: number, client?: boolean): void;
 
     /** Subscribe to window related events, init callback everytime the event occurs. */
-    addEventHandler(event: windowEvent, handler: funcion): Window;
+    addEventHandler(event: windowEvent, handler: function): Window;
     /** Subscribe to window related events, init callback everytime the event occurs. */
     on(event: windowEvent, cb: eventFunction): Window;
     /** Unsubscribe from event by eventname or handler used by `on()` */
     off(eventOrHandler: windowEvent|function): Window;
 
-    selectFile(params: selectFileParams): string|array<string>;
+    selectFile(params: selectFileParams): string|string[];
     selectFolder(params: object): string;
 
     /** Performs system event(s) in application message queue, mode is one of:  
@@ -2015,7 +2026,7 @@ declare var Window: {
     new(param?: windowParam): Window;
     readonly this: Window;
     /** List of Sciter windows in the current process */
-    readonly all: array<Window>;
+    readonly all: Window[];
     /** share is an object shared between all documents and windows in the application.
      * CAUTION: use it responsibly.If temporary window or document populates
      * shared object then it should clean it in `beforeunload` document event. */
@@ -2023,9 +2034,16 @@ declare var Window: {
     /** Number of monitors in the system */
     readonly screens: number;
     /** Report geometry and information of the given screen (monitor). */
-    screenBox(screen: number, type: 'frame'|'workarea'|'device'|'isPrimary'|'snapshot', property: keyof typeof boxProperties): number[];
+    screenBox(screen: number, type: keyof typeof screenBoxType|'devicePixelRatio', property?: "xywh"|"rect"|"position"|"dimension"): number[];
+    screenBox(screen: number, type: keyof typeof screenBoxType|'devicePixelRatio', property?: keyof typeof boxProperties): number;
+    /** Return name of device */
+    screenBox(screen: number, type: 'device'): string;
+    /** Is this screen the primary screen. */
+    screenBox(screen: number, type: 'isPrimary'): boolean;
+    /** Return screenshot of the monitor. */
+    screenBox(screen: number, type: 'snapshot'): Image;
     /** Return DOM element under screenX/screenY position.  
-     * @Note: this method may return DOM element belonging to any Sciter window in current process. */
+     * @info this method may return DOM element belonging to any Sciter window in current process. */
     elementAt(x: number, y: number): Element;
     /** Return value of internal timer. */
     ticks(): number;
@@ -2035,7 +2053,7 @@ declare var Window: {
      * Sending stops on first window that will consume the event by returning true from event handler of this event. */
     send(event: Event): void;
     /** Get command line arguments in a scapp app */
-    scapp: {argv: array};
+    scapp: {argv: string[]};
 
 
     readonly POPUP_WINDOW : 0;
@@ -2075,7 +2093,7 @@ interface windowParam {
     /** window html source file */
     url?: string;
     /** extra parameters to pass to the new window. */
-    parameter?: array|string|object;
+    parameter?: any;
 }
 
 type windowEvent = "statechange" | "resolutionchange" | "mediachange" | "activate" | "replacementstart" | "replacementend" | "move" | "size" | "trayiconclick" | "spacechange";
@@ -2095,6 +2113,10 @@ enum windowState {
 }
 
 enum frameType { "standard", "solid", "solid-with-shadow", "extended", "transparent" }
+
+enum windowBoxMetric { 'border', 'client', 'cursor', 'caret' }
+enum windowBoxRelativeTo { 'desktop', 'monitor', 'self' }
+enum screenBoxType { 'frame', 'workarea', 'device', 'isPrimary', 'snapshot' }
 
 interface selectFileParams {
     mode?: "save"|"open"|"open-multiple";
