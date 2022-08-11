@@ -18,6 +18,8 @@ interface Event {
     readonly srcElement: Element | null;
     /** The element to which event is dispatched (its target). */
     readonly target: Element | null;
+    /** The secondary element which is lossing or gaining focus from/to `target` */
+    readonly relatedTarget: Element | null;
     /** Type of event, e.g. "click", "hashchange", or "submit". */
     readonly type: string;
     /** If invoked when the cancelable attribute value is true,

@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.20.5
+//| Sciter.d.ts v0.20.6
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -479,10 +479,11 @@ interface Element extends Node, Behaviors {
     /** Get element matching the css selector */
     querySelector(query: string): Element;
     /** Get array of elements matching the css selector */
-    querySelectorAll(query: string): array<Element>;
-    getElementsByClassName(query: string): array<Element>;
-    getElementsByTagName(query: string): array<Element>;
-    getElementsByName(query: string): array<Element>;
+    querySelectorAll(query: string): Element[];
+    getElementById(id: string): Element;
+    getElementsByClassName(className: string): Element[];
+    getElementsByTagName(tag: string): Element[];
+    getElementsByName(name: string): Element[];
     /** Find the closest parent element matching the query selector */
     closest(query: string): Element | null;
     /** Check element match the selector */
@@ -824,6 +825,8 @@ interface Event {
     readonly srcElement: Element | null;
     /** The element to which event is dispatched (its target). */
     readonly target: Element | null;
+    /** The secondary element which is lossing or gaining focus from/to `target` */
+    readonly relatedTarget: Element | null;
     /** Type of event, e.g. "click", "hashchange", or "submit". */
     readonly type: string;
     /** If invoked when the cancelable attribute value is true,

@@ -102,10 +102,11 @@ interface Element extends Node, Behaviors {
     /** Get element matching the css selector */
     querySelector(query: string): Element;
     /** Get array of elements matching the css selector */
-    querySelectorAll(query: string): array<Element>;
-    getElementsByClassName(query: string): array<Element>;
-    getElementsByTagName(query: string): array<Element>;
-    getElementsByName(query: string): array<Element>;
+    querySelectorAll(query: string): Element[];
+    getElementById(id: string): Element;
+    getElementsByClassName(className: string): Element[];
+    getElementsByTagName(tag: string): Element[];
+    getElementsByName(name: string): Element[];
     /** Find the closest parent element matching the query selector */
     closest(query: string): Element | null;
     /** Check element match the selector */
