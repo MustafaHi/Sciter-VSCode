@@ -1,7 +1,10 @@
 import { encode, decode } from "@sciter"
 import { fs } from "@sys"
 import * as env from "@env"
-import { printf, Zip } from "../sciter";
+import * as Storage from '@storage';
+
+let storage = Storage.open('xx');
+    storage.root.d = storage.createIndex('string', true);
 
 
 var x = document.getBoundingClientRect();
@@ -41,7 +44,7 @@ Window.this.on("activate", () => {});
 Window.this.state = Window.CHILD_WINDOW
 Window.this.frameType = "solid";
 Window.this.isActive
-
+Window.screenBox(0, "snapshot");
 Window.this.frameType
 const k = new Window({ width: 16, parent: Window.this});
 

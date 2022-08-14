@@ -1,8 +1,10 @@
 interface Document extends Element {
-    /** Load image from `url` and bind it to variable */
-    bindImage(url: string, img ?: Image): Image;
+    /** Return image associated with provided arbitrary url, or assign one if image is provided too.  
+     * This method also allow you to use the image in CSS by it URL.
+     */
+    bindImage(url: string, image?: Image): Image;
 
-    /** return path relative to document path */
+    /** Returns absolute path of provided relative path using the document URL as a base. */
     url(relpath ?: string): string;
 
     /** Subscribe to any DOM event */
@@ -16,7 +18,7 @@ interface Document extends Element {
     /** Root(html) element */
     documentElement: Element;
     /** document loading state - `complete` | `interactive` */
-    readyState: string;
+    readyState:  'complete' | 'interactive';
     createElement(tag: string): Element;
     createTextNode(): Node;
     createComment(): Comment;
