@@ -16,6 +16,7 @@ interface Graphics
     strokeWidth: number;
     fillStyle: Color | string | Image;
     font: string;
+    canvas: CanvasElement;
 
     clearRect(x: number, y: number, w: number, h: number): void;
     beginPath(): void;
@@ -54,6 +55,11 @@ interface Graphics
 
     createTile(image: Image): Brush;
     createSolid(color: Color): Brush;
+}
+
+interface CanvasElement extends Element {
+    height: number;
+    width: number;
 }
 
 interface drawPathParams {
