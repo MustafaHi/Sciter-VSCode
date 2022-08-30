@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.21.1
+//| Sciter.d.ts v0.21.2
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -1236,13 +1236,14 @@ declare var Graphics: {
 
 interface Graphics
 {
-    lineCap: string;
-    lineJoin: string;
+    lineCap: 'butt'|'round'|'square';
+    lineJoin: 'round'|'bevel'|'miter';
     strokeStyle: Color | string | Image;
     lineWidth: number;
     strokeWidth: number;
     fillStyle: Color | string | Image;
     font: string;
+    /** @version 5.0.0.5+ */
     canvas: CanvasElement;
 
     clearRect(x: number, y: number, w: number, h: number): void;
@@ -1256,11 +1257,11 @@ interface Graphics
     ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, antiClockWise?: boolean): void;
     rect(x: number, y: number, w: number, h: number): void;
     closePath(): void;
-    stroke(...args): void;
     fill(...args): void;
-    strokeRect(x: number, y: number, w: number, h: number): void;
     fillRect(x: number, y: number, w: number, h: number): void;
     fillText(text: string, x: number, y: number, maxWidth: number): void;
+    stroke(...args): void;
+    strokeRect(x: number, y: number, w: number, h: number): void;
     setLineDash(...args): void;
     save(): void;
     restore(): void;
@@ -1377,10 +1378,10 @@ interface Color
 
 interface Image
 {
-    /** Render arbitrary graphics on bitmap */
-    new(width: number, height: number, canvas: Graphics, initColor?: number): Image;
     /** Render DOM element onto bitmap. */
     new(width: number, height: number, element: Element): Image;
+    /** Render arbitrary graphics on bitmap */
+    new(width: number, height: number, canvas: (ctx: Graphics) => void, initColor?: number): Image;
 
     readonly src: string;
     readonly width: number;
@@ -1388,9 +1389,11 @@ interface Image
     /** Image format `png`, `webp`, etc. */
     readonly packaging: string;
 
+    /** Static-Method load image from URL return promise of an Image object */
     load(url: string): Promise<Image>;
+    /** Draw on the image surface. Image must be a bitmap. */
     update(...arg): void;
-    toBytes(format: "png" | "jpeg" | "webp" | "bgra", compression?: number): ArrayBuffer;
+    toBytes(format: "png"|"jpeg"|"webp"|"bgra", compression?: number): ArrayBuffer;
     fromBytes(data: ArrayBuffer): Image;
     /** Returns pixel color at x/y. */
     colorAt(x: number, y: number): Color;
