@@ -134,7 +134,8 @@ interface Color
     toString(type?: "RGB" | "RGBA" | "rgb" | "rgba"): string;
     /** Color packaged to uint32 as `(a << 24) | (b << 16) | (g << 8) | (r)` */
     valueOf(): number;
-
+}
+declare var Color: {
     /** Creates `Graphics.Color` instance from r,g,b,a components in float numbers  
      * in `0.0-1.0` range. */
     rgb(r: number, g: number, b: number, a?: number): Color;

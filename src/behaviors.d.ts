@@ -220,7 +220,8 @@ interface plaintext
     /** String content, lines seperated by \r\n */
     content: string|string[];
     readonly lines: number;
-    readonly selectionStart, readonly selectionEnd: [lineNumber: number, linePosition: number];
+    readonly selectionStart: [lineNumber: number, linePosition: number];
+    readonly selectionEnd  : [lineNumber: number, linePosition: number];
     readonly selectionText: string;
 
     /** Load Content from URL */

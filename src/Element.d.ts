@@ -214,11 +214,11 @@ interface Element extends Node, Behaviors {
     dispatchEvent(event: Event, avoidDuplicates?: boolean): boolean;
 
     // EventTarget
-    ready: Function;
-    onclick: Function;
-    onchange: Function;
-    onkeydown: Function;
-    onwheel: Function;
+    ready(event: Event, element: Element): void;
+    onclick(event: Event, element: Element): void;
+    onchange(event: Event, element: Element): void;
+    onkeydown(event: Event, element: Element): void;
+    onwheel(event: Event, element: Element): void;
 }
 declare var Element: {
     new(): Element;

@@ -9,6 +9,8 @@ interface Window {
      * the property is undefined if host system does not support spaces (virtual desktops). */
     readonly isOnActiveSpace: boolean|undefined;
     
+    /** Get/Set Window title */
+    caption: string;
     isResizable: boolean;
     isMaximizable: boolean;
     isMinimizable: boolean;
@@ -83,7 +85,13 @@ interface Window {
     /** Unsubscribe from event by eventname or handler used by `on()` */
     off(eventOrHandler: windowEvent|function): Window;
 
-    selectFile(params: selectFileParams): string|string[];
+    /** Load HTML document to Window */
+    load(url: string): void;
+    /** Open file selection dialog */
+    selectFile<T extends selectFileParams>(params: T): T extends {'mode': 'open-multiple'} ? string[] : string;
+    selectFile(mode: "save"|"open", filter: string): string;
+    selectFile(mode: "open-multiple", filter: string): string[];
+    /** Open folder selection dialog */
     selectFolder(params: object): string;
 
     /** Performs system event(s) in application message queue, mode is one of:  
@@ -111,10 +119,10 @@ interface Window {
 
     /** gets/sets media variable that can be used in CSS as `@media name {...}` */
     mediaVar(name: string, value?: string): string|number|void;
-    /** gets/sets media multiple variables. */
+    /** gets/sets multiple media variables. that can be used in CSS as `@media name {...}`*/
     mediaVars(values?: object): object|void;
     /** Show a new window as dialog, returns
-     * close value of `window.close(valToReturn)` call inside the window.  
+     * close value of `Window.this.close(valueToReturn)` call inside the window.  
      * [Documentation](https://gitlab.com/sciter-engine/sciter-js-sdk/-/blob/main/docs/md/Window.md#windowmodaljsx-any)*/
     modal(params: windowParam): any;
     modal(params: JSX): any;

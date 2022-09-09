@@ -1,5 +1,8 @@
 let g = new Graphics();
 
+let Image = new Graphics.Image(5, 5, (ct) => {ct.beginPath();})
+
+let imageload = await Graphics.Image.load('xx');
 let x = 1, y = 1, w = 1, h = 1;
 let a = 1, b = 1, c = 1, d = 1, e = 1, f = 1;
 let startAngle = 1, endAngle = 1;
