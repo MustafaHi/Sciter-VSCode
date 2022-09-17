@@ -1,3 +1,3 @@
-//| Sciter.d.ts v0.21.3
+//| Sciter.d.ts v0.22.0
 //| https://github.com/MustafaHi/sciter-vscode
 

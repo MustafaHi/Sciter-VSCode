@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.21.3
+//| Sciter.d.ts v0.22.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -1629,8 +1629,7 @@ declare module '@storage' {
 }
 
 declare module "@sys" {
-    declare interface spawnOptions {stdout?: string, stdin?: string, stderr?: string}
-    export function spawn(args: array<string>, options?: spawnOptions ): Process;
+    export function spawn(args: string[], options?: spawnOptions ): Process;
     export function hrtime(): bigint;
     export function gettimeofday(): number;
     export function uname(): unameObject;
@@ -1648,13 +1647,26 @@ declare module "@sys" {
     export function exepath(): string;
     export function random(buffer: ArrayBuffer);
 
+    declare var UDP: {
+        new(): UDPSocket;
+    };
+    declare var TCP: {
+        new(): TCPSocket;
+    };
+    declare var TTY: {
+        new(): TTY;
+    };
+    declare var Pipe: {
+        new(): Pipe;
+    };
+
     namespace fs {
         /**
-         * Watch directory for changes
+         * Monitor files or folders for changes
          * @param path 
          * @param cb callback function
          */
-        function watch(path:string, cb: (path:string, events: 0x01 | 0x02) => WatchFS);
+        function watch(path:string, cb: (path:string, events: 0x01 | 0x02) => void): WatchFS;
         /**
          * Open file instance
          * @param path 
@@ -1671,27 +1683,50 @@ declare module "@sys" {
         function $open(path:string, flags: keyof typeof OpenFlagOptions, mode ?: number): File;
         function stat(path:string): Promise<StatStruct>;
         function $stat(path:string): StatStruct;
+        /** `lstat()` is identical to `stat()`, except that if path is a symbolic link, then the link itself is stat-ed, not the file that it refers to. */
         function lstat(): Promise<StatStruct>;
+        /** ( sync version of `lstat()` ) `$lstat()` is identical to `$stat()`, except that if path is a symbolic link, then the link itself is stat-ed, not the file that it refers to. */
         function $lstat(): StatStruct;
+        /** Expands all symbolic links and resolves references `/./`, `/../` and extra `/` characters in the pathname string to produce a canonicalized absolute pathname. */
+        function realpath(pathname: string): string;
+        /** Splits path to `0`: directory without trailling `/` and `1`: file name and extension */
+        function splitpath(path: string): [directory: string, file: string];
         /** Remove file */
         function unlink(path:string): Promise;
         function rename(oldpath:string, newpath: string) : Promise;
+        /** Creates unique temporary directory. The last six characters of template must be "XXXXXX". */
         function mkdtemp(template:string) : Promise<string>;
+        /** Creates unique temporary file. The last six characters of template must be "XXXXXX" */
         function mkstemp(template:string) : Promise<string>;
+        /** Delete directory (async) */
         function rmdir(path:string) : Promise;
+        /** Delete directory (sync) */
         function $rmdir(path:string);
+        /** Create directory (async) */
         function mkdir(path:string, mode ?: 0o777): Promise;
+        /** Create directory (sync) */
         function $mkdir(path:string, mode ?: 0o777);
         function copyfile(): Promise;
-        function readdir(path: string): Promise<FileList>;
-        function $readdir(path: string): FileList;
-        /** Read file content, check `$readfile` for sync method */
+        /** Read directory contents asynchronously. The promise resolves to file list. */
+        function readdir(path: string): Promise<FileList[]>;
+        /** Read directory contents synchronously. return file list. */
+        function $readdir(path: string): FileList[];
+        /** Return file content, check `$readfile` for sync method. */
         function readfile(path: string): Promise<ArrayBuffer>;
-        /** Synchronously read file content */
+        /** Synchronously return file content. */
         function $readfile(path: string): ArrayBuffer;
         
+        const UV_DIRENT_UNKNOWN: 0;
+        const UV_DIRENT_FILE: 1;
+        const UV_DIRENT_DIR : 2;
+        const UV_DIRENT_LINK: 3;
+        const UV_DIRENT_FIFO: 4;
+        const UV_DIRENT_SOCKET: 5;
+        /** Character stream device, like terminal. */
+        const UV_DIRENT_CHAR: 6;
+        const UV_DIRENT_BLOCK: 7;
     }
-    
+
     interface Dir {
         close();
         path: string;
@@ -1707,8 +1742,15 @@ declare module "@sys" {
         close (): Promise<undefined>;
         $close(): undefined;
         fileno(): number;
-        stat(): Promise<Object>;
+        stat(): Promise<StatStruct>;
         path: string;
+    }
+
+    interface FileList {
+        /** local file name + extension (relative to directory) */
+        name: string;
+        /** ORed flags (see `fs.UV_DIRENT_****`)  */
+        type: number;
     }
 
     declare interface WatchFS {
@@ -1746,6 +1788,12 @@ declare module "@sys" {
         /** Processor type: i686 */
         machine: string;
     }
+
+    interface spawnOptions {
+        stdin ?: string;
+        stdout?: string;
+        stderr?: string;
+    }
 }
 
 declare enum OpenFlagOptions { 'a', 'ax', 'a+', 'ax+', 'as', 'as+', 'r', 'r+', 'rs+', 'w', 'wx', 'w+', 'wx+' }
@@ -1768,43 +1816,48 @@ declare interface ProcessStats {
 
 declare interface Socket {
     close();
-    read();
-    write();
-    fileno();
-}
-declare interface Pipe extends Socket {
-    listen();
-    accept();
-    getsockname();
-    getpeername();
-    connect();
-    bind();
-}
-
-declare interface TTY extends Socket {
-    setMode();
-    getWinSize();
+    read(): Promise<ArrayBuffer>;
+    write(data: string|ArrayBuffer);
+    fileno(): number;
+    getsockname(): NetworkParam;
+    getpeername(): NetworkParam;
+    connect(param: NetworkParam): void;
+    bind(param: NetworkParam): void;
 }
 
 declare interface UDPSocket extends Socket {
     close();
-    recv();
-    send();
-    getsockname();
-    getpeername();
-    connect();
-    bind();
+    recv(): Promise<{data: ArrayBuffer, flags: number, addr: NetworkParam}>;
+    send(data: string|ArrayBuffer): Promise<void>;
 }
 
-declare interface TCPSocket {
+declare interface TCPSocket extends Socket {
     shutdown();
+    listen(): void;
+    accept(): Promise<TCPSocket>;
+}
+
+declare interface Pipe extends Socket {
+    listen(): void;
+    accept(): Promise<Pipe>;
+    bind(name: string): void;
+    getpeername(): string;
+    getsockname(): string;
+}
+
+declare interface TTY {
+    close();
+    read();
+    write();
     fileno();
-    listen();
-    accept();
-    getsockname();
-    getpeername();
-    connect();
-    bind();
+    setMode();
+    getWinSize();
+}
+
+declare interface NetworkParam {
+    family?: number;
+    ip: string;
+    port: number;
 }
 
 interface Node {
