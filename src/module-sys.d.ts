@@ -185,9 +185,7 @@ declare interface ProcessStats {
 }
 
 declare interface Socket {
-    close();
-    read(): Promise<ArrayBuffer>;
-    write(data: string|ArrayBuffer);
+    close(): void;
     fileno(): number;
     getsockname(): NetworkParam;
     getpeername(): NetworkParam;
@@ -196,15 +194,16 @@ declare interface Socket {
 }
 
 declare interface UDPSocket extends Socket {
-    close();
     recv(): Promise<{data: ArrayBuffer, flags: number, addr: NetworkParam}>;
     send(data: string|ArrayBuffer): Promise<void>;
 }
 
 declare interface TCPSocket extends Socket {
-    shutdown();
+    shutdown(): void;
     listen(): void;
     accept(): Promise<TCPSocket>;
+    read(): Promise<ArrayBuffer>;
+    write(data: string|ArrayBuffer): void;
 }
 
 declare interface Pipe extends Socket {
@@ -213,6 +212,8 @@ declare interface Pipe extends Socket {
     bind(name: string): void;
     getpeername(): string;
     getsockname(): string;
+    read(): Promise<ArrayBuffer>;
+    write(data: string|ArrayBuffer): void;
 }
 
 declare interface TTY {
