@@ -84,6 +84,10 @@ interface Window {
     on(event: windowEvent, cb: eventFunction): Window;
     /** Unsubscribe from event by eventname or handler used by `on()` */
     off(eventOrHandler: windowEvent|function): Window;
+    /** Send event to the window synchronously. Returns `true` if the window consumes the event. */
+    dispatchEvent(event: Event): boolean;
+    /** Post event to the window asynchronously. The function returns immediately - does not wait for the event consumption. */
+    postEvent(event: Event): void;
 
     /** Load HTML document to Window */
     load(url: string): void;

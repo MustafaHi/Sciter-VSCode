@@ -49,14 +49,29 @@ declare module "@sys" {
          * @param path 
          * @param flags method to open the file with read/write
          * @param mode file content encoding
+         * @deprecated >5.0.0.5 use `fs.sync.open()`
          */
         function $open(path:string, flags: keyof typeof OpenFlagOptions, mode ?: number): File;
+        /** Return information about the file at path. */
         function stat(path:string): Promise<StatStruct>;
+        /** Return information about the file at path. (sync) 
+         * @deprecated >5.0.0.5 use `fs.sync.stat()` or `fs.statSync()`
+        */
         function $stat(path:string): StatStruct;
+        /** Return information about the file at path. (sync)
+         * @version 5.0.0.6+
+         */
+        function statSync(path:string): StatStruct;
         /** `lstat()` is identical to `stat()`, except that if path is a symbolic link, then the link itself is stat-ed, not the file that it refers to. */
         function lstat(): Promise<StatStruct>;
-        /** ( sync version of `lstat()` ) `$lstat()` is identical to `$stat()`, except that if path is a symbolic link, then the link itself is stat-ed, not the file that it refers to. */
+        /** ( sync version of `lstat()` ) `$lstat()` is identical to `$stat()`, except that if path is a symbolic link, then the link itself is stat-ed, not the file that it refers to. 
+         * @deprecated >5.0.0.5 use `fs.sync.lstat()` or `fs.lstatSync()`
+        */
         function $lstat(): StatStruct;
+        /** ( sync version of `lstat()` ) `$lstat()` is identical to `$stat()`, except that if path is a symbolic link, then the link itself is stat-ed, not the file that it refers to. 
+         * @version 5.0.0.6+
+        */
+        function lstatSync(): StatStruct;
         /** Expands all symbolic links and resolves references `/./`, `/../` and extra `/` characters in the pathname string to produce a canonicalized absolute pathname. */
         function realpath(pathname: string): string;
         /** Splits path to `0`: directory without trailling `/` and `1`: file name and extension */
@@ -70,21 +85,53 @@ declare module "@sys" {
         function mkstemp(template:string) : Promise<string>;
         /** Delete directory (async) */
         function rmdir(path:string) : Promise;
-        /** Delete directory (sync) */
+        /** Delete directory (sync)
+         * @deprecated >5.0.0.5 use `fs.sync.rmdir()` or `fs.rmdirSync()`
+         */
         function $rmdir(path:string);
+        /** Delete directory (sync) 
+         * @version 5.0.0.6+
+        */
+        function rmdirSync(path:string);
         /** Create directory (async) */
         function mkdir(path:string, mode ?: 0o777): Promise;
-        /** Create directory (sync) */
+        /** Create directory (sync)
+         * @deprecated >5.0.0.5 use `fs.sync.mkdir()` or `fs.mkdirSync()`
+         */
         function $mkdir(path:string, mode ?: 0o777);
+        /** Create directory (sync)
+         * @version 5.0.0.6+
+         */
+        function mkdirSync(path:string, mode ?: 0o777);
+        /** Change mode command used to manage file system access permissions on Unix and Unix-like systems.
+         * @version 5.0.0.6+
+         * @reference [chmod](https://man7.org/linux/man-pages/man2/chmod.2.html)
+         */
+        function chmod(path: string, mode ?: number): Promise;
+        /** Change mode command used to manage file system access permissions on Unix and Unix-like systems. (sync)
+         * @version 5.0.0.6+
+         * @reference [chmod](https://man7.org/linux/man-pages/man2/chmod.2.html)
+         */
+        function chmodSync(path: string, mode ?: number);
         function copyfile(): Promise;
         /** Read directory contents asynchronously. The promise resolves to file list. */
         function readdir(path: string): Promise<FileList[]>;
-        /** Read directory contents synchronously. return file list. */
+        /** Read directory contents synchronously. return file list. 
+         * @deprecated >5.0.0.5 use `fs.sync.readdir()` or `fs.readdirSync()`
+        */
         function $readdir(path: string): FileList[];
-        /** Return file content, check `$readfile` for sync method. */
+        /** Read directory contents synchronously. return file list. 
+         * @version 5.0.0.6+
+        */
+        function readdirSync(path: string): Promise<FileList[]>;
+        /** Return file content, check `readfileSync` for sync method. */
         function readfile(path: string): Promise<ArrayBuffer>;
-        /** Synchronously return file content. */
+        /** Synchronously return file content.
+         * @deprecated >5.0.0.5 use `fs.sync.readfile()` or `fs.readfileSync()`
+         */
         function $readfile(path: string): ArrayBuffer;
+        /** Synchronously return file content. */
+        function readfileSync(path: string): ArrayBuffer;
         
         const UV_DIRENT_UNKNOWN: 0;
         const UV_DIRENT_FILE: 1;
@@ -95,6 +142,35 @@ declare module "@sys" {
         /** Character stream device, like terminal. */
         const UV_DIRENT_CHAR: 6;
         const UV_DIRENT_BLOCK: 7;
+
+        /** Synchronous methods of existing Asynchronous file system methods.
+         * @version 5.0.0.6+
+         */
+        namespace sync {
+            /**
+             * Open file instance
+             * @param path 
+             * @param flags method to open the file with read/write
+             * @param mode file content encoding
+             */
+            function open(path:string, flags: keyof typeof OpenFlagOptions, mode ?: number): File;
+            /** Return information about the file at path. */
+            function stat(path:string): StatStruct;
+            /** `lstat()` is identical to `stat()`, except that if path is a symbolic link, then the link itself is stat-ed, not the file that it refers to. */
+            function lstat(): StatStruct;
+            /** Delete directory. */
+            function rmdir(path:string);
+            /** Create directory.*/
+            function mkdir(path:string, mode ?: 0o777);
+            /** Change mode command used to manage file system access permissions on Unix and Unix-like systems.
+             * @reference [chmod](https://man7.org/linux/man-pages/man2/chmod.2.html)
+            */
+            function chmod(path: string, mode ?: number);
+            /** Read directory contents. The promise resolves to file list. */
+            function readdir(path: string): FileList[];
+            /** Return file content. */
+            function readfile(path: string): ArrayBuffer;
+        }
     }
 
     interface Dir {
@@ -106,11 +182,20 @@ declare module "@sys" {
 
     declare interface File {
         read (length?:number, fileposition ?: number): Promise<Uint8Array>;
+        /** @deprecated >5.0.0.5 use `readSync()` */
         $read(length?:number, fileposition ?: number): Uint8Array;
+        /** @version 5.0.0.5+ */
+        readSync(length?:number, fileposition ?: number): Uint8Array;
         write (data:string|string[]|ArrayBuffer, filePosition ?: number) : Promise<number>;
+        /** @deprecated >5.0.0.5 use `writeSync` */
         $write(data:string|string[]|ArrayBuffer, filePosition ?: number) : number;
+        /** @version 5.0.0.6+ */
+        writeSync(data:string|string[]|ArrayBuffer, filePosition ?: number) : number;
         close (): Promise<undefined>;
+        /** @deprecated >5.0.0.5 use `closeSync` */
         $close(): undefined;
+        /** @version 5.0.0.6+ */
+        closeSync(): undefined;
         fileno(): number;
         stat(): Promise<StatStruct>;
         path: string;
