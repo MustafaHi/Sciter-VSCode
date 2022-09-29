@@ -125,13 +125,15 @@ declare module "@sys" {
         */
         function readdirSync(path: string): Promise<FileList[]>;
         /** Return file content, check `readfileSync` for sync method. */
-        function readfile(path: string): Promise<ArrayBuffer>;
+        function readFile(path: string): Promise<ArrayBuffer>;
         /** Synchronously return file content.
          * @deprecated >5.0.0.5 use `fs.sync.readfile()` or `fs.readfileSync()`
          */
         function $readfile(path: string): ArrayBuffer;
-        /** Synchronously return file content. */
-        function readfileSync(path: string): ArrayBuffer;
+        /** Synchronously return file content.
+         * @version 5.0.0.6+
+         */
+        function readFileSync(path: string): ArrayBuffer;
         
         const UV_DIRENT_UNKNOWN: 0;
         const UV_DIRENT_FILE: 1;
