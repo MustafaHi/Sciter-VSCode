@@ -45,13 +45,13 @@ declare function scanf(...args: string[]): array<string | number>;
  * for resolving relative paths in `import ... from "relpath"` statements inside.
  * @return module's exported data as an object.
  */
-declare function evalModule(text: string, url?: string): object;
+declare function evalModule(text: string, url?: string): any;
 
 /** Loads and executes JavaScript at url synchronously. */
 declare function loadScript(url: string): void;
 
 /** Loads and executes JavaScript module at url synchronously. Returns modules exports object */
-declare function loadScriptModule(url: string): object;
+declare function loadScriptModule(url: string): any;
 
 /** Number of physical screen pixels in logical CSS px (dip) */
 declare var devicePixelRatio: float;
@@ -63,7 +63,7 @@ declare var globalThis: object;
 declare var window: typeof globalThis;
 
 
-declare function fetch(url: string, params: fetchParams): Promise<Response>;
+declare function fetch(url: string | Request, params?: fetchParams): Promise<Response>;
 
 interface fetchParams
 {
@@ -86,20 +86,24 @@ interface fetchParams
    }
    /** Callback function to be called on download progress.  
     * Note: total argument can be zero if server does not provide `Content-Length` info. */
-   downloadProgress: (fetched: number, total: number) => void;
+   downloadProgress?: (fetched: number, total: number) => void;
 }
 
 interface Response
 {
    readonly body: string;
    readonly bodyUsed: boolean;
-   readonly headers: object;
+   readonly headers: any;
    readonly ok: boolean;
-   readonly redirected: string[]|undefined;
+   readonly redirected: boolean;
    readonly status: number;
    readonly statusText: string;
    readonly type: string;
    readonly url: string;
+   /** if true then the request was aborted by `request.abort()` call.
+    * @version 5.0.1.1+ */
+   readonly aborted: boolean;
+   readonly request: Request;
    
    arrayBuffer(): Promise<ArrayBuffer>;
    blob(): Promise<ArrayBuffer>;
@@ -107,12 +111,22 @@ interface Response
    error(): Response;
    redirect(url: string, status?: number): Response;
    formData(): Promise<FormData>;
-   json(): Promise<object>;
+   json(): Promise<any>;
    text(): Promise<string>;
 }
 
-interface requestObject
+interface Request
 {
+   cache: "no-cache" | "reload" | "default";
+   context: "html" | "image" | "style" | "cursor" | "script" | "data" | "font" | "audio";
+   headers: any;
+   method: 'POST'|'GET'|'PUT'|'DELETE';
+   url: string;
+   /** Try to abort current request; Response of aborted request will have `response.aborted` property set to true.
+    * @version 5.0.1.1+ */
+   abort(): void;
+   progress?: (bytesLoaded: number, totalBytes: number) => void;
+
    /** Appends a new value to existing key inside the object, or adds the key if it does not already exist.  
     * To overwrite existing key/value use `set()`.
     */
@@ -133,7 +147,11 @@ interface requestObject
    /** Returns an iterator allowing to go through all values contained in this object. */
    values(): any[];
 }
-interface FormData extends requestObject
+declare var Request:
+{
+   new(): Request;
+}
+interface FormData extends Request
 {
 
 }
@@ -164,10 +182,11 @@ interface URL
    readonly filename: string;
    readonly dir: string;
    readonly extension: string;
+
+   guessMimeType(): string;
 }
 declare var URL: {
    new(url: string): URL;
-   guessMimeType(): string;
    /** Decode and remove prefix */
    toPath(path: string): string;
    /** Encode and prefix path with `file://` */
@@ -201,7 +220,7 @@ interface clipboardObject
 {
    text?: string;
    html?: string;
-   json?: object;
+   json?: any;
    /** List of files path */
    file?: string[];
    link?: { caption: string, url: string };

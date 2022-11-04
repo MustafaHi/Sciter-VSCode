@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.23.1
+//| Sciter.d.ts v0.24.0
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -1036,13 +1036,13 @@ declare function scanf(...args: string[]): array<string | number>;
  * for resolving relative paths in `import ... from "relpath"` statements inside.
  * @return module's exported data as an object.
  */
-declare function evalModule(text: string, url?: string): object;
+declare function evalModule(text: string, url?: string): any;
 
 /** Loads and executes JavaScript at url synchronously. */
 declare function loadScript(url: string): void;
 
 /** Loads and executes JavaScript module at url synchronously. Returns modules exports object */
-declare function loadScriptModule(url: string): object;
+declare function loadScriptModule(url: string): any;
 
 /** Number of physical screen pixels in logical CSS px (dip) */
 declare var devicePixelRatio: float;
@@ -1054,7 +1054,7 @@ declare var globalThis: object;
 declare var window: typeof globalThis;
 
 
-declare function fetch(url: string, params: fetchParams): Promise<Response>;
+declare function fetch(url: string | Request, params?: fetchParams): Promise<Response>;
 
 interface fetchParams
 {
@@ -1077,20 +1077,24 @@ interface fetchParams
    }
    /** Callback function to be called on download progress.  
     * Note: total argument can be zero if server does not provide `Content-Length` info. */
-   downloadProgress: (fetched: number, total: number) => void;
+   downloadProgress?: (fetched: number, total: number) => void;
 }
 
 interface Response
 {
    readonly body: string;
    readonly bodyUsed: boolean;
-   readonly headers: object;
+   readonly headers: any;
    readonly ok: boolean;
-   readonly redirected: string[]|undefined;
+   readonly redirected: boolean;
    readonly status: number;
    readonly statusText: string;
    readonly type: string;
    readonly url: string;
+   /** if true then the request was aborted by `request.abort()` call.
+    * @version 5.0.1.1+ */
+   readonly aborted: boolean;
+   readonly request: Request;
    
    arrayBuffer(): Promise<ArrayBuffer>;
    blob(): Promise<ArrayBuffer>;
@@ -1098,12 +1102,22 @@ interface Response
    error(): Response;
    redirect(url: string, status?: number): Response;
    formData(): Promise<FormData>;
-   json(): Promise<object>;
+   json(): Promise<any>;
    text(): Promise<string>;
 }
 
-interface requestObject
+interface Request
 {
+   cache: "no-cache" | "reload" | "default";
+   context: "html" | "image" | "style" | "cursor" | "script" | "data" | "font" | "audio";
+   headers: any;
+   method: 'POST'|'GET'|'PUT'|'DELETE';
+   url: string;
+   /** Try to abort current request; Response of aborted request will have `response.aborted` property set to true.
+    * @version 5.0.1.1+ */
+   abort(): void;
+   progress?: (bytesLoaded: number, totalBytes: number) => void;
+
    /** Appends a new value to existing key inside the object, or adds the key if it does not already exist.  
     * To overwrite existing key/value use `set()`.
     */
@@ -1124,7 +1138,11 @@ interface requestObject
    /** Returns an iterator allowing to go through all values contained in this object. */
    values(): any[];
 }
-interface FormData extends requestObject
+declare var Request:
+{
+   new(): Request;
+}
+interface FormData extends Request
 {
 
 }
@@ -1155,10 +1173,11 @@ interface URL
    readonly filename: string;
    readonly dir: string;
    readonly extension: string;
+
+   guessMimeType(): string;
 }
 declare var URL: {
    new(url: string): URL;
-   guessMimeType(): string;
    /** Decode and remove prefix */
    toPath(path: string): string;
    /** Encode and prefix path with `file://` */
@@ -1192,7 +1211,7 @@ interface clipboardObject
 {
    text?: string;
    html?: string;
-   json?: object;
+   json?: any;
    /** List of files path */
    file?: string[];
    link?: { caption: string, url: string };
@@ -1743,7 +1762,11 @@ declare module "@sys" {
          * @reference [chmod](https://man7.org/linux/man-pages/man2/chmod.2.html)
          */
         function chmodSync(path: string, mode ?: number);
-        function copyfile(): Promise;
+        /**
+         * Asynchronous file copy.
+         * @param flag a combination of `fs.UV_FS_COPYFILE_***`
+         */
+        function copyfile(source: string, destination: string, flag?: number): Promise;
         /** Read directory contents asynchronously. The promise resolves to file list. */
         function readdir(path: string): Promise<FileList[]>;
         /** Read directory contents synchronously. return file list. 
@@ -1774,6 +1797,13 @@ declare module "@sys" {
         /** Character stream device, like terminal. */
         const UV_DIRENT_CHAR: 6;
         const UV_DIRENT_BLOCK: 7;
+        
+        /** `fs.copyfile()` flag : return an error if the destination already exists */
+        const UV_FS_COPYFILE_EXCL: 1;
+        /** `fs.copyfile()` flag : attempt to create a reflink, if copy-on-write is not supported, a fallback copy mechanism is used. */
+        const UV_FS_COPYFILE_FICLONE: 2;
+        /** `fs.copyfile()` flag : attempt to create a reflink, if copy-on-write is not supported, an error is returned. */
+        const UV_FS_COPYFILE_FICLONE_FORCE: 4;
 
         /** Synchronous methods of existing Asynchronous file system methods.
          * @version 5.0.0.6+
@@ -1906,7 +1936,7 @@ declare interface Socket {
     fileno(): number;
     getsockname(): NetworkParam;
     getpeername(): NetworkParam;
-    connect(param: NetworkParam): void;
+    connect(param: NetworkParam): Promise<void>;
     bind(param: NetworkParam): void;
 }
 

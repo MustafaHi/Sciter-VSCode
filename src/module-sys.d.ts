@@ -113,7 +113,11 @@ declare module "@sys" {
          * @reference [chmod](https://man7.org/linux/man-pages/man2/chmod.2.html)
          */
         function chmodSync(path: string, mode ?: number);
-        function copyfile(): Promise;
+        /**
+         * Asynchronous file copy.
+         * @param flag a combination of `fs.UV_FS_COPYFILE_***`
+         */
+        function copyfile(source: string, destination: string, flag?: number): Promise;
         /** Read directory contents asynchronously. The promise resolves to file list. */
         function readdir(path: string): Promise<FileList[]>;
         /** Read directory contents synchronously. return file list. 
@@ -144,6 +148,13 @@ declare module "@sys" {
         /** Character stream device, like terminal. */
         const UV_DIRENT_CHAR: 6;
         const UV_DIRENT_BLOCK: 7;
+        
+        /** `fs.copyfile()` flag : return an error if the destination already exists */
+        const UV_FS_COPYFILE_EXCL: 1;
+        /** `fs.copyfile()` flag : attempt to create a reflink, if copy-on-write is not supported, a fallback copy mechanism is used. */
+        const UV_FS_COPYFILE_FICLONE: 2;
+        /** `fs.copyfile()` flag : attempt to create a reflink, if copy-on-write is not supported, an error is returned. */
+        const UV_FS_COPYFILE_FICLONE_FORCE: 4;
 
         /** Synchronous methods of existing Asynchronous file system methods.
          * @version 5.0.0.6+
@@ -276,7 +287,7 @@ declare interface Socket {
     fileno(): number;
     getsockname(): NetworkParam;
     getpeername(): NetworkParam;
-    connect(param: NetworkParam): void;
+    connect(param: NetworkParam): Promise<void>;
     bind(param: NetworkParam): void;
 }
 
