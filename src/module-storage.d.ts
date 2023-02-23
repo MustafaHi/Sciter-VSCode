@@ -16,11 +16,12 @@ declare module '@storage' {
     /** Commits (writes) all persistent objects reachable from its root into storage. */
     commit(): void;
 
-    /** >5.0.2.4,
+    /** 
      * Registers class (a.k.a. constructor function in terms of ES5) of persistable objects.
       When an object is stored into DB, name of its class is also stored. 
       When the object is fetched from the DB, it gets the class assigned automatically if that class was registered before.
-     */
+      @version 5.0.2.4+
+    */
     registerClass(cls);
   }
   /** Index object in persistent storage. provide effective access and ordering of potentially large data sets. */
