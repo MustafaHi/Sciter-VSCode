@@ -67,6 +67,9 @@ interface Element extends Node, Behaviors {
     paintOutline: function(Graphics);
     /** Schedules re-paint of the element. This will trigger `Element.paintXXXX` calls. */
     requestPaint(): void;
+    /** Force repaint immediately */
+    flushPaint(): void;
+
     /** Shows the popup element or VNode (JSX) in out-of-canvas popup window on desktop. */
     popup(popup: Element | VNode, params?: popupParams): void;
     /** Show this element as out-of-canvas popup window on desktop. 
