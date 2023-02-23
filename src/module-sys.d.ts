@@ -52,6 +52,7 @@ declare module "@sys" {
          * @deprecated >5.0.0.5 use `fs.sync.open()`
          */
         function $open(path:string, flags: keyof typeof OpenFlagOptions, mode ?: number): File;
+        function openSync(path:string, flags: keyof typeof OpenFlagOptions, mode ?: number): File;
         /** Return information about the file at path. */
         function stat(path:string): Promise<StatStruct>;
         /** Return information about the file at path. (sync) 
@@ -78,6 +79,7 @@ declare module "@sys" {
         function splitpath(path: string): [directory: string, file: string];
         /** Remove file */
         function unlink(path:string): Promise;
+        function unlinkSync(path:string);
         function rename(oldpath:string, newpath: string) : Promise;
         /** Creates unique temporary directory. The last six characters of template must be "XXXXXX". */
         function mkdtemp(template:string) : Promise<string>;
@@ -118,6 +120,7 @@ declare module "@sys" {
          * @param flag a combination of `fs.UV_FS_COPYFILE_***`
          */
         function copyfile(source: string, destination: string, flag?: number): Promise;
+        function copyfileSync(source: string, destination: string, flag?: number);
         /** Read directory contents asynchronously. The promise resolves to file list. */
         function readdir(path: string): Promise<FileList[]>;
         /** Read directory contents synchronously. return file list. 
@@ -130,6 +133,7 @@ declare module "@sys" {
         function readdirSync(path: string): Promise<FileList[]>;
         /** Return file content, check `readfileSync` for sync method. */
         function readFile(path: string): Promise<ArrayBuffer>;
+        function readfile(path: string): Promise<ArrayBuffer>;
         /** Synchronously return file content.
          * @deprecated >5.0.0.5 use `fs.sync.readfile()` or `fs.readfileSync()`
          */
@@ -138,6 +142,7 @@ declare module "@sys" {
          * @version 5.0.0.6+
          */
         function readFileSync(path: string): ArrayBuffer;
+        function readfileSync(path: string): ArrayBuffer;
         
         const UV_DIRENT_UNKNOWN: 0;
         const UV_DIRENT_FILE: 1;
@@ -183,6 +188,9 @@ declare module "@sys" {
             function readdir(path: string): FileList[];
             /** Return file content. */
             function readfile(path: string): ArrayBuffer;
+            function unlink(path:string);
+            function rename(oldpath:string, newpath: string);
+            function copyfile(source: string, destination: string, flag?: number);
         }
     }
 
