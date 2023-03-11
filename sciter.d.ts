@@ -1,4 +1,4 @@
-//| Sciter.d.ts v0.24.1
+//| Sciter.d.ts v0.24.2
 //| https://github.com/MustafaHi/sciter-vscode
 
 interface Behaviors
@@ -588,7 +588,7 @@ interface Element extends Node, Behaviors {
     click(): void;
     focus(): void;
     /** Call handler each time the event is fired */
-    addEventListener(name: string, handler: Function, flags?: object): void;
+    addEventListener(name: string, handler: eventFunction, flags?: object): void;
     removeEventListener(name: string, handler: Function): void;
     /** Fire event synchronously, `Event.target` will be set to this element,  
      * use `postEvent` for async method
@@ -2149,7 +2149,9 @@ declare var Range: {
 }
 
 interface Window {
-    state: number| keyof typeof windowState;
+    /** Window state: hidden, shown, fullscreen...  
+     *  use `Window.WINDOW_****` */
+    state: number;
 
     /** Window has input focus. */
     readonly isActive: boolean;
@@ -2319,21 +2321,22 @@ declare var Window: {
     scapp: {argv: string[]};
 
 
-    readonly POPUP_WINDOW : 0;
-    readonly TOOL_WINDOW  : 1;
-    readonly CHILD_WINDOW : 2;
-    readonly FRAME_WINDOW : 3;
-    readonly DIALOG_WINDOW: 4;
+    readonly POPUP_WINDOW  : 2,
+    readonly TOOL_WINDOW   : 3,
+    readonly CHILD_WINDOW  : 4, // undefined
+    readonly FRAME_WINDOW  : 5,
+    readonly DIALOG_WINDOW : 6,
 
-    readonly WINDOW_SHOWN      : 0;
-    readonly WINDOW_MINIMIZED  : 1;
-    readonly WINDOW_MAXIMIZED  : 2;
-    readonly WINDOW_HIDDEN     : 3;
-    readonly WINDOW_FULL_SCREEN: 4;
+    readonly WINDOW_SHOWN      : 1;
+    readonly WINDOW_MINIMIZED  : 2;
+    readonly WINDOW_MAXIMIZED  : 3;
+    readonly WINDOW_HIDDEN     : 4;
+    readonly WINDOW_FULL_SCREEN: 5;
 }
 
 interface windowParam {
-    type?: number| keyof typeof windowType;
+    /** Windows type use `Window.****_WINDOW` */
+    type?: number;
     /** When owner closed or minimized this window will be closed/minimized too. */
     parent?: Window;
     /** window caption (or title) */
@@ -2352,7 +2355,9 @@ interface windowParam {
     alignment?: number;
     /** index of monitor to spawn on. */
     screen?: number;
-    state?: number| keyof typeof windowState;
+    /** Window state: hidden, shown, fullscreen...  
+     *  use `Window.WINDOW_****` */
+    state?: number;
     /** window html source file */
     url?: string;
     /** extra parameters to pass to the new window. */
@@ -2360,20 +2365,6 @@ interface windowParam {
 }
 
 type windowEvent = "statechange" | "resolutionchange" | "mediachange" | "activate" | "replacementstart" | "replacementend" | "move" | "size" | "trayiconclick" | "spacechange";
-enum windowType {
-    POPUP_WINDOW  = 0,
-    TOOL_WINDOW   = 1,
-    CHILD_WINDOW  = 2,
-    FRAME_WINDOW  = 3,
-    DIALOG_WINDOW = 4,
-}
-enum windowState {
-    WINDOW_SHOWN     = 0,
-    WINDOW_MINIMIZED = 1,
-    WINDOW_MAXIMIZED = 2,
-    WINDOW_HIDDEN    = 3,
-    WINDOW_FULL_SCREEN = 4,
-}
 
 enum frameType { "standard", "solid", "solid-with-shadow", "extended", "transparent" }
 

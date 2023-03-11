@@ -208,7 +208,7 @@ interface Element extends Node, Behaviors {
     click(): void;
     focus(): void;
     /** Call handler each time the event is fired */
-    addEventListener(name: string, handler: Function, flags?: object): void;
+    addEventListener(name: string, handler: eventFunction, flags?: object): void;
     removeEventListener(name: string, handler: Function): void;
     /** Fire event synchronously, `Event.target` will be set to this element,  
      * use `postEvent` for async method
